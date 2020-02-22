@@ -1,0 +1,13 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      //不要targets也可以
+      {              
+        "targets":{
+          "node":"current"
+        }
+      }
+    ]
+  ]
+}
