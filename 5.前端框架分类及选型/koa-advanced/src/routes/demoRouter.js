@@ -3,6 +3,6 @@ import demoController from '../api/demoController'
 
 const router = new Router()
 
-router.get('/demo',demoController.demo)
+router.get('/getCaptcha',demoController.getCaptcha)
 
 export default router
