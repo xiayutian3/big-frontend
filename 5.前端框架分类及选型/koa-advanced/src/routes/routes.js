@@ -9,7 +9,8 @@
 //   broutes
 // )
 
-//使用es6语法改写
+//使用es6语法改写 + 合并路由插件
 import combineRoutes from 'koa-combine-routers'
 import publicRouter from './publicRouter'
-export default combineRoutes(publicRouter)
+import loginRouter from './LoginRouter'
+export default combineRoutes(publicRouter,loginRouter)

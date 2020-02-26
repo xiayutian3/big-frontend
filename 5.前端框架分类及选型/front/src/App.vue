@@ -23,5 +23,5 @@ export default {
 // CSS loader 会把把非根路径的url解释为相对路径， 加~前缀才会解释成模块路径。
   @import '~@/assets/layui/css/layui.css';
   @import "~@/assets/css/global.css";
-  @import "~@/assets/layui/css/modules/layer/default/layer.css";
+  // @import "~@/assets/layui/css/modules/layer/default/layer.css";
 </style>
