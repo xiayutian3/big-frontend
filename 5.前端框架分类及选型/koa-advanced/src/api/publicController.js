@@ -1,7 +1,7 @@
 //图形验证码功能
 import svgCaptcha from 'svg-captcha'
 
-class DemoController {
+class PublicController {
   constructor(){}
   async getCaptcha(ctx){
     const captcha = svgCaptcha.create({
@@ -10,7 +10,7 @@ class DemoController {
       color:true,
       noise:Math.floor(Math.random()*5),
       width:150,
-      height:50
+      height:38
     })
     // console.log(captcha)
     ctx.body = {
@@ -20,4 +20,4 @@ class DemoController {
   }
 }
 
-export default new DemoController()
+export default new PublicController()

@@ -11,5 +11,5 @@
 
 //使用es6语法改写
 import combineRoutes from 'koa-combine-routers'
-import demoRouter from './demoRouter'
-export default combineRoutes(demoRouter)
+import publicRouter from './publicRouter'
+export default combineRoutes(publicRouter)
