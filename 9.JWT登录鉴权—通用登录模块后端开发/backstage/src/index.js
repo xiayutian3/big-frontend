@@ -2,6 +2,8 @@
 // const path = require('path')
 import Koa from 'koa'
 import path from 'path'
+// koa token 鉴权(不能产生token)
+import JWT from 'koa-jwt'
 //支持json form  文件 传输
 import koaBody from 'koa-body'
 //json格式化美化
@@ -20,6 +22,12 @@ import router from './routes/routes'
 import compose from 'koa-compose'
 // 生产环境下，对中间件进行压缩
 import compress from 'koa-compress'
+//配置文件
+import config from './config/index'
+//koa-jwt错误处理中间件
+import errorHandle from './common/ErrorHandle.js'
+
+
 const isDevMode = process.env.NODE_ENV === 'production'?false:true
 
 const app = new Koa()
@@ -27,13 +35,21 @@ const app = new Koa()
 // app.use(router())
 // app.use(statics(path.join(__dirname,'../public')))
 
+// 定义公共路径，不需要jwt鉴权,排除一些不需要鉴权的路径，如 /public ,/\/login/
+const jwt = JWT({secret:config.JWT_SECRET}).unless({path:[/^\/public/,/\/login/]})
+
+
+
+
 //koa-compose对插件进行整合
 const middleware = compose([
   koaBody(),
   statics(path.join(__dirname,'../public')),
   cors(),
   jsonutil({pretty:false,param:'pretty'}),
-  helmet()
+  helmet(),
+  errorHandle,
+  jwt
 ])
 
 if(!isDevMode){

@@ -6,8 +6,10 @@ const REDIS = {
   port:15001,
   password: '123456',
 }
-
+//koa jwt secret(随机字符串，尽量长些)
+const JWT_SECRET = 'ere%4324@$&*ghg*dfsdgfgth!W#323F$T%g5G@Fedf@@45'
 export default {
   DB_URL,
-  REDIS
+  REDIS,
+  JWT_SECRET
 }
