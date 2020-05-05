@@ -19,14 +19,16 @@ const i18n = new VueI18n({
         password: '密码',
         name: '昵称',
         username: '账号',
-        code: '验证码'
+        code: '验证码',
+        repassword: '确认密码'
       },
       // validation: zh.messages
       // 扩展提示内容（第一种方式）
       validation: {
         ...zh.messages,
         required: '请输入{_field_}',
-        email: '请输入正确的{_field_}'
+        email: '请输入正确的{_field_}',
+        confirmed: '两次输入的密码不一致'
       }
     }
   }

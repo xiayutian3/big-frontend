@@ -11,7 +11,9 @@
     "webpack:debug": "node --inspect-brk ./node_modules/webpack/bin/webpack --config webpack.config.js --inline --progress",
     "build": "cross-env NODE_ENV=prod webpack --config config/webpack.config.prod.js",
     "dev": "cross-env NODE_ENV=dev nodemon --exec babel-node --inspect src/index.js",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "watch": "cross-env NODE_ENV=dev webpack --watch --progress --hide-modules --config config/webpack.config.dev.js",
+    "debug":"nodemon --inspect ./dist/server.bundle.js"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +31,7 @@
     "koa-static": "^5.0.0",
     "moment": "^2.24.0",
     "nodemailer": "^6.4.3",
+    "redis": "^3.0.2",
     "svg-captcha": "^1.4.0"
   },
   "devDependencies": {

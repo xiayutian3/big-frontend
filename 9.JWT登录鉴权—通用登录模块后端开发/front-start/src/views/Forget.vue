@@ -53,6 +53,7 @@
             -->
 
             <div class="layui-form layui-form-pane">
+               <validation-observer ref="observer">
               <form method="post">
                 <div class="layui-form-item">
                   <label for="L_email" class="layui-form-label">用户名</label>
@@ -99,6 +100,7 @@
                   <button type="button" class="layui-btn" alert="1" @click="submit()">提交</button>
                 </div>
               </form>
+               </validation-observer>
             </div>
           </div>
         </div>
@@ -110,7 +112,7 @@
 <script>
 import { getCode, forget } from '@/api/login'
 // vee-validate3.x的使用
-import { ValidationProvider } from 'vee-validate'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
 export default {
   name: 'forget',
@@ -126,17 +128,24 @@ export default {
   },
   methods: {
     _getCode () {
-      getCode().then((res) => {
+      // 会获取验证码,把sid传递过去，用来做与当前用户做一一对应，验证码时效性等
+      let sid = this.$store.state.sid || localStorage.getItem('sid')
+      getCode(sid).then((res) => {
         console.log(res)
         if (res.code === 200) {
           this.svg = res.data
         }
       })
     },
-    submit () {
+    async submit () {
+      const isValid = await this.$refs.observer.validate()
+      if (!isValid) {
+        // ABORT!!
+        return
+      }
       forget({
-        username: this.username,
-        code: this.code
+        username: this.username
+        // code: this.code
       }).then((res) => {
         console.log(res)
         if (res.code === 200) {
@@ -146,7 +155,8 @@ export default {
     }
   },
   components: {
-    ValidationProvider
+    ValidationProvider,
+    ValidationObserver
   }
 }
 </script>
