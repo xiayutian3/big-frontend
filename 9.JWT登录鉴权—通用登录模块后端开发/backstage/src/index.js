@@ -11,7 +11,7 @@ import jsonutil from 'koa-json'
 //处理跨域
 import cors from '@koa/cors'
 //koa通信安全头
-const helmet = require("koa-helmet");
+const helmet = require("koa-helmet")
 //设置静态资源目录
 const statics = require('koa-static')
 // const router = require('./routes/routes')
@@ -24,7 +24,7 @@ import compose from 'koa-compose'
 import compress from 'koa-compress'
 //配置文件
 import config from './config/index'
-//koa-jwt错误处理中间件
+//koa-jwt鉴权 错误处理中间件
 import errorHandle from './common/ErrorHandle.js'
 
 
@@ -55,10 +55,10 @@ const middleware = compose([
 if(!isDevMode){
   app.use(compress())
 }
-
 app.use(middleware)
 app.use(router())
 
 app.listen(3000,()=>{
   console.log('server is starting')
 })
+

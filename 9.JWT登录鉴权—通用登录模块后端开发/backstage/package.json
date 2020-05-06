@@ -33,6 +33,7 @@
     "koa-router": "^8.0.8",
     "koa-static": "^5.0.0",
     "moment": "^2.24.0",
+    "mongoose": "^5.9.12",
     "nodemailer": "^6.4.3",
     "redis": "^3.0.2",
     "svg-captcha": "^1.4.0"

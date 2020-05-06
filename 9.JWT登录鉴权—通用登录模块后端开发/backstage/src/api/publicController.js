@@ -9,7 +9,7 @@ class PublicController {
 
   //图形验证码
   async getCaptcha(ctx){
-    //获取前端传过来的sid，用来与图像验证码做对应,用来确定是哪个用户
+    //获取前端传过来的sid(唯一值)，用来与图像验证码做对应,用来确定是哪个用户
     const body = ctx.request.query
     // console.log(body.sid)
     const captcha = svgCaptcha.create({

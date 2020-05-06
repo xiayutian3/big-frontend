@@ -138,6 +138,7 @@ export default {
       sid = localStorage.getItem('sid')
     } else {
       sid = uuidv4()
+      console.log('sid:', sid)
       localStorage.setItem('sid', sid)
       // 更新vuex的sid
       this.$store.commit('setSid', sid)
