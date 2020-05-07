@@ -14,7 +14,7 @@ const getCode = (sid) => {
   //   method:'get',
   //   url:'/getCaptcha'
   // })
-  return axios.get('/getCaptcha', {
+  return axios.get('/public/getCaptcha', {
     params: {
       sid
     }
@@ -35,7 +35,7 @@ const forget = (option) => {
  * @param {*} loginInfo 用户的登录信息
  */
 const login = loginInfo => {
-  return axios.post('/login', {
+  return axios.post('/login/login', {
     ...loginInfo
   })
 }
