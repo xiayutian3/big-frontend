@@ -131,6 +131,9 @@ export default {
     }
   },
   mounted () {
+    // 测试vue 的小技巧
+    window.vue = this
+
     // 产生唯一标识，用来跟检查对应用户验证码时效性
 
     let sid = ''

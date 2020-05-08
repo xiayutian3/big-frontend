@@ -11,6 +11,10 @@ import store from './store'
 // 使用到vue-i18n的vee-validate3.x
 import '@/utils/veevalidate-i18n'
 
+// 使用自定义 alert组件
+import Alert from './components/modules/alert/index'
+Vue.use(Alert)
+
 Vue.config.productionTip = false
 
 new Vue({

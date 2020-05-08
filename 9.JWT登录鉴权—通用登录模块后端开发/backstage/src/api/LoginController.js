@@ -44,7 +44,7 @@ class LoginController {
     let code = body.code
     //对比客户端传过来的 sid code，是否与我们在redis中存的一致
     //封装一个验证图片验证码的函数
-    let result = await checkCode(sid, code)  //返回了一个promise对象,让它变成以部方法，才能正确返回结果
+    let result = await checkCode(sid, code)  //返回了一个promise对象,让它变成异步方法，才能正确返回结果
     if (result) {
       //接下来去mongodb数据库查找用户名，密码，对比是否正确
       let checkUserPasswd = false

@@ -1,4 +1,4 @@
-//对 koa-jwt鉴权做错误处理(jwt校验处理中间件)（统一的错误处理，针对鉴权，或者其它的错误处理）
+//对 koa-jwt鉴权做错误处理(jwt校验处理中间件,例如：数据库查找不到这个用户，mongoose程序报错，错误状态401)（统一的错误处理，针对鉴权，或者其它的错误处理）
 export default (ctx,next) => {
   return next().catch((err) => {
     if (401 == err.status) {
