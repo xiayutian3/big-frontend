@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import { getCode } from '@/api/login'
+import { getCode, reg } from '@/api/login'
 // vee-validate3.x的使用
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 export default {
@@ -198,7 +198,32 @@ export default {
         return
       }
       // 注册的请求
-      console.log('我过来了')
+      let regInfo = {
+        username: this.username,
+        name: this.name,
+        password: this.password,
+        code: this.code,
+        sid: this.$store.state.sid || localStorage.getItem('sid')
+      }
+      let res = await reg(regInfo)
+      if (res.code === 200) {
+        this.username = ''
+        this.name = ''
+        this.password = ''
+        this.repassword = ''
+        this.code = ''
+        // 重置表单
+        requestAnimationFrame(() => {
+          this.$refs.observer.reset()
+        })
+        // 跳转到登录界面，让用户登录
+        this.$router.push('/login')
+      } else {
+        // 设置返回的错误提示
+        // username -> '用户名已经注册'
+        // res.msg = {usernam:[],name:[],code:[]}
+        this.$refs.observer.setErrors(res.msg)
+      }
     }
   },
   components: {

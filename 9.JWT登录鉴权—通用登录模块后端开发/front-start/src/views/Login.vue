@@ -57,7 +57,7 @@
                     </validation-provider>
                   </div>
                   <div class="layui-form-item">
-                    <validation-provider name="code" rules="required|length:4" v-slot="{errors}">
+                    <validation-provider name="code" ref="codeFileld" rules="required|length:4" v-slot="{errors}">
                       <div class="layui-row">
                         <label for="L_vercode" class="layui-form-label">验证码</label>
                         <div class="layui-input-inline">
@@ -132,7 +132,7 @@ export default {
   },
   mounted () {
     // 测试vue 的小技巧
-    window.vue = this
+    // window.vue = this
 
     // 产生唯一标识，用来跟检查对应用户验证码时效性
 
@@ -141,7 +141,7 @@ export default {
       sid = localStorage.getItem('sid')
     } else {
       sid = uuidv4()
-      console.log('sid:', sid)
+      // console.log('sid:', sid)
       localStorage.setItem('sid', sid)
       // 更新vuex的sid
       this.$store.commit('setSid', sid)
@@ -173,7 +173,26 @@ export default {
         sid: this.$store.state.sid || localStorage.getItem('sid')
       }).then(res => {
         if (res.code === 200) {
+          // 登录成功 后重置数据
+          this.username = ''
+          this.password = ''
+          this.code = ''
+          // 重置表单项
+          requestAnimationFrame(() => {
+            this.$refs.observer.reset()
+          })
           console.log(res)
+        } else if (res.code === 401) {
+          // 图片验证码验证失败(validate插件以数组的形式返回，所以设置的时候也得用数组的形式)
+          this.$refs.codeFileld.setErrors([res.msg])
+        }
+      }).catch(err => {
+        // 从err中把data取出来
+        const data = err.response.data
+        if (data.code === 500) {
+          this.$alert('用户名密码校验失败，请检查！')
+        } else {
+          this.$alert('服务器出错误')
         }
       })
     }

@@ -18,7 +18,17 @@ export default new Router({
     {
       path: '/reg',
       name: 'reg',
-      component: Reg
+      component: Reg,
+      beforeEnter: (to, from, next) => {
+        // 路由钩子  主要是为了sid 唯一值，因为它只在登录界面生成，所以先访问login后再能访问reg页
+        // to要到的路由对象，from从哪里来的路由对象，next继续执行
+        // debugger
+        if (from.name === 'login') {
+          next()
+        } else {
+          next('/login')
+        }
+      }
     },
     {
       path: '/forget',
