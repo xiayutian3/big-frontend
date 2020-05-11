@@ -1,4 +1,7 @@
 import send from '../config/MailConfig'
+//加密密码的库(捉着可以用bcryptjs，api一样，node版的bcrypt)
+import bcrypt from 'bcrypt'
+//时间库moment
 import moment from 'moment'
 //可以产生和验证token
 import jsonwebtoken from 'jsonwebtoken'
@@ -13,7 +16,7 @@ class LoginController {
   constructor() { }
   async forget(ctx) {
     const { body } = ctx.request
-    console.log(body)
+    // console.log(body)
     try {
       //一般还要做一些操作(查找数据库拿到email)  body.username -> database ->email
       let result = await send({
@@ -50,7 +53,8 @@ class LoginController {
       let checkUserPasswd = false
       let user = await User.findOne({ username: body.username })
       // console.log('pwd', user.password, body.password)
-      if (user.password === body.password) {
+      //因为使用bcrypt加密，所以他的方法进行解密比对，第一个参数，我们传过来的密码，第二个 数据库中加密的密码
+      if (await bcrypt.compare(body.password,user.password)) {
         checkUserPasswd = true
       }
       if (checkUserPasswd) {
@@ -84,6 +88,64 @@ class LoginController {
       }
     }
 
+  }
+
+  //用户注册接口
+  async reg(ctx){
+    //接收客户端的数据
+    const {body} = ctx.request
+    //存放错误信息
+    let msg = {}
+  
+    //校验验证码的内容（时效性，有效性）
+    let sid = body.sid
+    let code = body.code
+    //对比客户端传过来的 sid code，是否与我们在redis中存的一致
+    //封装一个验证图片验证码的函数
+    let result = await checkCode(sid, code)  //返回了一个promise对象,让它变成异步方法，才能正确返回结果
+    let check = true
+    if(result){
+    //查库，看username是否被注册
+    let user1 = await User.findOne({username:body.username})
+    if(user1 && typeof user1.username != 'undefined'){
+      msg.username = ['此邮箱已经注册，可以通过邮箱找回密码']
+      check = false
+    }
+    //查库，看name是否被注册
+    let user2 = await User.findOne({name:body.name})
+    if(user2 && typeof user2.name != 'undefined'){
+      msg.name = ['此昵称已经注册，请重新输入昵称']
+      check = false
+    }
+    //写入数据到数据库
+    //通常来讲我们不直接存放用户的密码到数据库中，所以进行密码加密
+    if(check){
+      //加密密码
+      body.password = await bcrypt.hash(body.password,5)
+      let user = new User({
+        username:body.username,
+        name:body.name,
+        password:body.password,
+        created:moment().format('YYYY-MM-DD HH:mm:ss')
+      })
+      let result = await user.save()
+      ctx.body = {
+        code:200,
+        data:result,
+        mag:'注册成功'
+      }
+      return
+    }
+
+    }else{
+      //veevalidate 显示错误
+      msg.code = ['验证码已经失效，请重新获取']
+    }
+
+    ctx.body = {
+      code:500,
+      msg:msg
+    }
   }
 }
 

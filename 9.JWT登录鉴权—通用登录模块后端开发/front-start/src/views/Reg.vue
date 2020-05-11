@@ -182,7 +182,7 @@ export default {
   },
   methods: {
     _getCode () {
-      // 会获取验证码,把sid传递过去，用来做与当前用户做一一对应，验证码时效性等
+      // 会获取验证码,把sid传递过去，用来给redis sid->图形验证码做一一对应  ， 做与当前用户做一一对应，验证码时效性等
       let sid = this.$store.state.sid || localStorage.getItem('sid')
       getCode(sid).then(res => {
         // console.log(res)
@@ -217,11 +217,16 @@ export default {
           this.$refs.observer.reset()
         })
         // 跳转到登录界面，让用户登录
-        this.$router.push('/login')
+        // 自己实现的$alert组件
+        this.$alert('注册成功')
+        setTimeout(() => {
+          this.$router.push('/login')
+        }, 1000)
       } else {
         // 设置返回的错误提示
         // username -> '用户名已经注册'
         // res.msg = {usernam:[],name:[],code:[]}
+        // 这种方式是直接设置（register页） ValidationObserver  以name来对应，还有可以设置单个 ValidationProvider 错误的，也是一一对应，参照login页
         this.$refs.observer.setErrors(res.msg)
       }
     }
