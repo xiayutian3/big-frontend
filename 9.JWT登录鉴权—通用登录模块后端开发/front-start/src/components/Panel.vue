@@ -2,36 +2,27 @@
   <div class="panel">
     <div class="layui-container">
       <ul>
-        <li class="layui-hide-xs">
+        <router-link tag="li" to="/" class="layui-hide-xs">
           <a href>首页</a>
-        </li>
-        <li>
-          <a href>提问</a>
-        </li>
-        <li>
-          <a href>分享</a>
-        </li>
-        <li>
-          <a href>讨论</a>
-        </li>
-        <li>
-          <a href>建议</a>
-        </li>
-        <li>
-          <a href>公告</a>
-        </li>
-        <li>
-          <a href>动态</a>
-        </li>
+        </router-link>
+        <router-link v-for="(item,index) in lists" :key="'panel'+index" tag="li" :to="item.path">
+          <a href>
+            {{item.name}}
+            <span class="layui-badge-dot" v-if="item.isNew"></span>
+          </a>
+        </router-link>
         <li class="layui-hide-xs">
           <span class="line"></span>
         </li>
-        <li class="layui-hide-xs">
-          <a href>我发表的贴</a>
-        </li>
-        <li class="layui-hide-xs">
-          <a href>我收藏的贴</a>
-        </li>
+        <template v-if="isLogin">
+          <li class="layui-hide-xs">
+                  <a href>我发表的贴</a>
+                </li>
+                <li class="layui-hide-xs">
+                  <a href>我收藏的贴</a>
+                </li>
+        </template>
+
       </ul>
       <div class="right layui-hide-xs">
         <span class="layui-icon layui-icon-search"></span>
@@ -46,7 +37,41 @@ export default {
   name: 'panel',
   props: {},
   data () {
-    return {}
+    return {
+      lists: [
+        {
+          name: '提问',
+          path: '/index/ask',
+          isNew: false
+        },
+        {
+          name: '分享',
+          path: '/index/share',
+          isNew: true
+        },
+        {
+          name: '讨论',
+          path: '/index/discuss',
+          isNew: false
+        },
+        {
+          name: '建议',
+          path: '/index/advise',
+          isNew: false
+        },
+        {
+          name: '公告',
+          path: '/index/notice',
+          isNew: false
+        },
+        {
+          name: '动态',
+          path: '/index/logs',
+          isNew: false
+        }
+      ],
+      isLogin: this.$store.state.isLogin
+    }
   },
   created () {},
   mounted () {},
@@ -78,6 +103,11 @@ export default {
   ul {
     li {
       display: inline-block;
+      &.layui-this{
+        a{
+          color: #5fb878;
+        }
+      }
       a {
         padding: 0 20px;
       }

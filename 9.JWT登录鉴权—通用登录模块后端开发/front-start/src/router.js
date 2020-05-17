@@ -5,15 +5,29 @@ const Login = () => import(/* webpackChunkName: 'login' */ './views/Login.vue')
 const Reg = () => import(/* webpackChunkName: 'reg' */ './views/Reg.vue')
 const Forget = () =>
   import(/* webpackChunkName: 'forget' */ './views/Forget.vue')
+const Index = () => import(/* webpackChunkName: 'reg' */ './views/channels/Index.vue')
+const Template1 = () => import(/* webpackChunkName: 'reg' */ './views/channels/Template1.vue')
 
 Vue.use(Router)
 
 export default new Router({
+  linkExactActiveClass: 'layui-this', // 精准匹配,layui a标签激活的样式
   routes: [
     {
       path: '/',
-      name: 'index',
-      component: Home
+      component: Home,
+      children: [
+        {
+          path: '',
+          name: 'index',
+          component: Index
+        },
+        {
+          path: '/index/:catalog',
+          name: 'catalog',
+          component: Template1
+        }
+      ]
     },
     {
       path: '/login',
