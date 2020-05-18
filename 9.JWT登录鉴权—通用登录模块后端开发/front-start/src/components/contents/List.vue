@@ -15,27 +15,102 @@
           <a :class="{'layui-this':sort === 'answer'}"  @click.prevent="search(4)">按热议</a>
         </span>
       </div>
-      <ListItem />
+      <ListItem :lists="lists" @nextpage="nextPage" :isEnd="isEnd"/>
     </div>
   </div>
 </template>
 
 <script>
+import { getList } from '@/api/content'
 import ListItem from './ListItem'
 export default {
   name: 'list',
   props: {},
   data () {
     return {
+      isEnd: false,
       status: '',
       tag: '',
-      sort: 'created'
+      sort: 'created',
+      page: 0,
+      limit: 20,
+      catalog: '',
+      lists: [
+        {
+          uid: {
+            name: 'imooc',
+            isVip: 1
+          },
+          title: '大前端课程',
+          content: '',
+          created: '2020-5-18 01:00:00',
+          catalog: 'ask',
+          fav: 40,
+          isEnd: 0,
+          reads: 10,
+          answer: 0,
+          status: 0,
+          isTop: 0,
+          tags: [
+            {
+              name: '精华',
+              class: 'layui-bg-red'
+            },
+            {
+              name: '热门',
+              class: 'layui-bg-blue'
+            }
+          ]
+        }
+      ]
     }
   },
   created () {},
-  mounted () {},
+  mounted () {
+    this._getLists()
+  },
   computed: {},
   methods: {
+    _getLists () {
+      // 如果到最后一页，直接return，不再发请求
+      if (this.isEnd) return
+      let options = {
+        catalog: this.catalog,
+        isTop: 0,
+        page: this.page,
+        limit: this.limit,
+        sort: this.sort,
+        tag: this.tag,
+        status: this.status
+      }
+      getList(options).then(res => {
+        // console.log('_getLists -> res', res)
+
+        // 对于异常的判断，res，code 非200， 我们给用户一个提示
+        // 判断是否lists长度为0，如果是为零即可直接赋值
+        // 当lists长度不为0，后边的请求数据，加入到lists中
+        if (res.code === 200) {
+          // 判断res.datade长度，如果小于20条，则是最后一页的数据（默认一页20条）
+
+          if (res.data.length < this.limit) {
+            this.isEnd = true
+          }
+          if (this.lists.length === 0) {
+            this.lists = res.data
+          } else {
+            this.lists = this.lists.concat(res.data)
+          }
+        }
+      }).catch(err => {
+        if (err) {
+          this.$alert(err.msg)
+        }
+      })
+    },
+    nextPage () {
+      this.page++
+      this._getLists()
+    },
     search (val) {
       switch (val) {
         // 未结帖
