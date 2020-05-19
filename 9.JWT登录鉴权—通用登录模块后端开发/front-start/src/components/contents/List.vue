@@ -28,7 +28,9 @@ export default {
   props: {},
   data () {
     return {
-      isEnd: false,
+      isEnd: false, // 是否请求到了最后一页
+      isRepeat: false, // 发否多次请求
+      current: '', // 切换 精华，已结帖，未结，综合
       status: '',
       tag: '',
       sort: 'created',
@@ -72,8 +74,11 @@ export default {
   computed: {},
   methods: {
     _getLists () {
+      // isRepeat为true，相当于请求没有处理完，数据没有返回
+      // if (this.isRepeat) return
       // 如果到最后一页，直接return，不再发请求
       if (this.isEnd) return
+      this.isRepeat = true
       let options = {
         catalog: this.catalog,
         isTop: 0,
@@ -84,6 +89,9 @@ export default {
         status: this.status
       }
       getList(options).then(res => {
+        // 加入一个请求锁，防止用户多次点击，等数据返回了再打开   请求处理完成，
+        this.isRepeat = false
+
         // console.log('_getLists -> res', res)
 
         // 对于异常的判断，res，code 非200， 我们给用户一个提示
@@ -102,8 +110,10 @@ export default {
           }
         }
       }).catch(err => {
+        console.log(err)
+        this.isRepeat = false
         if (err) {
-          this.$alert(err.msg)
+          this.$alert(err.message)
         }
       })
     },
@@ -112,6 +122,10 @@ export default {
       this._getLists()
     },
     search (val) {
+      if (typeof val === 'undefined' && this.current === '') {
+        return
+      }
+      this.current = val
       switch (val) {
         // 未结帖
         case 0:
@@ -140,6 +154,7 @@ export default {
         default:
           this.status = ''
           this.tag = ''
+          this.current = ''
           break
       }
     }
@@ -147,7 +162,15 @@ export default {
   components: {
     ListItem
   },
-  watch: {}
+  watch: {
+    current (newVal, oldVal) {
+      // 做另一个导航列表的重置操作
+      this.page = 0
+      this.isEnd = false
+      this.lists = []
+      this._getLists()
+    }
+  }
 }
 </script>
 <style lang="scss">

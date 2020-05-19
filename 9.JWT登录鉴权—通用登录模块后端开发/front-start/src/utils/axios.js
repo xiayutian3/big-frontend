@@ -53,10 +53,14 @@
 
 import axios from 'axios'
 import errorHandle from './errorHandle'
+// 取消请求函数
+let CancelToken = axios.CancelToken
 
 class HttpRequest {
   constructor (baseUrl) {
     this.baseUrl = baseUrl
+    // 全局的变量，用于取消请求
+    this.pending = {}
   }
   // 获取axios实例的配置
   getInsideConfig () {
@@ -69,23 +73,43 @@ class HttpRequest {
     }
     return config
   }
+
+  // 取消请求函数
+  removePending (key, isRequest = false) {
+    if (this.pending[key] && isRequest) {
+      this.pending[key]('取消重复请求')
+    }
+    delete this.pending[key] // 防止内存泄漏,还有删除对象上没有的属性不会报错
+  }
+
   // 设定拦截器
   interceptors (instance) {
     // 添加请求拦截器
-    instance.interceptors.request.use(function (config) {
+    instance.interceptors.request.use((config) => {
+      // console.log('config:' + JSON.stringify(config))
+      // 取消请求的配置
+      let key = config.url + '&' + config.method
+      this.removePending(key, true)
+      config.cancelToken = new CancelToken((c) => {
+        this.pending[key] = c
+      })
       // 在发送请求之前做些什么
-      // console.log('config:' + config)
       return config
-    }, function (error) {
+    }, (error) => {
       // 对请求错误做些什么
       errorHandle(error)
       return Promise.reject(error)
     })
 
     // 添加响应拦截器
-    instance.interceptors.response.use(function (response) {
+    instance.interceptors.response.use((response) => {
+      // console.log('response:' + JSON.stringify(response))
       // 对响应数据做点什么
-      // console.log('response:' + response)
+
+      // 正常的请求，关于取消请求的（数据回来了，不需要取消请求了，但是要删除请求对应的key）
+      let key = response.config.url + '&' + response.config.method
+      this.removePending(key)
+
       if (response.status === 200) {
         // return response.data
         // 跟上边直接返回都是一样的（也可以不加Promise.resolve）
@@ -93,7 +117,7 @@ class HttpRequest {
       } else {
         return Promise.reject(response)
       }
-    }, function (error) {
+    }, (error) => {
       // 对响应错误做点什么
 
       errorHandle(error)
