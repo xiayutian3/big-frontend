@@ -12,12 +12,14 @@ const insertMethods = async () => {
   const result = await data.save()
   console.log(result)
 }
+insertMethods()
 
 // 查
 const findMethods = async () => {
   const result = await User.find()
   console.log(result)
 }
+findMethods()
 
 // 改
 const updateMethods = async () => {
@@ -26,6 +28,7 @@ const updateMethods = async () => {
   })
   console.log(result)
 }
+updateMethods()
 
 // 删
 const deleteMethods = async () => {

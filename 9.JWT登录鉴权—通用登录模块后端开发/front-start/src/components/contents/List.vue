@@ -69,6 +69,12 @@ export default {
   },
   created () {},
   mounted () {
+    // 切换头部导航，
+    // console.log(this.$route.params)
+    let catalog = this.$route.params['catalog']
+    if (typeof catalog !== 'undefined' && catalog !== '') {
+      this.catalog = catalog
+    }
     this._getLists()
   },
   computed: {},
@@ -157,6 +163,12 @@ export default {
           this.current = ''
           break
       }
+    },
+    init () {
+      this.page = 0
+      this.isEnd = false
+      this.lists = []
+      this._getLists()
     }
   },
   components: {
@@ -165,10 +177,16 @@ export default {
   watch: {
     current (newVal, oldVal) {
       // 做另一个导航列表的重置操作
-      this.page = 0
-      this.isEnd = false
-      this.lists = []
-      this._getLists()
+      this.init()
+    },
+    '$route' (newVal, oldVal) {
+      // 切换头部导航，
+      console.log(this.$route.params)
+      let catalog = this.$route.params['catalog']
+      if (typeof catalog !== 'undefined' && catalog !== '') {
+        this.catalog = catalog
+      }
+      this.init()
     }
   }
 }

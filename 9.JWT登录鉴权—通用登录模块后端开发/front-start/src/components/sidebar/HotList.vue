@@ -2,67 +2,12 @@
   <div>
     <dl class="fly-panel fly-list-one">
       <dt class="fly-panel-title">本周热议</dt>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
+      <dd  v-for="(item,index) in lists" :key="'hotlist'+index">
+        <a href="jie/detail.html">{{item.title}}</a>
         <span>
-          <i class="iconfont icon-pinglun1"></i> 16
+          <i class="iconfont icon-pinglun1"></i> {{item.answer}}
         </span>
       </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-      <dd>
-        <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
-        <span>
-          <i class="iconfont icon-pinglun1"></i> 16
-        </span>
-      </dd>
-
       <!-- 无数据时 -->
       <!--
         <div class="fly-none">没有相关数据</div>
@@ -72,13 +17,22 @@
 </template>
 
 <script>
+import { getTop } from '@/api/content'
 export default {
   name: 'hotlist',
   props: {},
   data () {
-    return {}
+    return {
+      lists: []
+    }
   },
-  created () {},
+  created () {
+    getTop().then(res => {
+      if (res.code === 200) {
+        this.lists = res.data
+      }
+    })
+  },
   mounted () {},
   computed: {},
   methods: {},

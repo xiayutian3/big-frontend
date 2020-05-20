@@ -15,13 +15,17 @@
 
 <script>
 import ListItem from './ListItem'
+import { getList } from '@/api/content'
 export default {
   name: 'top',
   props: {},
   data () {
     return {
+      isTop: 0,
+      sort: '',
+      tag: '',
       page: 0,
-      limit: 20,
+      status: 20,
       lists: [
         {
           uid: {
@@ -52,10 +56,37 @@ export default {
       ]
     }
   },
-  created () {},
+  created () {
+    this._getLists()
+  },
   mounted () {},
   computed: {},
-  methods: {},
+  methods: {
+    _getLists () {
+      // isRepeat为true，相当于请求没有处理完，数据没有返回
+      // if (this.isRepeat) return
+      // 如果到最后一页，直接return，不再发请求
+      if (this.isEnd) return
+      this.isRepeat = true
+      let options = {
+        isTop: 0,
+        sort: this.sort,
+        tag: this.tag,
+        status: this.status
+      }
+      getList(options).then(res => {
+        if (res.code === 200) {
+          this.lists = res.data
+        }
+      }).catch(err => {
+        console.log(err)
+        this.isRepeat = false
+        if (err) {
+          this.$alert(err.message)
+        }
+      })
+    }
+  },
   components: {
     ListItem
   },

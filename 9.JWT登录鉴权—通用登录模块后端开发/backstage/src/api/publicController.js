@@ -1,7 +1,7 @@
 //图形验证码功能
 import svgCaptcha from 'svg-captcha'
 //redis相关的操作（redis是安装在虚拟机上的，要开启虚拟机）
-import {setValue,getValue} from '../config/RedisConfig'
+import {setValue} from '../config/RedisConfig'
 // import {setValue,getValue} from '@/config/RedisConfig'
 
 class PublicController {
