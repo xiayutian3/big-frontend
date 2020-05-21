@@ -9,10 +9,8 @@
 //   a
 // }
 
-
-
-module.exports = async function (ctx){
+module.exports = async function (ctx) {
   ctx.body = {
-    "message":"hello from a44"
+    message: 'hello from a44'
   }
 }

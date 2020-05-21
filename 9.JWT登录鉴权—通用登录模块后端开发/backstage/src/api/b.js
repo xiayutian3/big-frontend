@@ -1,5 +1,5 @@
-module.exports = async function (ctx){
+module.exports = async function (ctx) {
   ctx.body = {
-    "message":"hello from b"
+    message: 'hello from b'
   }
 }

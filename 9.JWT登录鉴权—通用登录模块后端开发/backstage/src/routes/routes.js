@@ -1,4 +1,4 @@
-//合并路由插件
+// 合并路由插件
 // const combineRoutes = require('koa-combine-routers')
 
 // const aroutes = require('./aRouter')
@@ -9,8 +9,8 @@
 //   broutes
 // )
 
-//使用es6语法改写 + 合并路由插件
+// 使用es6语法改写 + 合并路由插件
 import combineRoutes from 'koa-combine-routers'
 import publicRouter from './publicRouter'
 import loginRouter from './LoginRouter'
-export default combineRoutes(publicRouter,loginRouter)
+export default combineRoutes(publicRouter, loginRouter)

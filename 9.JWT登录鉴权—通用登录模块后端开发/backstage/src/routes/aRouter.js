@@ -3,6 +3,6 @@ const a = require('../api/a')
 
 const router = new Router()
 
-router.get('/a',a)
+router.get('/a', a)
 
 module.exports = router

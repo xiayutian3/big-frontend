@@ -176,10 +176,13 @@ export default {
   },
   watch: {
     current (newVal, oldVal) {
+      // 刚开始刷新页面，监视都不执行，离开当前组件的话，也不执行
+      console.log(123456)
       // 做另一个导航列表的重置操作
       this.init()
     },
     '$route' (newVal, oldVal) {
+      // 刷新当前页面的话，监视路由 不执行
       // 切换头部导航，
       console.log(this.$route.params)
       let catalog = this.$route.params['catalog']
