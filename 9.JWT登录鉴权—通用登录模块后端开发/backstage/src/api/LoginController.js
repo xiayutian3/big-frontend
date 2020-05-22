@@ -1,8 +1,10 @@
 import send from '../config/MailConfig'
 // 加密密码的库(捉着可以用bcryptjs，api一样，node版的bcrypt)
 import bcrypt from 'bcrypt'
-// 时间库moment
-import moment from 'moment'
+// 时间库moment（大，功能多）  dayjs（小） 一样的用法
+// import moment from 'moment'
+import moment from 'dayjs'
+
 // 可以产生和验证token
 import jsonwebtoken from 'jsonwebtoken'
 // 获取配置的JWT_SECRET

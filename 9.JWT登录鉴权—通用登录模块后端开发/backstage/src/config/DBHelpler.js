@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
 import config from './index'
 
+// 去掉警告信息，xxx将要移除的警告  ensureIndex is deprecated
+mongoose.set('useCreateIndex', true)
+
 // 创建连接
 mongoose.connect(config.DB_URL, {
   useNewUrlParser: true,

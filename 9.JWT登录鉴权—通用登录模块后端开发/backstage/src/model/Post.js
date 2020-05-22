@@ -1,10 +1,14 @@
 import mongoose from '../config/DBHelpler'
 // 测试mongoose
-import moment from 'moment'
+// 时间格式化插件 moment(体积大，功能多，有些用不到)  dayjs（体积小，移动端适合） 用法一样
+// import moment from 'moment'
+import moment from 'dayjs'
+
 const Schema = mongoose.Schema
 
 const PostSchema = new Schema({
-  uid: String,
+  // 可以取到user的数据 ref 指向 users 集合 ，引用数据
+  uid: { type: String, ref: 'users' },
   title: String,
   content: String,
   created: Date,
@@ -16,7 +20,7 @@ const PostSchema = new Schema({
   status: String,
   isTop: String,
   sort: String,
-  tags: String
+  tags: Array
 
 })
 
@@ -41,6 +45,10 @@ PostSchema.statics = {
       .sort({ [sort]: -1 }) // -1倒序进行排列
       .skip(page * limit) // 跳过多少页数据
       .limit(limit) // 获取多少条数据
+      .populate({ // （填充）过滤筛选（排除一些不必要的字段，或者是敏感字段）
+        path: 'uid', // 对哪个字段进行过滤筛选，（原Schema） 填充到那个字段下
+        select: 'name isVip pic' // 从相应的数据中拿到相应的字段（指向引用的集合中）填充回来
+      })
   }
 }
 
