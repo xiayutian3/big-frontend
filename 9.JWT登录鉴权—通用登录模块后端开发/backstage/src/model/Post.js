@@ -1,5 +1,6 @@
 import mongoose from '../config/DBHelpler'
-// 测试mongoose
+// 文章的module
+
 // 时间格式化插件 moment(体积大，功能多，有些用不到)  dayjs（体积小，移动端适合） 用法一样
 // import moment from 'moment'
 import moment from 'dayjs'
@@ -25,8 +26,18 @@ const PostSchema = new Schema({
 })
 
 // 定义保存前的钩子函数，用于保存创建时间，中间件
+// moment().format('YY-MM-DD HH:mm:ss') 产生出来的是字符串，要跟schema里的类型型对应，才能添加上相应的字段
+// new Date() 产生的是 Date类型，schema定义要定义成Date，才能添加上相应的字段
 PostSchema.pre('save', function (next) {
-  this.created = moment().format('YY-MM-DD HH:mm:ss')
+  // console.log(new Date())
+  // console.log(typeof new Date())
+  this.created = new Date() // 产生的是Date类型，返回给前端，前端在进行时间格式化（就可以显示，多少天前，多少个小时前，之类的时间格式）
+  // this.created = moment().format('YY-MM-DD HH:mm:ss') // 产生的是字符串类型 （因为前端对时间进行格式化了，这里后端就不需要了）
+
+  // 也可以这种写法，但是shema要定义 String类型
+  // if (!this.created) {
+  // this.created = moment().format('YY-MM-DD HH:mm:ss')
+  // }
   next()
 })
 
@@ -49,7 +60,19 @@ PostSchema.statics = {
         path: 'uid', // 对哪个字段进行过滤筛选，（原Schema） 填充到那个字段下
         select: 'name isVip pic' // 从相应的数据中拿到相应的字段（指向引用的集合中）填充回来
       })
+  },
+  getTopWeek: function () {
+    return this.find({
+      created: { // 根据创建时间来筛选
+        // 大于等于，现在的时间-7天的时间（向前 7天内的文章）//近7天内的数据
+        $gte: moment().subtract(7, 'days')
+      }
+    }, {
+      answer: 1, // 第二个对象，告诉mongodb，哪些显示的字段 1是显示 0不显示
+      title: 1
+    }).sort({ answer: -1 }).limit(15) // 排序 按照answer这个字段进行（-1）倒序排列，（0）正序排列，长度限制15条
   }
+
 }
 
 const PostModel = mongoose.model('post', PostSchema)

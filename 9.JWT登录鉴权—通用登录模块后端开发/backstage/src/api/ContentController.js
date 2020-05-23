@@ -1,5 +1,6 @@
 // 文章列表
 import Post from '../model/Post'
+import Links from '../model/Links'
 
 class ContentController {
   // 获取文章列表
@@ -9,9 +10,9 @@ class ContentController {
     // *************************************
     // 测试数据
     // const post = new Post({
-    //   title: 'test title share',
-    //   content: 'test content share',
-    //   catalog: 'share',
+    //   title: 'test logs',
+    //   content: 'test logs',
+    //   catalog: 'logs',
     //   fav: 20,
     //   isEnd: '0',
     //   reads: '0',
@@ -20,10 +21,10 @@ class ContentController {
     //   isTop: '0',
     //   sort: '0',
     //   tags: [
-    //     // {
-    //     //   name: '精华',
-    //     //   class: ''
-    //     // }
+    //     {
+    //       name: '精华',
+    //       class: ''
+    //     }
     //   ]
     // })
 
@@ -57,6 +58,33 @@ class ContentController {
       code: 200,
       data: result,
       msg: '获取文章列表成功'
+    }
+  }
+
+  // 获取友情链接
+  async getLinks (ctx) {
+    const result = await Links.find({ type: 'links' })
+    ctx.body = {
+      code: 200,
+      data: result
+    }
+  }
+
+  // 获取温馨提示
+  async getTips (ctx) {
+    const result = await Links.find({ type: 'tips' })
+    ctx.body = {
+      code: 200,
+      data: result
+    }
+  }
+
+  // 本周热议
+  async getTopWeek (ctx) {
+    const result = await Post.getTopWeek()
+    ctx.body = {
+      code: 200,
+      data: result
     }
   }
 }
