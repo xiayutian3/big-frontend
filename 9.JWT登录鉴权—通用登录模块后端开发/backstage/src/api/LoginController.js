@@ -70,8 +70,24 @@ class LoginController {
           expiresIn: '1d'
         })
         // ***一般客户端鉴权，请求头Authorization，值为：Bearer+空格+token  ***
+        // 除了token还要返回用户信息
+        // toJSON（） mongoose提供的方法,拿到用户信息
+        const userObj = user.toJSON()
+        const arr = ['password', 'username', 'roles']
+        // 删除user里边不需要返回的字段
+        arr.map(item => {
+          delete userObj[item]
+        })
         ctx.body = {
           code: 200,
+          // 返回的用户信息，字段少的时候可以这么做
+          // data: {
+          //   name: user.name,
+          //   pic: user.pic,
+          //   isVip: user.isVip
+          // },
+          // 返回的用户信息，字段多的情况
+          data: userObj,
           token: token
         }
         // 重置checkUserPasswd（为下一个用户重新验证）

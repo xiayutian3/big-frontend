@@ -15,7 +15,7 @@
               <!-- validation-observer v-slot="{validate}"   把validate方法从里边拿出来 -->
               <!-- <validation-observer ref="observer" v-slot="{validate}"> -->
                 <!-- 下面这种也可以，不需要v-slot -->
-                 <validation-observer ref="observer">
+                <validation-observer ref="observer">
                 <form method="post">
                   <div class="layui-form-item">
                     <label for="L_email" class="layui-form-label">用户名</label>
@@ -173,15 +173,22 @@ export default {
         sid: this.$store.state.sid || localStorage.getItem('sid')
       }).then(res => {
         if (res.code === 200) {
+          // 同步vuex的用户信息
+          this.$store.commit('setUserInfo', res.data)
+          this.$store.commit('setIsLogin', true)
           // 登录成功 后重置数据
           this.username = ''
           this.password = ''
           this.code = ''
           // 重置表单项
+          // this.$refs.observer.reset()
+          // 或者像下面这样
           requestAnimationFrame(() => {
             this.$refs.observer.reset()
+            this.$router.push({ name: 'index' })
           })
-          console.log(res)
+          // this.$router.push({ name: 'index' })
+          // console.log(res)
         } else if (res.code === 401) {
           // 图片验证码验证失败(validate插件以数组的形式返回，所以设置的时候也得用数组的形式)
           this.$refs.codeFileld.setErrors([res.msg])
