@@ -53,16 +53,17 @@
         </template>
         <template v-else>
           <!-- 登入后的状态 -->
-          <li class="layui-nav-item">
+          <li class="layui-nav-item" @mouseenter="show" @mouseleave="hide">
             <a class="fly-nav-avatar" href="javascript:;">
               <cite class="layui-hide-xs">{{userInfo.name}}</cite>
               <!-- <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i> -->
-              <i class="layui-badge fly-badge-vip layui-hide-xs" v-show="userInfo.isVip != 0">VIP{{userInfo.isVip}}</i>
-              <img
-                :src="userInfo.pic"
-              />
+              <i
+                class="layui-badge fly-badge-vip layui-hide-xs"
+                v-show="userInfo.isVip != 0"
+              >VIP{{userInfo.isVip}}</i>
+              <img :src="userInfo.pic" />
             </a>
-            <dl class="layui-nav-child">
+            <dl class="layui-nav-child layui-anim layui-anim-upbit" :class="{'layui-show':isHover}">
               <dd>
                 <a href="user/set.html">
                   <i class="layui-icon">&#xe620;</i>基本设置
@@ -93,12 +94,34 @@
 <script>
 export default {
   name: 'Header',
+  data () {
+    return {
+      isHover: false,
+      hoverCtrl: {}
+    }
+  },
   computed: {
     isShow () {
       return this.$store.state.isLogin
     },
     userInfo () {
       return this.$store.state.userInfo || { name: '', pic: '', isVip: 0 }
+    }
+  },
+  methods: {
+    show () {
+      // 鼠标移入头像显示用户的操作菜单
+      clearTimeout(this.hoverCtrl)
+      this.hoverCtrl = setTimeout(() => {
+        this.isHover = true
+      }, 200)
+    },
+    hide () {
+      clearTimeout(this.hoverCtrl)
+      // 鼠标移出头像隐藏用户的操作菜单
+      this.hoverCtrl = setTimeout(() => {
+        this.isHover = false
+      }, 200)
     }
   }
 }
