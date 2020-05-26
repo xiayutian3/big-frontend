@@ -3,10 +3,16 @@ import Router from 'vue-router'
 const Home = () => import(/* webpackChunkName: 'reg' */ './views/Home.vue')
 const Login = () => import(/* webpackChunkName: 'login' */ './views/Login.vue')
 const Reg = () => import(/* webpackChunkName: 'reg' */ './views/Reg.vue')
-const Forget = () =>
-  import(/* webpackChunkName: 'forget' */ './views/Forget.vue')
+const Forget = () => import(/* webpackChunkName: 'forget' */ './views/Forget.vue')
+const Center = () => import('./views/Center.vue')
 const Index = () => import(/* webpackChunkName: 'reg' */ './views/channels/Index.vue')
 const Template1 = () => import(/* webpackChunkName: 'reg' */ './views/channels/Template1.vue')
+const User = () => import('./views/User.vue')
+const UserCenter = () => import('./components/user/Center.vue')
+const UserMsg = () => import('./components/user/Msg.vue')
+const UserOthers = () => import('./components/user/Others.vue')
+const UserPosts = () => import('./components/user/Posts.vue')
+const UserSetting = () => import('./components/user/Setting.vue')
 
 Vue.use(Router)
 
@@ -53,6 +59,43 @@ export default new Router({
       path: '/forget',
       name: 'forget',
       component: Forget
+    },
+    {
+      path: '/user/:uid',
+      name: 'home',
+      props: true,
+      component: User
+    },
+    {
+      path: '/center',
+      component: Center,
+      children: [
+        {
+          path: '',
+          name: 'center',
+          component: UserCenter
+        },
+        {
+          path: 'msg',
+          name: 'msg',
+          component: UserMsg
+        },
+        {
+          path: 'others',
+          name: 'others',
+          component: UserOthers
+        },
+        {
+          path: 'posts',
+          name: 'posts',
+          component: UserPosts
+        },
+        {
+          path: 'set',
+          name: 'set',
+          component: UserSetting
+        }
+      ]
     }
   ]
 })

@@ -11,6 +11,9 @@ import store from './store'
 // 使用到vue-i18n的vee-validate3.x
 import '@/utils/veevalidate-i18n'
 
+// Symbol 引用 自定义 icon(阿里de iconfont上下载的)
+import '@/assets/custom/iconfont'
+
 // 使用自定义 alert组件
 import Alert from './components/modules/alert/index'
 Vue.use(Alert)
