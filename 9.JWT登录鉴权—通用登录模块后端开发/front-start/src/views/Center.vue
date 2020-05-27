@@ -3,7 +3,7 @@
     <ul class="layui-nav layui-nav-tree" lay-filter="test">
       <!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
       <li class="layui-nav-item" v-for="(item,index) in lists" :key="'center'+index">
-        <router-link :to="{name:item.link}" class="link-item">
+        <router-link :to="{name:item.link}" class="link-item" :active-class="item.activeClass">
           <svg class="custom-icon" aria-hidden="true">
             <use :xlink:href="`#${item.icon}`"></use>
           </svg>
@@ -35,7 +35,8 @@ export default {
         {
           name: '基本设置',
           icon: 'icon-setting',
-          link: 'set'
+          link: 'info',
+          activeClass: 'layui-this' // 被激活的时候
         },
         {
           name: '我的帖子',
