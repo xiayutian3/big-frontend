@@ -17,7 +17,8 @@ const Accounts = () => import('./components/user/common/Accounts.vue')
 const MyInfo = () => import('./components/user/common/MyInfo.vue')
 const Passwd = () => import('./components/user/common/Passwd.vue')
 const PicUpload = () => import('./components/user/common/PicUpload.vue')
-
+const MyPost = () => import('./components/user/common/MyPost.vue')
+const MyCollection = () => import('./components/user/common/MyCollection.vue')
 Vue.use(Router)
 
 export default new Router({
@@ -91,12 +92,22 @@ export default new Router({
         },
         {
           path: 'posts',
-          name: 'posts',
-          component: UserPosts
+          component: UserPosts,
+          children: [
+            {
+              path: '',
+              name: 'mypost',
+              component: MyPost
+            },
+            {
+              path: 'mycollection',
+              name: 'mycollection',
+              component: MyCollection
+            }
+          ]
         },
         {
           path: 'set',
-          name: 'set',
           component: UserSetting,
           children: [
             {

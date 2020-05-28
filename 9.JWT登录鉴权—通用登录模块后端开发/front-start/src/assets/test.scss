@@ -1,0 +1,107 @@
+// @for $i from 0 through 5 {
+//   .pd#{$i}{
+//     padding: $i * 10 + px;
+//   }
+//   .pl#{$i}{
+//   padding-left: $i * 10 + px;
+//   }
+//   .pr#{$i}{
+//     padding-right: $i * 10 + px;
+//   }
+// }
+
+// *********************************************************
+// $test:3333;
+
+// //调试scss 应用 (npx dart-sass test.scss或者 npx sass test.scss)
+// @warn $test;
+// @debug 'hello debug sass: #{$test}';
+
+// .hello{
+//   body:red;
+// }
+
+// *************************************************************************
+// 第二部分（sass进阶）实现
+// .p-0{
+//   padding: 0 !important;
+// }
+// .px-0{
+//   padding-right: 0 !important;
+//   padding-left: 0 !important;
+// }
+
+
+//map.scss(比如说公共的样式,可以传到map里做扩展)给个默认值
+$spacerscom: (
+  6:60px,
+  7:70px
+) !default; 
+
+// //各个模块的样式
+// $spacer: 10px;
+// $spacers: map-merge($map1: (
+//   // 0:0,
+//   // 1:10px,
+//   // 2:20px
+//   0:0 * $spacer,
+//   1:1 * $spacer,
+//   2:2 * $spacer
+// ), $map2: $spacerscom);
+// //有点类似于@for
+// @each $key, $value in $spacers {
+//   .p-#{$key}{
+//     padding: $value;
+//   }
+// };
+
+// ************************************
+$utils:() !default;
+// $utils:(
+//   pl:(
+//     property: padding-left,
+//     values:$spacerscom
+//   )
+// ) !default;
+$utils: map-merge($map1: (
+  m:(
+    property:margin,
+    values:$spacerscom
+  ),
+  mx:(
+    property:margin-left margin-right,
+    values:$spacerscom
+  ),
+  p:(
+    property:padding,
+    values:$spacerscom
+  ),
+  px:(
+    property:padding-left padding-right,
+    values:$spacerscom
+  ),
+), $map2: $utils);
+//有点类似于@for
+@each $key, $value in $utils {
+  // @debug $key
+
+  // 也可以这样打印
+  // .test-#{$key}{
+  //   padding: 0;
+  // }
+
+  // 从$value中取出 values
+  $values:map-get($map: $value, $key: values);
+  // $values   (6: 60px, 7: 70px)
+  // @debug $values  
+  @each $sub-key,$sub-val in $values {
+    //.px-{spacer-item}{padding-left: spacer-value !important;}
+    $properties:map-get($map: $value, $key:property );
+    .#{$key}-#{$sub-key}{
+      //因为properties可能有两个
+      @each $property in $properties {
+        #{$property}:$sub-val !important;
+      }
+    }
+  }
+};

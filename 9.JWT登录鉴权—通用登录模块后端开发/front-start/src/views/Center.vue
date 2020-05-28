@@ -41,7 +41,8 @@ export default {
         {
           name: '我的帖子',
           icon: 'icon-document1',
-          link: 'posts'
+          link: 'mypost',
+          activeClass: 'layui-this' // 被激活的时候
         },
         {
           name: '我的消息',
