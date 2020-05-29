@@ -176,6 +176,7 @@ export default {
           // 同步vuex的用户信息
           this.$store.commit('setUserInfo', res.data)
           this.$store.commit('setIsLogin', true)
+          this.$store.commit('setToken', res.token)
           // 登录成功 后重置数据
           this.username = ''
           this.password = ''

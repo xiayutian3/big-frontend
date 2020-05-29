@@ -65,23 +65,23 @@
             </a>
             <dl class="layui-nav-child layui-anim layui-anim-upbit" :class="{'layui-show':isHover}">
               <dd>
-                <a href="user/set.html">
+                <router-link :to="{name:'info'}">
                   <i class="layui-icon">&#xe620;</i>基本设置
-                </a>
+                </router-link>
               </dd>
               <dd>
-                <a href="user/message.html">
+                <router-link :to="{name:'msg'}">
                   <i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息
-                </a>
+                </router-link>
               </dd>
               <dd>
-                <a href="user/home.html">
+                <router-link :to="{name:'center'}">
                   <i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页
-                </a>
+                </router-link>
               </dd>
               <hr style="margin: 5px 0;" />
               <dd>
-                <a href="/user/logout/" style="text-align: center;">退出</a>
+                <a href="###" @click="logout" style="text-align: center;">退出</a>
               </dd>
             </dl>
           </li>
@@ -109,6 +109,16 @@ export default {
     }
   },
   methods: {
+    logout () {
+      this.$confirm('确定退出吗？', () => {
+        // 清楚本地，vuex上的用户数据
+        localStorage.clear()
+        this.$store.commit('setToken', '')
+        this.$store.commit('setUserInfo', '')
+        this.$store.commit('setIsLogin', false)
+        this.$router.push('/')
+      }, () => {})
+    },
     show () {
       // 鼠标移入头像显示用户的操作菜单
       clearTimeout(this.hoverCtrl)
