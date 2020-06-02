@@ -63,12 +63,6 @@ class LoginController {
       if (checkUserPasswd) {
         // 验证通过，返回Token数据
 
-        // 生成有时效性的token 。  payload,是明文，不要放敏感的信息，exp：过期时间，为1天，后边 JWT_SECRET 是密钥
-        // let token = jsonwebtoken.sign({_id:'brian',exp:Math.floor(Date.now()/1000) + 60*60*24},config.JWT_SECRET)
-        // 另一种方式设置token过期时间的方式
-        const token = jsonwebtoken.sign({ _id: 'brian' }, config.JWT_SECRET, {
-          expiresIn: '1d'
-        })
         // ***一般客户端鉴权，请求头Authorization，值为：Bearer+空格+token  ***
         // 除了token还要返回用户信息
         // toJSON（） mongoose提供的方法,拿到用户信息
@@ -77,6 +71,12 @@ class LoginController {
         // 删除user里边不需要返回的字段
         arr.map(item => {
           delete userObj[item]
+        })
+        // 生成有时效性的token 。  payload,是明文，不要放敏感的信息，exp：过期时间，为1天，后边 JWT_SECRET 是密钥
+        // let token = jsonwebtoken.sign({_id:'brian',exp:Math.floor(Date.now()/1000) + 60*60*24},config.JWT_SECRET)
+        // 另一种方式设置token过期时间的方式
+        const token = jsonwebtoken.sign({ _id: userObj._id }, config.JWT_SECRET, {
+          expiresIn: '1d'
         })
         ctx.body = {
           code: 200,
