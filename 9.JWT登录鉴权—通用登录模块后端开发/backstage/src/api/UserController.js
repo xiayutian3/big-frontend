@@ -10,6 +10,7 @@ class UserController {
     const obj = await getJWTPayload(ctx.header.authorization)
     // 查询用户上一次签到的记录
     const record = await SignRecord.findByUid(obj._id)
+    // console.log('UserController -> userSign -> record', record)
     const user = await User.findByID(obj._id)
     let newRecord = {}
     let result = ''
@@ -18,21 +19,28 @@ class UserController {
       // 有历史签到数据
       // 1.判断用户上一次签到记录的created时间是否与今天相同
       //  如果当前的日期与上一次签到的日期相同，说明用户已经签到
-      if (moment(record.created).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+      const created = moment(record.created).format('YYYY-MM-DD')
+      const now = moment().format('YYYY-MM-DD')
+      if (created === now) {
         ctx.body = {
           code: 500,
           favs: user.favs,
           count: user.count,
           msg: '用户已经签到'
         }
+        // 如果不return 会被外边下面的ctx.body覆盖
+        return
       } else {
         // 有上一次的签到记录，并且不与今天相同，进行连续签到的判断
         // 如果相同，代表用户实在连续签到
-        const count = user.count
+        let count = user.count
         let fav = 0
         // 判断签到的时间：用户上一次的签到时间等于，当前时间的前一天，说明，用户在连续签到
-        if (moment(record.lastSign).format('YYYY-MM-DD') === moment().subtract(1, 'days').format('YYYY-MM-DD')) {
+        // 注意第n+1天签到的时候，需要与第n天的created比较
+        if (moment(record.created).format('YYYY-MM-DD') === moment().subtract(1, 'days').format('YYYY-MM-DD')) {
           // 连续签到的积分获得逻辑
+          // 因为如果用户当前是4天，在签到就是第5天了，所以count + 1
+          count += 1
           if (count < 5) {
             fav = 5
           } else if (count >= 5 && count < 15) {
@@ -60,6 +68,7 @@ class UserController {
           }
         } else {
           // 用户中断了一次签到
+          // 注意第n+1天签到的时候，需要与第n天的created比较,就知道是否中断了
           fav = 5
           await User.updateOne(
             { _id: obj._id },
@@ -73,11 +82,10 @@ class UserController {
             count: 1 // 连续签到的天数
           }
         }
-        // 更新签到记录表(单次签到)
+        // 更新签到记录表(单次签到)  新增加一条（这个用户的）记录
         newRecord = new SignRecord({
           uid: obj._id,
-          favs: fav,
-          lastSign: record.created
+          favs: fav
         })
         await newRecord.save()
       }
@@ -89,17 +97,16 @@ class UserController {
       },
       {
         $set: { count: 1 }, // 设置count的值为1
-        $inc: { fav: 5 } // fav积分增加5
+        $inc: { favs: 5 } // fav积分增加5
       })
       // 保存用户的签到记录
       newRecord = new SignRecord({
         uid: obj._id,
-        favs: 5,
-        lastSign: moment().format('YYYY-MM-DD HH:mm:ss')
+        favs: 5
       })
       await newRecord.save()
       result = {
-        favs: 5,
+        favs: user.favs + 5,
         count: 1 // 连续签到的天数
       }
     }

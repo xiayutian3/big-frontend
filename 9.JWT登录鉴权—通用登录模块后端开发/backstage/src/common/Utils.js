@@ -2,9 +2,11 @@ import { getValue } from '../config/RedisConfig'
 import jwt from 'jsonwebtoken'
 import config from '../config/index'
 
-// 获取token中的payload信息(解密token)
+// 获取token中的payload信息(验证token,解析获得payload),
+// Bearer+空格+token形式
 const getJWTPayload = token => {
-  return jwt.verity(token.split(' ')[1], config.JWT_SECRET)
+  // console.log(token)
+  return jwt.verify(token.split(' ')[1], config.JWT_SECRET)
 }
 
 // 从redis中读取验证码，对比验证码的有效性，正确性

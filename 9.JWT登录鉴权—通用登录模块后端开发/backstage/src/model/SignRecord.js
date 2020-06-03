@@ -6,10 +6,9 @@ import moment from 'dayjs'
 
 const Schema = mongoose.Schema
 const SignRecordSchema = new Schema({
-  uid: { type: String, ref: 'users' }, // 这个字段与user表相关联，引用
+  uid: { type: String, ref: 'users' }, // 这个字段与user表相关联，子引用
   created: { type: Date },
-  favs: { type: Number },
-  lastSign: { type: Date }
+  favs: { type: Number }
 })
 
 // 保存前触发的钩子函数，注意里边不要用箭头函数（照着官方来写）
@@ -21,6 +20,7 @@ SignRecordSchema.pre('save', function (next) {
 // 定义静态方法
 SignRecordSchema.statics = {
   findByUid: function (uid) {
+    // （一个用户签到记录是列表，有很多条签到记录）倒序以后，查找到用户最新签到的记录（只有一条）findOne方法
     return this.findOne({ uid: uid }).sort({ created: -1 }) // 以created字段，-1倒序排列
   }
 }
