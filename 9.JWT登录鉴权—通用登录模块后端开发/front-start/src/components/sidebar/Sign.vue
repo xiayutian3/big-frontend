@@ -11,35 +11,43 @@
       </a>
       <span class="fly-signin-days">
         已连续签到
-        <cite>16</cite>天
+        <cite>{{count}}</cite>天
       </span>
     </div>
     <div class="fly-panel-main fly-signin-main">
-      <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
-      <span>
-        可获得
-        <cite>5</cite>飞吻
-      </span>
+      <template v-if="!isSign">
+        <button class="layui-btn layui-btn-danger" id="LAY_signin" @click="sign">今日签到</button>
+        <span>
+          可获得
+          <cite>{{favs}}</cite>飞吻
+        </span>
+      </template>
 
       <!-- 已签到状态 -->
-      <!--
-          <button class="layui-btn layui-btn-disabled">今日已签到</button>
-          <span>获得了<cite>20</cite>飞吻</span>
-      -->
+
+      <template v-else>
+        <button class="layui-btn layui-btn-disabled">今日已签到</button>
+        <span>
+          获得了
+          <cite>{{favs}}</cite>飞吻
+        </span>
+      </template>
     </div>
-    <SignInfo :isShow="isShow" @closeModal="close"/>
-    <SignList :isShow="showList" @closeModal="close"/>
+    <SignInfo :isShow="isShow" @closeModal="close" />
+    <SignList :isShow="showList" @closeModal="close" />
   </div>
 </template>
 
 <script>
 import SignInfo from './SignInfo'
 import SignList from './SignList'
+import { userSign } from '@/api/user'
 export default {
   name: 'sign',
   props: {},
   data () {
     return {
+      isLogin: this.$store.state.isLogin,
       isShow: false,
       showList: false,
       current: 0
@@ -47,7 +55,41 @@ export default {
   },
   created () {},
   mounted () {},
-  computed: {},
+  computed: {
+    isSign () {
+      return this.$store.state.userInfo.isSign ? this.$store.state.userInfo.isSign : false
+    },
+    favs () {
+      let count = parseInt(this.count)
+      let result = 0
+      // 积分
+      if (count < 5) {
+        result = 5
+      } else if (count >= 5 && count < 15) {
+        result = 10
+      } else if (count >= 15 && count < 30) {
+        result = 15
+      } else if (count >= 30 && count < 100) {
+        result = 20
+      } else if (count >= 100 && count < 365) {
+        result = 30
+      } else if (count >= 365) {
+        result = 50
+      }
+      return result
+    },
+    count () {
+      if (this.$store.state.userInfo !== {}) {
+        if (typeof this.$store.state.userInfo.count !== 'undefined') {
+          return this.$store.state.userInfo.count
+        } else {
+          return 0
+        }
+      } else {
+        return 0
+      }
+    }
+  },
   methods: {
     showInfo () {
       this.isShow = true
@@ -61,6 +103,27 @@ export default {
     },
     choose (num) {
       this.current = num
+    },
+    sign () {
+      // 判断是否登录
+      if (!this.isLogin) {
+        this.$pop('shake', '请先登录')
+        return
+      }
+      userSign().then(res => {
+        let user = this.$store.state.userInfo
+        // 用户签到
+        if (res.code === 200) {
+          user.isSign = true
+          user.favs = res.favs
+          user.count = res.count
+          this.$store.commit('setUserInfo', user)
+          this.$pop('', '签到成功')
+        } else {
+          // 用户已经签到
+          this.$pop('', '您已经签到了')
+        }
+      })
     }
   },
   components: {

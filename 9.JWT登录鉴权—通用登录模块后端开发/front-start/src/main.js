@@ -14,9 +14,11 @@ import '@/utils/veevalidate-i18n'
 // Symbol 引用 自定义 icon(阿里de iconfont上下载的)
 import '@/assets/custom/iconfont'
 
-// 使用自定义 alert组件
+// 使用自定义 alert组件 ，pop组件
 import Alert from './components/modules/alert/index'
+import Pop from './components/modules/pop'
 Vue.use(Alert)
+Vue.use(Pop)
 
 Vue.config.productionTip = false
 

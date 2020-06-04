@@ -154,9 +154,9 @@ router.beforeEach((to, from, next) => {
 
     // 解析token拿到过期时间(payload.exp单位是秒，moment是毫秒，需要转换)
     const payload = jwt.decode(token)
-    console.log('payload', payload)
+    // console.log('payload', payload)
     // 判断时间是否过期
-    console.log(moment().isBefore(moment(payload.exp * 1000)))
+    // console.log(moment().isBefore(moment(payload.exp * 1000)))
     if (moment().isBefore(moment(payload.exp * 1000))) {
     // jsonwebtoken （jwt.decode(token [, options])）可以解析出token中的时效性，因为是明文传输
     // token时效性问题8-24小时，refresh token 1个月  （如果有refresh token的话）作用：当用户的token过期后，会拿着这个refresh token，去服务器请求新的token，从而替换旧的token,通常把token时效设置短一点，保证安全性

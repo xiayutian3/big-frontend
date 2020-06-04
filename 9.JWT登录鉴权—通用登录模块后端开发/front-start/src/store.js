@@ -8,7 +8,7 @@ export default new Vuex.Store({
     sid: '',
     isLogin: false,
     token: '',
-    userInfo: {} // 设置用户的基本信息
+    userInfo: JSON.parse(localStorage.getItem('userInfo')) || {} // 设置用户的基本信息
   },
   mutations: {
     setSid (state, value) {

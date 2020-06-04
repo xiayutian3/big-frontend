@@ -13,6 +13,8 @@ import config from '../config'
 import { checkCode } from '../common/Utils'
 // User模型
 import User from '../model/User'
+// 签到模型
+import SignRecord from '../model/SignRecord'
 
 class LoginController {
   // constructor () { }
@@ -78,6 +80,20 @@ class LoginController {
         const token = jsonwebtoken.sign({ _id: userObj._id }, config.JWT_SECRET, {
           expiresIn: '1d'
         })
+
+        // 加入isSign属性给用户，前端需要，判断是否到签到问题
+        const signRecord = await SignRecord.findByUid(userObj._id)
+        if (signRecord !== null) {
+          if (moment(signRecord.created).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+            userObj.isSign = true
+          } else {
+            userObj.isSign = false
+          }
+        } else {
+          // 用户无签到记录
+          userObj.isSign = false
+        }
+
         ctx.body = {
           code: 200,
           // 返回的用户信息，字段少的时候可以这么做
