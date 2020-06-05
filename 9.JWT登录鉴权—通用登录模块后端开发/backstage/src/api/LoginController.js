@@ -89,6 +89,8 @@ class LoginController {
           } else {
             userObj.isSign = false
           }
+          // 用户签到情况(返回的时候添加一个属性lastSign)
+          userObj.lastSign = signRecord.created
         } else {
           // 用户无签到记录
           userObj.isSign = false
