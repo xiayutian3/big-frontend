@@ -9,7 +9,7 @@
         活跃榜
         <span class="layui-badge-dot"></span>
       </a>
-      <span class="fly-signin-days">
+      <span class="fly-signin-days" v-show="isSign || isLogin">
         已连续签到
         <cite>{{count}}</cite>天
       </span>
@@ -49,7 +49,6 @@ export default {
   props: {},
   data () {
     return {
-      isLogin: this.$store.state.isLogin,
       isShow: false,
       showList: false,
       current: 0,
@@ -80,6 +79,9 @@ export default {
     }
   },
   computed: {
+    isLogin () {
+      return this.$store.state.isLogin
+    },
     favs () {
       let count = parseInt(this.count)
       let result = 0
@@ -165,8 +167,8 @@ export default {
         this.formatted = formatted // or do your jQuery stuff here
         if (timeLeft <= 0) {
           // 重置操作
-          clearInterval(timer)
           this.isSign = false
+          clearInterval(timer)
         }
       }, 1000)
     }
@@ -175,7 +177,14 @@ export default {
     SignInfo,
     SignList
   },
-  watch: {}
+  watch: {
+    '$store.state.isLogin' (newVal, oldVal) {
+      if (!newVal) {
+        this.isSign = false
+        clearInterval(timer)
+      }
+    }
+  }
 }
 </script>
 <style lang="scss">

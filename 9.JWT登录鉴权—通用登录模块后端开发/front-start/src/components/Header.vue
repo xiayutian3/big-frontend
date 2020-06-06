@@ -116,7 +116,8 @@ export default {
         this.$store.commit('setToken', '')
         this.$store.commit('setUserInfo', '')
         this.$store.commit('setIsLogin', false)
-        this.$router.push('/')
+        // 后边的回调是错误处理
+        this.$router.push('/', () => {})
       }, () => {})
     },
     show () {

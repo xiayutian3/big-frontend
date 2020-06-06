@@ -7,22 +7,24 @@ import moment from 'dayjs' // 功能跟moment一样，比moment小，moment的�
 const Home = () => import(/* webpackChunkName: 'reg' */ './views/Home.vue')
 const Login = () => import(/* webpackChunkName: 'login' */ './views/Login.vue')
 const Reg = () => import(/* webpackChunkName: 'reg' */ './views/Reg.vue')
-const Forget = () => import(/* webpackChunkName: 'forget' */ './views/Forget.vue')
-const Center = () => import('./views/Center.vue')
-const Index = () => import(/* webpackChunkName: 'reg' */ './views/channels/Index.vue')
-const Template1 = () => import(/* webpackChunkName: 'reg' */ './views/channels/Template1.vue')
-const User = () => import('./views/User.vue')
-const UserCenter = () => import('./components/user/Center.vue')
-const UserMsg = () => import('./components/user/Msg.vue')
-const UserOthers = () => import('./components/user/Others.vue')
-const UserPosts = () => import('./components/user/Posts.vue')
-const UserSetting = () => import('./components/user/Setting.vue')
-const Accounts = () => import('./components/user/common/Accounts.vue')
-const MyInfo = () => import('./components/user/common/MyInfo.vue')
-const Passwd = () => import('./components/user/common/Passwd.vue')
-const PicUpload = () => import('./components/user/common/PicUpload.vue')
-const MyPost = () => import('./components/user/common/MyPost.vue')
-const MyCollection = () => import('./components/user/common/MyCollection.vue')
+const Forget = () => import(/* webpackChunkName: 'Forget' */ './views/Forget.vue')
+const Center = () => import(/* webpackChunkName: 'Center' */ './views/Center.vue')
+const Index = () => import(/* webpackChunkName: 'Index' */ './views/channels/Index.vue')
+const Template1 = () => import(/* webpackChunkName: 'Template1' */ './views/channels/Template1.vue')
+const User = () => import(/* webpackChunkName: 'User' */ './views/User.vue')
+const UserCenter = () => import(/* webpackChunkName: 'UserCenter' */ './components/user/Center.vue')
+const UserMsg = () => import(/* webpackChunkName: 'UserMsg' */ './components/user/Msg.vue')
+const UserOthers = () => import(/* webpackChunkName: 'UserOthers' */ './components/user/Others.vue')
+const UserPosts = () => import(/* webpackChunkName: 'UserPosts' */ './components/user/Posts.vue')
+const UserSetting = () => import(/* webpackChunkName: 'UserSetting' */ './components/user/Setting.vue')
+const Accounts = () => import(/* webpackChunkName: 'Accounts' */ './components/user/common/Accounts.vue')
+const MyInfo = () => import(/* webpackChunkName: 'MyInfo' */ './components/user/common/MyInfo.vue')
+const Passwd = () => import(/* webpackChunkName: 'Passwd' */ './components/user/common/Passwd.vue')
+const PicUpload = () => import(/* webpackChunkName: 'PicUpload' */ './components/user/common/PicUpload.vue')
+const MyPost = () => import(/* webpackChunkName: 'MyPost' */ './components/user/common/MyPost.vue')
+const MyCollection = () => import(/* webpackChunkName: 'MyCollection' */ './components/user/common/MyCollection.vue')
+const NoFound = () => import(/* webpackChunkName: 'NoFound' */ './views/NoFound.vue')
+
 Vue.use(Router)
 
 const router = new Router({
@@ -139,6 +141,14 @@ const router = new Router({
           ]
         }
       ]
+    },
+    {
+      path: '/404',
+      component: NoFound
+    },
+    {
+      path: '*',
+      redirect: '/404'
     }
   ]
 })
