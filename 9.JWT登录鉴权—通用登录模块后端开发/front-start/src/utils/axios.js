@@ -53,6 +53,9 @@
 
 import axios from 'axios'
 import errorHandle from './errorHandle'
+import store from '@/store'
+// 定义请求头不需要添加token的路径
+import publicConfig from '@/config'
 // 取消请求函数
 let CancelToken = axios.CancelToken
 
@@ -86,6 +89,17 @@ class HttpRequest {
   interceptors (instance) {
     // 添加请求拦截器
     instance.interceptors.request.use((config) => {
+      // 判断是否是公共路径，是的话，就不要添加token
+      let isPublic = false
+      publicConfig.publicPath.map(path => {
+        isPublic = isPublic || path.test(config.url)
+      })
+      // 添加token
+      const token = store.state.token
+      if (!isPublic && token) {
+        config.headers.Authorization = 'Bearer ' + token
+      }
+
       // console.log('config:' + JSON.stringify(config))
       // 取消请求的配置
       let key = config.url + '&' + config.method

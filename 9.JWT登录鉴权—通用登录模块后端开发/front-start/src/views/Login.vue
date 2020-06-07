@@ -173,6 +173,8 @@ export default {
         sid: this.$store.state.sid || localStorage.getItem('sid')
       }).then(res => {
         if (res.code === 200) {
+          // 在个人中心基本设置那里需要到username，把他带过去，不去更改后端接口了（储存用户的登录名）
+          res.data.username = this.username
           // 同步vuex的用户信息
           this.$store.commit('setUserInfo', res.data)
           this.$store.commit('setIsLogin', true)
