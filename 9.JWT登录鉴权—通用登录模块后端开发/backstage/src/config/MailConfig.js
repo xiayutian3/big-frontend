@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import config from './index'
 
 // async..await is not allowed in global scope, must use a wrapper
 async function send (sendInfo) {
@@ -28,14 +29,16 @@ async function send (sendInfo) {
   //   user:'xyt1，xyt2'      //收件人
   // }
 
-  // 假设是重置密码链接
-  const url = 'http://www.imooc.com'
+  // 假设是重置密码链接或者是修改邮箱
+  const route = sendInfo.type === 'email' ? '/email' : 'reset'
+  const url = `${config.baseUrl}/#${route}?key=${sendInfo.key}`
+  console.log('send -> url', url)
 
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: '"认证邮箱" 1127071993@qq.com', // sender address(发件人信息)
     to: sendInfo.email, // list of receivers(收件人信息)
-    subject: sendInfo.user !== '' ? `你好开发者，${sendInfo.user}! <慕课网前端全栈实践>注册码` : '<慕课网前端全栈实践>注册码', // Subject line
+    subject: sendInfo.user !== '' && sendInfo.type !== 'email' ? `你好开发者，${sendInfo.user}! <慕课网前端全栈实践>注册码` : '<慕课网前端全栈实践>确认修改邮件链接', // Subject line
     text: `您在《慕课网前端全栈实践》课程中注册，您的邀请码是:${sendInfo.code},过期时间为:${sendInfo.expire}`, // plain text body
     html: `
      <div style="border: 1px solid #dcdcdc;color: #676767;width: 600px; margin: 0 auto; padding-bottom: 50px;position: relative;">

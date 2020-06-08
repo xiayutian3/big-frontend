@@ -2,6 +2,12 @@ import SignRecord from '../model/SignRecord'
 import { getJWTPayload } from '../common/Utils'
 import User from '../model/User'
 import moment from 'dayjs'
+// 发送邮箱
+import send from '../config/MailConfig'
+import { v4 as uuid } from 'uuid'
+import { setValue } from '@/config/RedisConfig'
+import config from '@/config/index'
+import jwt from 'jsonwebtoken'
 
 class UserController {
   // 用户签到接口
@@ -116,6 +122,54 @@ class UserController {
       msg: '请求成功',
       ...result,
       lastSign: newRecord.created
+    }
+  }
+
+  // 更新用户基本信息接口
+  async updateUserInfo (ctx) {
+    const { body } = ctx.request
+    const obj = await getJWTPayload(ctx.header.authorization)
+    // 判断用户是否修改了邮箱（需要验证邮箱）
+    const user = await User.findOne({ _id: obj._id })
+    if (body.username && body.username !== user.username) {
+      // 用户修改邮箱
+      // 发送reset邮件
+      const key = uuid()
+      // 设置token和他的过期时间( 存在redis中)
+      setValue(key, jwt.sign({ _id: obj._id },
+        config.JWT_SECRET, {
+          expiresIn: '30m'
+        }
+      ))
+      const result = await send({
+        type: 'email',
+        key: key,
+        code: '', // 验证码(一般存在redis中)
+        expire: moment().add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss'), // 过期时间
+        email: user.username, // 收件人邮箱(修改邮箱，是给旧的邮箱发送邮件确认)
+        user: user.name // 收件人
+      })
+      ctx.body = {
+        code: 500,
+        data: result,
+        msg: '发送验证码邮件成功，请点击链接确认修改邮件账号'
+      }
+    } else {
+      // 过滤掉一些不可以让这个接口更新的字段（安全性更好）
+      const arr = ['username', 'mobile', 'password']
+      arr.map(item => delete body[item])
+      const result = await User.updateOne({ _id: obj._id }, body)
+      if (result.n === 1 && result.ok === 1) {
+        ctx.body = {
+          code: 200,
+          msg: '更新成功'
+        }
+      } else {
+        ctx.body = {
+          code: 500,
+          msg: '更新失败'
+        }
+      }
     }
   }
 }
