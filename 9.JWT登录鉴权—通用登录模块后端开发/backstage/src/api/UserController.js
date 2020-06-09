@@ -5,7 +5,7 @@ import moment from 'dayjs'
 // 发送邮箱
 import send from '../config/MailConfig'
 import { v4 as uuid } from 'uuid'
-import { setValue } from '@/config/RedisConfig'
+import { setValue, getValue } from '@/config/RedisConfig'
 import config from '@/config/index'
 import jwt from 'jsonwebtoken'
 
@@ -131,44 +131,70 @@ class UserController {
     const obj = await getJWTPayload(ctx.header.authorization)
     // 判断用户是否修改了邮箱（需要验证邮箱）
     const user = await User.findOne({ _id: obj._id })
+    let msg = ''
     if (body.username && body.username !== user.username) {
       // 用户修改邮箱
       // 发送reset邮件
+      // 判断用户的新邮箱是否已经有人注册
+      const tmpUser = await User.findOne({ username: body.username })
+      if (tmpUser && tmpUser.password) {
+        ctx.body = {
+          code: 501,
+          msg: '邮箱已经注册'
+        }
+        return
+      }
       const key = uuid()
       // 设置token和他的过期时间( 存在redis中)
       setValue(key, jwt.sign({ _id: obj._id },
         config.JWT_SECRET, {
-          expiresIn: '30m'
+          expiresIn: '30m' // 30分钟过期时间
         }
       ))
-      const result = await send({
+      await send({
         type: 'email',
-        key: key,
+        data: {
+          key: key,
+          username: body.username
+        },
         code: '', // 验证码(一般存在redis中)
         expire: moment().add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss'), // 过期时间
         email: user.username, // 收件人邮箱(修改邮箱，是给旧的邮箱发送邮件确认)
         user: user.name // 收件人
       })
+      msg = '更新基本资料成功，账号修改需要邮件确认，请查收邮件！'
+    }
+    // 邮件也发送，但是其他内容也要修改
+    // 过滤掉一些不可以让这个接口更新的字段（安全性更好）
+    const arr = ['username', 'mobile', 'password']
+    arr.map(item => delete body[item])
+    const result = await User.updateOne({ _id: obj._id }, body)
+    if (result.n === 1 && result.ok === 1) {
       ctx.body = {
-        code: 500,
-        data: result,
-        msg: '发送验证码邮件成功，请点击链接确认修改邮件账号'
+        code: 200,
+        msg: msg === '' ? '更新成功' : msg
       }
     } else {
-      // 过滤掉一些不可以让这个接口更新的字段（安全性更好）
-      const arr = ['username', 'mobile', 'password']
-      arr.map(item => delete body[item])
-      const result = await User.updateOne({ _id: obj._id }, body)
-      if (result.n === 1 && result.ok === 1) {
-        ctx.body = {
-          code: 200,
-          msg: '更新成功'
-        }
-      } else {
-        ctx.body = {
-          code: 500,
-          msg: '更新失败'
-        }
+      ctx.body = {
+        code: 500,
+        msg: '更新失败'
+      }
+    }
+  }
+
+  // 更新用户名
+  async updateUsername (ctx) {
+    const body = ctx.query
+    if (body.key) {
+      // 从redis中取出 客户端传过来的key  对应的token
+      const token = await getValue(body.key)
+      const obj = getJWTPayload('Bearer ' + token)
+      await User.updateOne({ _id: obj._id }, {
+        username: body.username
+      })
+      ctx.body = {
+        code: 200,
+        msg: '更新用户名成功'
       }
     }
   }
