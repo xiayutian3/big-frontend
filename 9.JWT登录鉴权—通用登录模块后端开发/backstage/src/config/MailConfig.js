@@ -31,7 +31,7 @@ async function send (sendInfo) {
   // }
 
   // 假设是重置密码链接或者是修改邮箱
-  const route = sendInfo.type === 'email' ? '/email' : 'reset'
+  const route = sendInfo.type === 'email' ? '/confirm' : '/reset'
   // const url = `${config.baseUrl}/#${route}?key=${sendInfo.key}`
   const url = `${config.baseUrl}/#${route}?` + qs.stringify(sendInfo.data)
   // console.log('send -> url', url)

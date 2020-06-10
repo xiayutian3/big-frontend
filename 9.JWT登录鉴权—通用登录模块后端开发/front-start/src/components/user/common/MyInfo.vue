@@ -121,6 +121,17 @@ export default {
         regmark: this.regmark
       })
       if (code === 200) {
+        // 更新vuex中的userinfo信息
+        this.$store.commit('setUserInfo', {
+          ...this.$store.state.userInfo,
+          ...{
+            username: this.username,
+            name: this.name,
+            location: this.location,
+            gender: this.gender,
+            regmark: this.regmark
+          }
+        })
         this.$alert('更新成功')
       }
     }

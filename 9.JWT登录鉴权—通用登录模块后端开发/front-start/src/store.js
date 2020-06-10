@@ -22,9 +22,9 @@ export default new Vuex.Store({
     },
     setUserInfo (state, value) {
       if (value === '') return
-      state.userInfo = value
       // 本地存储用户的基本信息
       localStorage.setItem('userInfo', JSON.stringify(value))
+      state.userInfo = value
     },
     setIsLogin (state, value) {
       // 设置login的状态

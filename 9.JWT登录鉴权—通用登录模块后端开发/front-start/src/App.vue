@@ -37,6 +37,9 @@ export default {
   .pl#{$i}{
   padding-left: $i * 10 + px !important;
   }
+  .pb#{$i}{
+  padding-bottom: $i * 10 + px !important;
+  }
   .pr#{$i}{
     padding-right: $i * 10 + px !important;
   }
