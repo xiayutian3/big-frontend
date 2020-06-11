@@ -17,8 +17,12 @@ const updateUserInfo = (data) => axios.post('/user/basic', data)
 // 确认修改用户名(邮箱，username字段对应的是 =》 邮箱)
 const updateUsername = data => axios.get('/public/reset-email?' + qs.stringify(data))
 
+// 更新用户密码
+const updateUserPwd = (data) => axios.post('/public/pwd', data)
+
 export {
   userSign,
   updateUserInfo,
-  updateUsername
+  updateUsername,
+  updateUserPwd
 }

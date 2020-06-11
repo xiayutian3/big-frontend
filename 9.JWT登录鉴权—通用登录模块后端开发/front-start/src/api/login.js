@@ -25,7 +25,7 @@ const getCode = (sid) => {
  * @param {*} option 用户信息，邮箱，验证码
  */
 const forget = (option) => {
-  return axios.post('/forget', {
+  return axios.post('/login/forget', {
     ...option
   })
 }

@@ -16,7 +16,10 @@ router.get('/tips', ContentController.getTips)
 // 回复周榜
 router.get('/topWeek', ContentController.getTopWeek)
 
-// 确认修改邮件
+// 确认修改邮件（修改username）
 router.get('/reset-email', userController.updateUsername)
+
+// 更新用户password密码（改密码）
+router.post('/pwd', userController.updateUserPwd)
 
 export default router

@@ -1,5 +1,6 @@
 import SignRecord from '../model/SignRecord'
-import { getJWTPayload } from '../common/Utils'
+// 引入自定义的对比函数
+import { getJWTPayload, checkCode } from '../common/Utils'
 import User from '../model/User'
 import moment from 'dayjs'
 // 发送邮箱
@@ -8,6 +9,8 @@ import { v4 as uuid } from 'uuid'
 import { setValue, getValue } from '@/config/RedisConfig'
 import config from '@/config/index'
 import jwt from 'jsonwebtoken'
+// 加密密码的库(捉着可以用bcryptjs，api一样，node版的bcrypt)
+import bcrypt from 'bcrypt'
 
 class UserController {
   // 用户签到接口
@@ -182,7 +185,7 @@ class UserController {
     }
   }
 
-  // 更新用户名
+  // 更新用户名(邮箱)
   async updateUsername (ctx) {
     const body = ctx.query
     if (body.key) {
@@ -195,6 +198,47 @@ class UserController {
       ctx.body = {
         code: 200,
         msg: '更新用户名成功'
+      }
+    }
+  }
+
+  // 更新用户密码
+  async updateUserPwd (ctx) {
+    const { body } = ctx.request
+    const sid = body.sid
+    const code = body.code
+    // 对比客户端传过来的 sid code，是否与我们在redis中存的一致
+    // 封装一个验证图片验证码的函数
+    const ifSidcode = await checkCode(sid, code) // 返回了一个promise对象,让它变成异步方法，才能正确返回结果
+    if (!ifSidcode) {
+      ctx.body = {
+        code: 401,
+        msg: '图片验证码错误'
+      }
+      return
+    }
+    // 从redis中取出 客户端传过来的key  对应的token,如果存在，说明还有有效的30分钟内
+    const token = await getValue(body.key)
+    if (!token) {
+      ctx.body = {
+        code: 401,
+        msg: '操作无效，您已超过30分钟'
+      }
+      return
+    }
+    // 加密密码
+    body.password = await bcrypt.hash(body.password, 5)
+    const updatePwd = { password: body.password }
+    const result = await User.updateOne({ username: body.username }, updatePwd)
+    if (result.n === 1 && result.ok === 1) {
+      ctx.body = {
+        code: 200,
+        msg: '更新成功'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '更新失败'
       }
     }
   }

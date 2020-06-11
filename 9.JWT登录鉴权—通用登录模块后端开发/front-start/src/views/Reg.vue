@@ -173,8 +173,8 @@ export default {
       name: '',
       password: '',
       repassword: '',
-      code: '',
-      svg: ''
+      code: '', // 要输入的图片验证码
+      svg: '' // 验证码图片
     }
   },
   mounted () {

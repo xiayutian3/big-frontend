@@ -15,19 +15,34 @@ import { checkCode } from '../common/Utils'
 import User from '../model/User'
 // 签到模型
 import SignRecord from '../model/SignRecord'
+import { v4 as uuid } from 'uuid'
+import { setValue } from '@/config/RedisConfig'
 
 class LoginController {
   // constructor () { }
   async forget (ctx) {
     const { body } = ctx.request
     // console.log(body)
+    const user = await User.findOne({ username: body.username })
+    const key = uuid()
+    // 设置token和他的过期时间( 存在redis中)
+    setValue(key, jsonwebtoken.sign({ _id: user._id },
+      config.JWT_SECRET, {
+        expiresIn: '30m' // 30分钟过期时间
+      }
+    ))
     try {
       // 一般还要做一些操作(查找数据库拿到email)  body.username -> database ->email
       const result = await send({
-        code: 1234, // 验证码(一般存在redis中)
+        type: '',
+        data: {
+          key: key,
+          username: body.username
+        },
+        code: '', // 验证码(一般存在redis中)
         expire: moment().add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss'), // 过期时间
         email: body.username, // 收件人邮箱
-        user: 'xyt' // 收件人
+        user: user.name // 收件人
       })
       ctx.body = {
         code: 200,
@@ -78,7 +93,7 @@ class LoginController {
         // let token = jsonwebtoken.sign({_id:'brian',exp:Math.floor(Date.now()/1000) + 60*60*24},config.JWT_SECRET)
         // 另一种方式设置token过期时间的方式
         const token = jsonwebtoken.sign({ _id: userObj._id }, config.JWT_SECRET, {
-          expiresIn: '1d'
+          expiresIn: '7d' // 7d：表示7天的时长
         })
 
         // 加入isSign属性给用户，前端需要，判断是否到签到问题

@@ -138,14 +138,16 @@ export default {
       })
     },
     async submit () {
+      let sid = this.$store.state.sid || localStorage.getItem('sid')
       const isValid = await this.$refs.observer.validate()
       if (!isValid) {
         // ABORT!!
         return
       }
       forget({
-        username: this.username
-        // code: this.code
+        sid: sid,
+        username: this.username,
+        code: this.code
       }).then((res) => {
         console.log(res)
         if (res.code === 200) {
