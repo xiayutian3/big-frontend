@@ -39,7 +39,16 @@ const jwt = JWT({ secret: config.JWT_SECRET }).unless({ path: [/^\/public/, /\/l
 
 // koa-compose对插件进行整合
 const middleware = compose([
-  koaBody(),
+  koaBody({
+    multipart: true, // 支持文件上传
+    formidable: {
+      keepExtensions: true, // 保持文件的后缀
+      maxFieldsSize: 5 * 1024 * 1024 // 上传文件的最大限制
+    },
+    onError: (err) => { // 错误处理回调
+      console.log('koa-body err', err)
+    }
+  }),
   statics(path.join(__dirname, '../public')),
   cors(),
   jsonutil({ pretty: false, param: 'pretty' }),

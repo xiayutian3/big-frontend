@@ -1,6 +1,8 @@
 import { getValue } from '../config/RedisConfig'
 import jwt from 'jsonwebtoken'
 import config from '../config/index'
+import fs from 'fs'
+import path from 'path'
 
 // 获取token中的payload信息(验证token,解析获得payload),
 // Bearer+空格+token形式
@@ -22,7 +24,57 @@ const checkCode = async (key, value) => {
     return false
   }
 }
+
+// 判断路径是否存在(使用node的fs模块自带的方法)  stats 对象提供了关于文件的信息。
+const getState = path => {
+  return new Promise(resolve => {
+    // fs.stat(path, (err, stats) => {
+    //   if (err) {
+    //     resolve(false)
+    //   } else {
+    //     resolve(stats)
+    //   }
+    // })
+    // 也可以这么写
+    fs.stat(path, (err, stats) => err ? resolve(false) : resolve(stats))
+  })
+}
+
+// 创建文件夹函数
+const mkdir = dir => {
+  return new Promise(resolve => {
+    fs.mkdir(dir, err => err ? resolve(false) : resolve(true))
+  })
+}
+
+// 循环遍历，递归判断如果上级目录不存在，则产生上级目录
+const dirExists = async (dir) => {
+  const isExists = await getState(dir)
+  // 如果路径存在且不是文件，返回true
+  if (isExists && isExists.isDirectory()) {
+    return true
+  } else if (isExists) {
+    // 创建的地方路径存在，可能有相同的文件的名字，则就不能创建相同名字的文件夹，就创建失败，返回false
+    // 路径存在，但是是文件，返回false
+    return false
+  }
+
+  // 如果路径不存在,创建该路径（获得上级目录路径）
+  const tempDir = path.parse(dir).dir
+  // 循环遍历，递归判断如果上级目录不存在，则产生上级目录
+  const status = await dirExists(tempDir)
+  if (status) {
+    // 上级目录存在才创建文件夹
+    const result = await mkdir(dir)
+    console.log('dirExists -> result', result)
+    return result
+  } else {
+    return false
+  }
+}
+
 export {
   checkCode,
-  getJWTPayload
+  getJWTPayload,
+  dirExists
 }

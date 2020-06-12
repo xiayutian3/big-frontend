@@ -1,6 +1,14 @@
 // 文章列表
 import Post from '../model/Post'
 import Links from '../model/Links'
+import fs from 'fs'
+import { v4 as uuid } from 'uuid'
+import moment from 'dayjs'
+import config from '@/config'
+// 自定义判断路径创建目录
+import { dirExists } from '@/common/Utils'
+// 也可以用现成的第三方库创建文件夹
+import makeDir from 'make-dir'
 
 class ContentController {
   // 获取文章列表
@@ -86,6 +94,24 @@ class ContentController {
       code: 200,
       data: result
     }
+  }
+
+  // 上传图片
+  // (后端存储图片，一般是给每个图片一个特定的名字，按时间日期来分文件夹存放在里边)
+  async uploadImg (ctx) {
+    // 获得上传的文件
+    const file = ctx.request.files.file
+    // 图片名称、图片格式、存储的位置、返回给前端-可以读取的路径
+    // 拿到图片的格式
+    const ext = file.name.split('.').pop()
+    // 存储的位置， 图片名称
+    const dir = `${config.uploadPath}/${moment().format('YYYYMMDD')}`
+
+    // 判断路径是否存在，不存在则创建
+    // await dirExists(dir)   //自己写的函数判断路径和创建文件夹
+    await makeDir(dir) // 第三方库创建文件夹
+    // 存储文件到指定的路径
+    // 给文件一个唯一的名称（防止文件重名问题）
   }
 }
 
