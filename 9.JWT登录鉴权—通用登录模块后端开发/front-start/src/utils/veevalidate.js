@@ -28,7 +28,8 @@ localize('zh_CN', {
     password: '密码',
     name: '昵称',
     username: '账号',
-    code: '验证码'
+    code: '验证码',
+    oldpassword: '旧密码'
   },
   // 可以做自定义的规则，和提示的信息内容
   // (需要在validation-provider加上 name="email"，才会显示自定义的信息。如
@@ -37,6 +38,18 @@ localize('zh_CN', {
     email: {
       email: '请输入正确的{_field_}',
       required: '请输入{_field_}!!!'
+    },
+    name: {
+      min: (field, { length }) => {
+        return `请在${field}输入至少${length}个字符`
+      }
+    },
+    password: {
+      confirmed: (field, { target }) => {
+      // console.log("target", target)
+      // console.log("field", field)
+        return `两次输入的${field}不一致`
+      }
     }
   }
 })

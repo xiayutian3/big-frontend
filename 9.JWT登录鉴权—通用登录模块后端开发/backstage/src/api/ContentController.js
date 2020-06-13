@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid'
 import moment from 'dayjs'
 import config from '@/config'
 // 自定义判断路径创建目录
-import { dirExists } from '@/common/Utils'
+// import { dirExists } from '@/common/Utils'
 // 也可以用现成的第三方库创建文件夹
 import makeDir from 'make-dir'
 
@@ -112,6 +112,53 @@ class ContentController {
     await makeDir(dir) // 第三方库创建文件夹
     // 存储文件到指定的路径
     // 给文件一个唯一的名称（防止文件重名问题）
+    const picname = uuid() // 生成唯一图片名称
+    const destPath = `${dir}/${picname}.${ext}` // 图片路径
+    // 创建文件读取流
+    const reader = fs.createReadStream(file.path)
+    // const reader = fs.createReadStream(file.path, {
+    // 上传bufer的大小限制 1kb，不设置，默认64kb
+    // highWaterMark: 1 * 1024
+    // })
+    // 创建写入文件流，写入文件到指定目录
+    const upStream = fs.createWriteStream(destPath)
+    // 返回的用户的图片路径
+    const filePath = `/${moment().format('YYYYMMDD')}/${picname}.${ext}`
+
+    // method 1（直接读取文件流，写入文件）
+    reader.pipe(upStream)
+
+    // methods 2
+    // 要上传文件的总长度( stat.size)
+    // const stat = fs.statSync(file.path)
+    // // console.log('ContentController -> uploadImg -> stat', stat.size)
+    // // 记录读取的长度
+    // let totalLength = 0
+    // // 监听读取数据
+    // reader.on('data', function (chunk) {
+    //   totalLength += chunk.totalLength
+    //   // console.log('ContentController -> uploadImg -> totalLength', totalLength)
+    //   if (upStream.write(chunk) === false) {
+    //     // 如果写入失败，就停止流的读取
+    //     reader.pause()
+    //   }
+    // })
+
+    // // 监听 drain，书写完后，再继续读取流（因为上边暂停了）
+    // reader.on('drain', function () {
+    //   // 继续读取
+    //   reader.resume()
+    // })
+
+    // // 当读取完成。就关闭掉写入流（因为写入很快完成）
+    // reader.on('end', function () {
+    //   upStream.end()
+    // })
+    ctx.body = {
+      code: 200,
+      msg: '图片上传成功',
+      data: filePath
+    }
   }
 }
 

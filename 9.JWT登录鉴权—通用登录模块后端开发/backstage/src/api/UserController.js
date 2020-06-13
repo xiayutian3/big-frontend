@@ -202,7 +202,7 @@ class UserController {
     }
   }
 
-  // 更新用户密码
+  // 更新用户密码（这个是我自己写的 用于登录得时候忘记密码，用户想修改密码用）
   async updateUserPwd (ctx) {
     const { body } = ctx.request
     const sid = body.sid
@@ -239,6 +239,28 @@ class UserController {
       ctx.body = {
         code: 500,
         msg: '更新失败'
+      }
+    }
+  }
+
+  // 修改密码接口（这个是老师得，用于，登陆成功后再个人中心那里想重新设置密码）
+  async changePasswd (ctx) {
+    const { body } = ctx.request
+    const obj = await getJWTPayload(ctx.header.authorization)
+    const user = await User.findOne({ _id: obj._id })
+    // 密码比对，一个是 用户传过来的旧密码，第二个是数据库中存得密码
+    // 对比成功后重新加密客户端传过来的密码，再存到数据库中
+    if (await bcrypt.compare(body.oldpwd, user.password)) {
+      const newpasswd = await bcrypt.hash(body.newpwd, 5)
+      const result = await User.updateOne({ _id: obj._id }, { $set: { password: newpasswd } })
+      ctx.body = {
+        code: 200,
+        msg: '更新密码成功'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '更新密码错误，请检查！'
       }
     }
   }
