@@ -26,6 +26,7 @@ const PicUpload = () => import(/* webpackChunkName: 'PicUpload' */ './components
 const MyPost = () => import(/* webpackChunkName: 'MyPost' */ './components/user/common/MyPost.vue')
 const MyCollection = () => import(/* webpackChunkName: 'MyCollection' */ './components/user/common/MyCollection.vue')
 const NoFound = () => import(/* webpackChunkName: 'NoFound' */ './views/NoFound.vue')
+const Add = () => import(/* webpackChunkName: 'add' */ './components/contents/Add.vue')
 
 Vue.use(Router)
 
@@ -82,6 +83,11 @@ const router = new Router({
       path: '/forget',
       name: 'forget',
       component: Forget
+    },
+    {
+      path: '/add',
+      name: 'add',
+      component: Add
     },
     {
       path: '/user/:uid',
