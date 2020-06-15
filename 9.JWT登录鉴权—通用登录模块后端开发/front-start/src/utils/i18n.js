@@ -21,7 +21,8 @@ const i18n = new VueI18n({
         username: '账号',
         code: '验证码',
         repassword: '确认密码',
-        oldpassword: '旧密码'
+        oldpassword: '旧密码',
+        title: '文章标题'
       },
       // validation: zh.messages
       // 扩展提示内容（第一种方式）

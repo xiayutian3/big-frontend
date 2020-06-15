@@ -29,7 +29,8 @@ localize('zh_CN', {
     name: '昵称',
     username: '账号',
     code: '验证码',
-    oldpassword: '旧密码'
+    oldpassword: '旧密码',
+    title: '文章标题'
   },
   // 可以做自定义的规则，和提示的信息内容
   // (需要在validation-provider加上 name="email"，才会显示自定义的信息。如
