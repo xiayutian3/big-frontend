@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="layui-layer layui-layer-page layui-layer-border edit-content" v-show="isShow" ref="wrapper">
+    <div class="layui-layer layui-layer-page layui-layer-border edit-content" v-show="isShow">
       <div class="layui-layer-title">插入图片</div>
       <div class="layui-layer-content">
         <ul class="layui-form layui-form-pane">
@@ -33,7 +33,7 @@ import { uploadImg } from '@/api/content'
 import config from '@/config'
 export default {
   name: 'imgUpload',
-  props: ['isShow', 'ctrl'],
+  props: ['isShow'],
   data () {
     return {
       name: '',
@@ -41,36 +41,10 @@ export default {
     }
   },
   created () {},
-  mounted () {
-    // 点击body 触发表情框的关闭事件
-    this.$nextTick(() => {
-      document.querySelector('body').addEventListener('click', this.handleBodyClick)
-    })
-  },
-  // 全局绑定bodyclick事件很危险，多次使用这个组件 body上会多次绑定，所以不用使用要清除掉
-  // 离开当前的url就会触发销毁事件
-  beforeDestroy () {
-    // console.log('我清清除了')
-    document.querySelector('body').removeEventListener('click', this.handleBodyClick)
-  },
   computed: {},
   methods: {
     handleFaceClick (item) {
       this.$emit('addEvent', item)
-    },
-    handleBodyClick (e) {
-      // 防止事件冒泡
-      e.stopPropagation()
-      // 如果没有 ctrl传入。直接返回
-      if (typeof this.ctrl === 'undefined') return
-      // 触发隐藏本组件的关闭事件，改变isShow的状态
-      // 判断是否点击到了非控制ICON + 本组件  以外的地方
-      // js的contains方法用来查看dom元素的包含关系，
-      if (!(this.ctrl.contains(e.target) || this.$refs.wrapper.contains(e.target))) {
-        this.$emit('closeEvent')
-        this.name = ''
-        this.formData = ''
-      }
     },
     close () {
       // 清空输入内容，选择的文件，关闭弹框
