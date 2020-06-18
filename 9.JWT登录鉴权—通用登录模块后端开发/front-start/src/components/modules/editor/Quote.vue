@@ -35,7 +35,7 @@ export default {
         this.$pop('shake', '请输入内容')
         return
       }
-      this.$emit('addEvent')
+      this.$emit('addEvent', this.text)
       // 重置操作
       setTimeout(() => {
         this.$emit('closeEvent')

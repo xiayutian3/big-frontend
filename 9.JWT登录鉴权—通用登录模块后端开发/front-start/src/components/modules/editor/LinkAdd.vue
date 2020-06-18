@@ -35,7 +35,7 @@ export default {
         this.$pop('shake', '请输入合法的链接')
         return
       }
-      this.$emit('addEvent')
+      this.$emit('addEvent', this.link)
       // 重置操作
       setTimeout(() => {
         this.$emit('closeEvent')

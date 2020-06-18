@@ -16,21 +16,23 @@
           <span @click="iconShowmdal(5)" ref="emwdaima">
             <i class="iconfont icon-emwdaima"></i>
           </span>
-          <span>hr</span>
-          <span>
+          <span @click="addHr">hr</span>
+          <span @click="iconShowmdal(6)">
             <i class="iconfont icon-yulan1"></i>
           </span>
         </div>
-        <textarea ref="textEdit" class="layui-textarea fly-editor" name="content"></textarea>
+        <textarea v-model="content" id="edit" ref="textEdit" class="layui-textarea fly-editor" name="content" @focus="fouceEvent" @blur="blurEvent"></textarea>
       </div>
     </div>
     <div ref="modal">
-      <Face :isShow="faceStatus" :ctrl="$refs.face" @closeEvent="faceStatus=false" />
-      <ImgUpload :isShow="imgStatus" :ctrl="$refs.img" @closeEvent="imgStatus=false" />
-      <LinkAdd :isShow="linkStatus" :ctrl="$refs.link" @closeEvent="linkStatus=false" />
-      <Quote :isShow="quoteStatus" :ctrl="$refs.quote" @closeEvent="quoteStatus=false" />
+      <Face :isShow="faceStatus" :ctrl="$refs.face" @closeEvent="faceStatus=false" @addEvent = "addFace"/>
+      <ImgUpload :isShow="imgStatus" :ctrl="$refs.img" @closeEvent="imgStatus=false" @addEvent = "addPic" />
+      <LinkAdd :isShow="linkStatus" :ctrl="$refs.link" @closeEvent="linkStatus=false" @addEvent = "addLink"/>
+      <Quote :isShow="quoteStatus" :ctrl="$refs.quote" @closeEvent="quoteStatus=false" @addEvent = "addQuote"/>
+      <!-- 以下两种都可以 style 写法 -->
        <!-- <Emwdaima :style="`width:${codeWidth}px;height:${codeHeight}px`" :isShow="emwdaimaStatus" :ctrl="$refs.quote" @closeEvent="emwdaimaStatus=false" /> -->
-      <Emwdaima :style="`width:${codeWidth}px;height:${codeHeight}px`" :isShow="emwdaimaStatus" :ctrl="$refs.quote" @closeEvent="emwdaimaStatus=false" />
+      <Emwdaima :style="{width:codeWidth+'px',height:codeHeight+'px'}" :isShow="emwdaimaStatus" :ctrl="$refs.quote" @closeEvent="emwdaimaStatus=false" @addEvent = "addCode"/>
+      <Preview :isShow="previewStatus" :content="content"  @closeEvent="previewStatus=false"/>
     </div>
   </div>
 </template>
@@ -41,6 +43,7 @@ import ImgUpload from './ImgUpload'
 import LinkAdd from './LinkAdd'
 import Quote from './Quote'
 import Emwdaima from './Emwdaima'
+import Preview from './Preview'
 export default {
   name: 'editor',
   props: {},
@@ -51,8 +54,11 @@ export default {
       linkStatus: false,
       quoteStatus: false,
       emwdaimaStatus: false,
+      previewStatus: false,
       codeWidth: 0,
-      codeHeight: 0
+      codeHeight: 0,
+      content: '', // 富文本编辑器的内容
+      pos: ''// 光标的默认位置
     }
   },
   created () {},
@@ -124,15 +130,97 @@ export default {
         case 5:
           this.emwdaimaStatus = !this.emwdaimaStatus
           break
+        case 6:
+          this.previewStatus = !this.previewStatus
+          break
       }
+    },
+    getPos () {
+      // 获取光标的位置
+      let cursorPos = 0
+      let elem = document.getElementById('edit')
+      if (document.selection) {
+        // IE
+        let selectRange = document.selection.createRange()
+        selectRange.moveStart('character', -elem.value.length)
+        cursorPos = selectRange.text.length
+      } else if (elem.selectionStart || elem.selectionStart === '0') {
+        cursorPos = elem.selectionStart
+      }
+      this.pos = cursorPos
+    },
+    fouceEvent () {
+      // 获取光标的位置
+      // 这个不要也可以，老师的是 要的
+      // this.getPos()
+    },
+    blurEvent () {
+      // 获取光标的位置
+      this.getPos()
+    },
+    insert (val) {
+      // 在光标的位置插入内容
+      if (typeof this.content === 'undefined') {
+        return
+      }
+      let tmp = this.content.split('')
+      tmp.splice(this.pos, 0, val)
+      this.content = tmp.join('')
+    },
+    addFace (item) {
+      // 添加表情
+      const insertContent = ` face${item}`
+      // 插入富文本内容的方法
+      this.insert(insertContent)
+      // 插入表情完后，调整光标的位置,连续在后边插入
+      this.pos += insertContent.length
+    },
+    addPic (item) {
+      // 添加图片链接
+      const insertContent = ` img[${item}]`
+      // 插入富文本内容的方法
+      this.insert(insertContent)
+      // 插入完后，调整光标的位置,连续在后边插入
+      this.pos += insertContent.length
+    },
+    addLink (item) {
+      // 添加链接
+      const insertContent = ` a(${item})[${item}]`
+      // 插入富文本内容的方法
+      this.insert(insertContent)
+      // 插入完后，调整光标的位置,连续在后边插入
+      this.pos += insertContent.length
+    },
+    addCode (item) {
+      // 添加代码
+      const insertContent = ` \n[pre]\n${item}\n[/pre]`
+      // 插入富文本内容的方法
+      this.insert(insertContent)
+      // 插入完后，调整光标的位置,连续在后边插入
+      this.pos += insertContent.length
+    },
+    addQuote (item) {
+      // 添加引用
+      const insertContent = ` \n[quote]\n${item}\n[/quote]`
+      // 插入富文本内容的方法
+      this.insert(insertContent)
+      // 插入完后，调整光标的位置,连续在后边插入
+      this.pos += insertContent.length
+    },
+    addHr () {
+      // 添加hr
+      this.insert('\n[hr]')
+      this.pos += 5
     }
+
   },
   components: {
     Face,
     ImgUpload,
     LinkAdd,
     Quote,
-    Emwdaima
+    Emwdaima,
+    Preview
   },
   watch: {}
 }
