@@ -46,7 +46,7 @@ import Emwdaima from './Emwdaima'
 import Preview from './Preview'
 export default {
   name: 'editor',
-  props: {},
+  props: ['initContent'],
   data () {
     return {
       faceStatus: false,
@@ -86,6 +86,12 @@ export default {
       .removeEventListener('click', this.handleBodyClick)
   },
   computed: {},
+  // 也可以实时获取content的变化,
+  updated () {
+    // console.log('content', this.content)
+    // 触发事件给父组件
+    this.$emit('changeContent', this.content)
+  },
   methods: {
     handleBodyClick (e) {
       // 防止事件冒泡
@@ -222,7 +228,11 @@ export default {
     Emwdaima,
     Preview
   },
-  watch: {}
+  watch: {
+    initContent (nval) {
+      this.content = nval
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

@@ -16,42 +16,45 @@
                 <form action method="post">
                   <div class="layui-row layui-col-space15 layui-form-item">
                     <div class="layui-col-md3">
-                      <label class="layui-form-label">所在专栏</label>
-                      <div class="layui-input-block" @click="isSelect = !isSelect">
-                        <div
-                          class="layui-unselect layui-form-select"
-                          :class="{'layui-form-selected':isSelect}"
-                        >
-                          <div class="layui-select-title">
-                            <input
-                              type="text"
-                              placeholder="请选择"
-                              readonly
-                              v-model="catalogs[cataIndex].text"
-                              class="layui-input layui-unselect"
-                            />
-                            <i class="layui-edge"></i>
+                      <validation-provider name="catalog" rules="is_not:请选择" v-slot="{errors}">
+                        <div class="layui-row">
+                          <label class="layui-form-label">所在专栏</label>
+                          <div class="layui-input-block" @click="isSelect = !isSelect">
+                            <div
+                              class="layui-unselect layui-form-select"
+                              :class="{'layui-form-selected':isSelect}"
+                            >
+                              <div class="layui-select-title">
+                                <input
+                                  type="text"
+                                  placeholder="请选择"
+                                  readonly
+                                  v-model="catalogs[cataIndex].text"
+                                  class="layui-input layui-unselect"
+                                />
+                                <i class="layui-edge"></i>
+                              </div>
+                              <dl class="layui-anim layui-anim-upbit">
+                                <dd
+                                  v-for="(item,index) in catalogs"
+                                  :key="'catalog'+ index"
+                                  @click="chooseCatalog(item,index)"
+                                  :class="{'layui-this':index === cataIndex}"
+                                >{{item.text}}</dd>
+                              </dl>
+                            </div>
                           </div>
-                          <dl class="layui-anim layui-anim-upbit">
-                            <dd
-                              v-for="(item,index) in catalogs"
-                              :key="'catalog'+ index"
-                              @click="chooseCatalog(item,index)"
-                              :class="{'layui-this':index === cataIndex}"
-                            >{{item.text}}</dd>
-                          </dl>
                         </div>
-                      </div>
+                        <div class="layui-row">
+                          <span style="color: #c00;">{{errors[0]}}</span>
+                        </div>
+                      </validation-provider>
                     </div>
                     <div class="layui-col-md9">
                       <label for="L_title" class="layui-form-label">标题</label>
-                      <validation-provider name="title" rules="required|title" v-slot="{errors}">
+                      <validation-provider name="title" rules="required" v-slot="{errors}">
                         <div class="layui-input-block">
-                          <input
-                            type="text"
-                            v-model="title"
-                            class="layui-input"
-                          />
+                          <input type="text" v-model="title" class="layui-input" />
                           <!-- <input type="hidden" name="id" value="{{d.edit.id}}"> -->
                         </div>
                         <div class="layui-form-mid">
@@ -60,7 +63,7 @@
                       </validation-provider>
                     </div>
                   </div>
-                  <Editor />
+                  <Editor @changeContent="add" :initContent="content"/>
                   <div class="layui-form-item">
                     <div class="layui-inline">
                       <label class="layui-form-label">悬赏飞吻</label>
@@ -122,7 +125,7 @@
                     </validation-provider>
                   </div>
                   <div class="layui-form-item">
-                    <button class="layui-btn" lay-filter="*" lay-submit>立即发布</button>
+                    <button type="button" class="layui-btn" @click="submit">立即发布</button>
                   </div>
                 </form>
               </validation-observer>
@@ -135,6 +138,7 @@
 </template>
 
 <script>
+import { addPost } from '@/api/content'
 import CodeMix from '@/mixin/code'
 import Editor from '@/components/modules/editor/Index'
 export default {
@@ -170,10 +174,25 @@ export default {
           value: 'advise'
         }
       ],
-      favList: [20, 30, 50, 60, 80]
+      favList: [20, 30, 50, 60, 80],
+      content: ''
     }
   },
-  mounted () {},
+  mounted () {
+    // 当用户重新进入页面（比如说用户编辑太久，token过期，重新登录后到这页面），提示是否加载之前的内容
+    const saveData = localStorage.getItem('addData')
+    if (saveData && saveData !== '') {
+      this.$confirm('是否加载未编辑完的内容？', () => {
+        const obj = JSON.parse(saveData)
+        this.title = obj.title
+        this.cataIndex = obj.cataIndex
+        this.content = obj.content
+        this.favIndex = obj.favIndex
+      }, () => {
+        localStorage.setItem('addData', '')
+      })
+    }
+  },
   computed: {},
   methods: {
     chooseCatalog (item, index) {
@@ -181,6 +200,44 @@ export default {
     },
     chooseFav (item, index) {
       this.favIndex = index
+    },
+    add (val) {
+      this.content = val
+      // 防止用户编辑时间过长，token过期，保存用户的编辑内容
+      const saveData = {
+        title: this.title,
+        cataIndex: this.cataIndex,
+        content: this.content,
+        favIndex: this.favIndex
+      }
+      if (this.title.trim() !== '' && this.content.trim() !== '') {
+        localStorage.setItem('addData', JSON.stringify(saveData))
+      }
+    },
+    async submit () {
+      const isValid = await this.$refs.observer.validate()
+      if (!isValid) {
+        // ABORT!!
+        return
+      }
+
+      // 对发帖内容校验
+      if (this.content.trim() === '') {
+        this.$alert('文章内容不得为空')
+        return
+      }
+
+      // 发表新帖接口
+      addPost({
+        title: this.title,
+        catalog: this.catalogs[this.cataIndex].value,
+        content: this.content,
+        fav: this.favList[this.favIndex],
+        code: this.code,
+        sid: this.$store.state.sid
+      }).then(res => {
+        console.log('submit -> res', res)
+      })
     }
   },
   components: {

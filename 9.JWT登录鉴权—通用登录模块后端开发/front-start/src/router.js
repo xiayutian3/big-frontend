@@ -87,6 +87,7 @@ const router = new Router({
     {
       path: '/add',
       name: 'add',
+      meta: { requiresAuth: true },
       component: Add
     },
     {
@@ -198,7 +199,7 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-  // 路由权限
+  // 路由权限  //路由守卫添加了 meta: { requiresAuth: true },
   if (to.matched.some(record => record.meta.requiresAuth)) {
     const isLogin = store.state.isLogin
     // 需要用户登录的页面
