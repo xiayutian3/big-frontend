@@ -9,6 +9,9 @@ import config from '@/config'
 // import { dirExists } from '@/common/Utils'
 // 也可以用现成的第三方库创建文件夹
 import makeDir from 'make-dir'
+// 引入自定义的对比函数(对比redis中存的验证码 checkCode)
+import { checkCode, getJWTPayload } from '../common/Utils'
+import User from '../model/User'
 
 class ContentController {
   // 获取文章列表
@@ -158,6 +161,50 @@ class ContentController {
       code: 200,
       msg: '图片上传成功',
       data: filePath
+    }
+  }
+
+  // 发表新帖
+  async addPost (ctx) {
+    const { body } = ctx.request
+
+    // 校验验证码的内容（时效性，有效性）
+    const sid = body.sid
+    const code = body.code
+    // 对比客户端传过来的 sid code，是否与我们在redis中存的一致
+    // 封装一个验证图片验证码的函数
+    const result = await checkCode(sid, code) // 返回了一个promise对象,让它变成异步方法，才能正确返回结果
+    if (result) {
+      // 获得payload数据
+      const obj = await getJWTPayload(ctx.header.authorization)
+      // 判断用户的积分是否 > fav,否则，提示用户积分不足发帖
+      // 用户积分足够的时候，新建Post，减除用户对应的积分
+      const user = await User.findByID(obj._id)
+      if (user.favs < body.fav) {
+        ctx.body = {
+          code: 501,
+          msg: '积分不足'
+        }
+        return
+      } else {
+        // 发帖成功扣除相应的积分  $inc 在原有的基础上减去,
+        await User.updateOne({ _id: obj._id }, { $inc: { favs: -body.fav } })
+      }
+      // 保存到数据库
+      const newPost = new Post(body)
+      newPost.uid = obj._id
+      const result = await newPost.save()
+      ctx.body = {
+        code: 200,
+        msg: '成功的保存文章',
+        data: result
+      }
+    } else {
+      /// 图片验证码验证失败
+      ctx.body = {
+        code: 500,
+        msg: '图片验证码验证失败'
+      }
     }
   }
 }

@@ -234,9 +234,18 @@ export default {
         content: this.content,
         fav: this.favList[this.favIndex],
         code: this.code,
-        sid: this.$store.state.sid
+        sid: this.$store.state.sid || localStorage.getItem('sid')
       }).then(res => {
-        console.log('submit -> res', res)
+        if (res.code === 200) {
+          // 发帖成功后对存到localstorage表单内容，进行清空
+          localStorage.setItem('addData', '')
+          this.$alert('发帖成功~~2s后跳转')
+          setTimeout(() => {
+            this.$router.push({ name: 'index' })
+          }, 2000)
+        } else {
+          this.$alert(res.msg)
+        }
       })
     }
   },

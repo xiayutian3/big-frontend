@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div id="preview" class="layui-layer layui-layer-page layui-layer-prompt edit-content" v-show="isShow">
+    <div id="preview" class=" layui-layer-page layui-layer-prompt edit-content" v-show="isShow">
       <div class="layui-layer-title">预览</div>
       <div class="layui-layer-content">
         <div class="detail-body" v-html="replaceContent"></div>
@@ -49,5 +49,6 @@ export default {
   top: 0;
   left: 0;
   z-index: 10000;
+  box-shadow: 0 0 20px rgba(0,0,0,.2);
 }
 </style>

@@ -15,14 +15,21 @@ const PostSchema = new Schema({
   created: Date,
   catalog: String,
   fav: String,
-  isEnd: String,
-  reads: Number,
-  answer: Number,
-  status: String,
-  isTop: String,
-  sort: String,
-  tags: Array
-
+  isEnd: { type: String, default: '0' },
+  reads: { type: Number, default: 0 },
+  answer: { type: Number, default: 0 },
+  status: { type: String, default: '0' },
+  isTop: { type: String, default: '0' },
+  sort: { type: Number, default: 100 }, // 0 ,1 - 100,采取倒序，0 ，1变成第一个数据
+  tags: {
+    type: Array,
+    default: [
+      // {
+      //   name: '',
+      //   class: ''
+      // }
+    ]
+  }
 })
 
 // 定义保存前的钩子函数，用于保存创建时间，中间件

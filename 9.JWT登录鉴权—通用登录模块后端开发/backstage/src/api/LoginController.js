@@ -9,7 +9,7 @@ import moment from 'dayjs'
 import jsonwebtoken from 'jsonwebtoken'
 // 获取配置的JWT_SECRET
 import config from '../config'
-// 引入自定义的对比函数
+// 引入自定义的对比函数(对比redis中存的验证码)
 import { checkCode } from '../common/Utils'
 // User模型
 import User from '../model/User'
