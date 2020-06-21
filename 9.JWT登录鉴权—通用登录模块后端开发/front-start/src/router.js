@@ -27,6 +27,7 @@ const MyPost = () => import(/* webpackChunkName: 'MyPost' */ './components/user/
 const MyCollection = () => import(/* webpackChunkName: 'MyCollection' */ './components/user/common/MyCollection.vue')
 const NoFound = () => import(/* webpackChunkName: 'NoFound' */ './views/NoFound.vue')
 const Add = () => import(/* webpackChunkName: 'add' */ './components/contents/Add.vue')
+const Detail = () => import(/* webpackChunkName: 'detail' */ './components/contents/Detail.vue')
 
 Vue.use(Router)
 
@@ -89,6 +90,11 @@ const router = new Router({
       name: 'add',
       meta: { requiresAuth: true },
       component: Add
+    },
+    {
+      path: '/detail',
+      name: 'detail',
+      component: Detail
     },
     {
       path: '/user/:uid',

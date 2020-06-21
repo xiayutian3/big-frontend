@@ -35,6 +35,9 @@ export default {
   .pd#{$i}{
     padding: $i * 10 + px !important;
   }
+  .pt#{$i}{
+  padding-top: $i * 10 + px !important;
+  }
   .pl#{$i}{
   padding-left: $i * 10 + px !important;
   }
