@@ -156,7 +156,7 @@
             <!-- 无数据时 -->
             <!-- <li class="fly-none">消灭零回复</li> -->
           </ul>
-
+          <Pagination :showType="icon" :hasSelect="true"/>
           <div class="layui-form layui-form-pane">
             <form>
               <Editor />
@@ -211,6 +211,7 @@ import Ads from '@/components/sidebar/Ads'
 import Panel from '@/components/Panel'
 import CodeMix from '@/mixin/code'
 import Editor from '@/components/modules/editor/Index'
+import Pagination from '@/components/modules/pagination/Index'
 export default {
   name: 'detail',
   mixins: [CodeMix],
@@ -227,7 +228,8 @@ export default {
     HotList,
     Ads,
     Panel,
-    Editor
+    Editor,
+    Pagination
   },
   watch: {}
 }

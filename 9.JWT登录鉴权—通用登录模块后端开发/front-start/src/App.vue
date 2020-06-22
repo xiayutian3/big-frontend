@@ -25,39 +25,39 @@ export default {
   position: relative;
   top: -4px;
 }
-.gray{
+.gray {
   color: #999;
 }
-.pd20{
+.pd20 {
   padding: 20px;
 }
 @for $i from 0 through 5 {
-  .pd#{$i}{
+  .pd#{$i} {
     padding: $i * 10 + px !important;
   }
-  .pt#{$i}{
-  padding-top: $i * 10 + px !important;
+  .pt#{$i} {
+    padding-top: $i * 10 + px !important;
   }
-  .pl#{$i}{
-  padding-left: $i * 10 + px !important;
+  .pl#{$i} {
+    padding-left: $i * 10 + px !important;
   }
-  .pb#{$i}{
-  padding-bottom: $i * 10 + px !important;
+  .pb#{$i} {
+    padding-bottom: $i * 10 + px !important;
   }
-  .pr#{$i}{
+  .pr#{$i} {
     padding-right: $i * 10 + px !important;
   }
-  .mr#{$i}{
+  .mr#{$i} {
     margin-right: $i * 10 + px !important;
   }
-  .ml#{$i}{
+  .ml#{$i} {
     margin-left: $i * 10 + px !important;
   }
-  .mt#{$i}{
+  .mt#{$i} {
     margin-top: $i * 10 + px !important;
   }
 }
-.mt20{
+.mt20 {
   margin-top: -20px;
 }
 // .pl0{
@@ -69,16 +69,35 @@ export default {
 .text-center {
   text-align: center;
 }
-.text-left{
+.text-left {
   text-align: left;
 }
-.text-right{
+.text-right {
   text-align: right;
 }
-.orange{
+.orange {
   color: #ff5722;
 }
-.pull-right{
+.pull-right {
   float: right !important;
+}
+.d-hide {
+  position: absolute;
+  overflow: hidden;
+  height: 0;
+}
+.d-flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  &.flex-start {
+    justify-content: flex-start;
+  }
+  &.flex-end {
+    justify-content: flex-end;
+  }
+  &.flex-center {
+    justify-content: center;
+  }
 }
 </style>
