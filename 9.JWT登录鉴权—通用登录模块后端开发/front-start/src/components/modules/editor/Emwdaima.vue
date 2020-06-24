@@ -3,7 +3,7 @@
     <div class=" layui-layer-page layui-layer-prompt edit-content" v-show="isShow">
       <div class="layui-layer-title">请输入内容</div>
       <div class="layui-layer-content">
-        <textarea v-model="text" id="content" class="layui-textarea fly-editor" name="content"></textarea>
+        <textarea v-model="text" id="content1" class="layui-textarea fly-editor" name="content"></textarea>
       </div>
       <span class="layui-layer-setwin" @click="cancel">
         <a href="###" class="layui-layer-ico layui-layer-close layui-layer-close1"></a>
@@ -31,7 +31,7 @@ export default {
     submit () {
       if (this.text === '') {
         // 输入框内容获得焦点事件
-        document.getElementById('content').focus()
+        document.getElementById('content1').focus()
         this.$pop('shake', '请输入内容')
         return
       }

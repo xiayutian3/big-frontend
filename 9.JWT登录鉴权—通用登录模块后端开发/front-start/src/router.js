@@ -36,6 +36,10 @@ const router = new Router({
   routes: [
     {
       path: '/',
+      redirect: '/detail'
+    },
+    {
+      path: '/',
       component: Home,
       children: [
         {

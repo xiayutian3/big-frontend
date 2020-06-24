@@ -156,7 +156,14 @@
             <!-- 无数据时 -->
             <!-- <li class="fly-none">消灭零回复</li> -->
           </ul>
-          <Pagination :showType="icon" :hasSelect="true"/>
+          <Pagination
+            :showType="'icon'"
+            :hasSelect="true"
+            :showEnd="false"
+            :total="101"
+            :size="15"
+            :current="0"
+          />
           <div class="layui-form layui-form-pane">
             <form>
               <Editor />
@@ -189,7 +196,7 @@
                 </validation-provider>
               </div>
               <div class="layui-form-item">
-                <button class="layui-btn" type="button" >提交回复</button>
+                <button class="layui-btn" type="button">提交回复</button>
               </div>
             </form>
           </div>
