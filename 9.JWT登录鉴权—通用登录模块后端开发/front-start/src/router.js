@@ -34,10 +34,10 @@ Vue.use(Router)
 const router = new Router({
   linkExactActiveClass: 'layui-this', // 精准匹配,layui a标签激活的样式
   routes: [
-    {
-      path: '/',
-      redirect: '/detail'
-    },
+    // {
+    //   path: '/',
+    //   redirect: '/detail'
+    // },
     {
       path: '/',
       component: Home,
@@ -96,7 +96,8 @@ const router = new Router({
       component: Add
     },
     {
-      path: '/detail',
+      path: '/detail/:tid',
+      props: true, //  让tid 变成props 传递，在组件内就可以用props接受,这样的话，在访问detail路径必须输入 :tid,如果只是输入 /detail，的话，无法访问，必须/detail/123456
       name: 'detail',
       component: Detail
     },

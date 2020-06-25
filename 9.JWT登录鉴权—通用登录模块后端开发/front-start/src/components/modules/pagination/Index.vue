@@ -4,11 +4,11 @@
     :class="{'flex-center':align === 'center','flex-left':align === 'left','flex-right':align === 'right'}"
   >
     <div class="layui-box layui-laypage layui-laypage-default">
-      <a href="###" class="layui-laypage-pre" v-show="showEnd" :class="{'layui-disabled': current === 0}">
+      <a @click.prevent="home" class="layui-laypage-pre" v-show="showEnd" :class="{'layui-disabled': current === 0}">
         <i class="layui-icon layui-icon-prev" v-if="showType === 'icon'"></i>
         <template v-else>首页</template>
       </a>
-      <a href="###" :class="{'layui-disabled': current === 0}">
+      <a @click.prevent="prev" :class="{'layui-disabled': current === 0}">
         <i class="layui-icon layui-icon-left" v-if="showType === 'icon'"></i>
         <template v-else>上一页</template>
       </a>
@@ -16,22 +16,23 @@
 
       <!-- current + 2 < page.length 显示 ...    current从0开始，但是页码没有第0页，所以current+1 表示第一页 -->
       <!-- current - 2 > 1 显示 ...    current从0开始，但是页码没有第0页，所以current+1 表示第一页-->
-      <a v-if="pages.length > 5 && (current+1 -2)>1" href="###" :key="'page'+index">...</a>
+      <a v-if="pages.length > 5 && (current+1 -2)>1" href="###" class="layui-disabled">...</a>
       <template v-for="(item,index) in pages">
         <a
           v-if="item>=(current+1-2)&& item<=(current+1+2)"
           href="###"
           :class="[current === index?theme:'',current === index?'active':'']"
           :key="'page'+index"
+          @click.prevent="changeIndex(index)"
         >{{item}}</a>
       </template>
-      <a v-if="pages.length > 5 && (current+1 +2)<pages.length" href="###" :key="'page'+index">...</a>
+      <a v-if="pages.length > 5 && (current+1 +2)<pages.length" href="###" class="layui-disabled">...</a>
 
-      <a href="###" :class="{'layui-disabled': current === pages.length-1}">
+      <a @click.prevent="next" :class="{'layui-disabled': current === pages.length-1}">
         <i class="layui-icon layui-icon-right" v-if="showType === 'icon'"></i>
         <template v-else>下一页</template>
       </a>
-      <a href="###" class="layui-laypage-next" v-show="showEnd" :class="{'layui-disabled': current === pages.length-1}">
+      <a @click.prevent="end" class="layui-laypage-next" v-show="showEnd" :class="{'layui-disabled': current === pages.length-1}">
         <i class="layui-icon layui-icon-next" v-if="showType === 'icon'"></i>
         <template v-else>尾页</template>
       </a>
@@ -122,10 +123,10 @@ export default {
   },
   created () {},
   mounted () {
-    // 初始化分页的长度
-    this.initPages()
     // 设置select的内容
     this.limit = this.size
+    // 初始化分页的长度
+    this.initPages()
     // lodash中 ：uniq 数组去重 sortBy 数组排序 concat数组合并
     this.options = _.uniq(_.sortBy(_.concat(this.options, this.size)))
     this.optIndex = this.options.indexOf(this.size)
@@ -133,12 +134,47 @@ export default {
   computed: {},
   methods: {
     initPages () {
-      const len = Math.ceil(this.total / this.size)
+      const len = Math.ceil(this.total / this.limit)
       // 5 -> [1,2,3,4,5] lodsh的range  可以做到
       this.pages = _.range(1, len + 1)
     },
     chooseFav (item, index) {
+      if (this.optIndex !== index) {
+        // 当页面上的limit发生变化之后，调整current的数值
+        this.$emit('changeCurrent', Math.floor(this.limit * this.current / this.options[index]))
+      }
+      // 选择每页显示的条数后，重新划分页码
       this.optIndex = index
+      this.limit = this.options[this.optIndex]
+      this.initPages()
+    },
+    home () {
+      this.$emit('changeCurrent', 0)
+    },
+    end () {
+      this.$emit('changeCurrent', this.pages.length - 1)
+    },
+    prev () {
+      let cur = 0
+      if (this.current - 1 < 0) {
+        cur = 0
+      } else {
+        cur = this.current - 1
+      }
+      this.$emit('changeCurrent', cur)
+    },
+    next () {
+      let cur = 0
+      if (this.current + 1 > this.pages.length) {
+        cur = this.pages.length - 1
+      } else {
+        cur = this.current + 1
+      }
+      this.$emit('changeCurrent', cur)
+    },
+    changeIndex (val) {
+      // 点击相应的页码的时候
+      this.$emit('changeCurrent', val)
     }
   },
   components: {},

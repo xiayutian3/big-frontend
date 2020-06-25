@@ -46,11 +46,15 @@ const uploadImg = formData => axios.post('/content/upload', formData)
 // 发贴接口
 const addPost = data => axios.post('/content/add', data)
 
+// 获取文章详情
+const getDetail = tid => axios.get('/public/content/detail?tid=' + tid)
+
 export {
   getList,
   getTips,
   getLinks,
   getTop,
   uploadImg,
-  addPost
+  addPost,
+  getDetail
 }
