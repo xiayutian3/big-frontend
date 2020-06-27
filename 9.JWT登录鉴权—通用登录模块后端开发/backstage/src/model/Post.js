@@ -78,6 +78,13 @@ PostSchema.statics = {
       answer: 1, // 第二个对象，告诉mongodb，哪些显示的字段 1是显示 0不显示
       title: 1
     }).sort({ answer: -1 }).limit(15) // 排序 按照answer这个字段进行（-1）倒序排列，（0）正序排列，长度限制15条
+  },
+  // 使用populate从另一个表中获取数据（取想要的字段）
+  findByTid: function (id) {
+    return this.findOne({ _id: id }).populate({
+      path: 'uid', // 通过‘uid’-》映射user表
+      select: 'name pic isVip _id' // 获取相应的字段 ，之间用空格隔开，_id要加上，不然uid会被替换掉
+    })
   }
 
 }

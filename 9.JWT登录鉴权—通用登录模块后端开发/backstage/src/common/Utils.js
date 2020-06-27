@@ -73,8 +73,19 @@ const dirExists = async (dir) => {
   }
 }
 
+// 替换原有的key，换成新的key
+const rename = (obj, key, newKey) => {
+  if (Object.keys(obj).indexOf(key) !== -1) {
+    obj[newKey] = obj[key]
+    // 删除旧的key
+    delete obj[key]
+  }
+  return obj
+}
+
 export {
   checkCode,
   getJWTPayload,
-  dirExists
+  dirExists,
+  rename
 }

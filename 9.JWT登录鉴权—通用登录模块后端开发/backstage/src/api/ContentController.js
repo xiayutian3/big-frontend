@@ -207,6 +207,29 @@ class ContentController {
       }
     }
   }
+
+  // 获取文章详情
+  async getPostDetail (ctx) {
+    const params = ctx.query
+    // 没有帖子标题的情况
+    if (!params.tid) {
+      ctx.body = {
+        code: 500,
+        msg: '文章标题为空'
+      }
+      return
+    }
+
+    // 查找返回相应的数据，（包括帖子中的用户信息）
+    const post = await Post.findByTid(params.tid)
+    // rename方法,把uid改成user字段
+    // const result = rename(post.toJSON(), 'uid', 'user')
+    ctx.body = {
+      code: 200,
+      data: post,
+      msg: '查询文章详情'
+    }
+  }
 }
 
 export default new ContentController()
