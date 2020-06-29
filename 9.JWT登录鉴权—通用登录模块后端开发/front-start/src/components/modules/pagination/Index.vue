@@ -39,7 +39,7 @@
     </div>
     <div class="total" v-if="hasTotal">
       到第
-      <input type="text" class="imooc-input" />页 共 total 页
+      <input v-model="pushPageNum" type="text" class="imooc-input" @keyup.enter="pushPage"/>页 共 {{pages.length}} 页
     </div>
     <div class="layui-input-inline" style="width:190px;" v-if="hasSelect">
       <div
@@ -73,7 +73,7 @@
 <script>
 import _ from 'lodash'
 export default {
-  name: 'pagination',
+  name: 'dy-pagination',
   props: {
     align: {
       type: String,
@@ -118,7 +118,8 @@ export default {
       optIndex: 0,
       options: [10, 20, 30, 50, 100],
       pages: [], // 页码集合
-      limit: 10 // 每页条数
+      limit: 10, // 每页条数
+      pushPageNum: '' // 跳转到多少页
     }
   },
   created () {},
@@ -142,6 +143,8 @@ export default {
       if (this.optIndex !== index) {
         // 当页面上的limit发生变化之后，调整current的数值
         this.$emit('changeCurrent', Math.floor(this.limit * this.current / this.options[index]))
+        // 调整limit的值的变化
+        this.$emit('changeLimit', this.options[index])
       }
       // 选择每页显示的条数后，重新划分页码
       this.optIndex = index
@@ -173,12 +176,33 @@ export default {
       this.$emit('changeCurrent', cur)
     },
     changeIndex (val) {
+      // console.log(val)
       // 点击相应的页码的时候
-      this.$emit('changeCurrent', val)
+      // 如果重复点击就不让他操作
+      if (val !== this.current) {
+        this.$emit('changeCurrent', val)
+      }
+    },
+    pushPage () {
+      // 输入页码，跳转到相应的页码，页数是从零开始的，我们看到的分页是从1开始的，所以要减一
+      if (!this.pushPageNum) {
+        return
+      }
+      this.$emit('changeCurrent', this.pushPageNum - 1)
+    },
+    clearPageNum () {
+      // console.log('清空相应的页码')
+      // 清空相应的页码
+      this.pushPageNum = ''
     }
   },
   components: {},
-  watch: {}
+  watch: {
+    // 监听异步获取回来的total，改变页码
+    total (newVal, oldVal) {
+      this.initPages()
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

@@ -98,16 +98,16 @@
             <li class="jieda-daan" v-for="(item,index) in comments" :key="'comments'+index">
               <div class="detail-about detail-about-reply">
                 <a class="fly-avatar" href>
-                  <img
-                    :src="item.user?item.user.pic:'/img/bear.jpg'"
-                    alt=" "
-                  />
+                  <img :src="item.cuid?item.cuid.pic:'/img/bear.jpg'" alt=" " />
                 </a>
                 <div class="fly-detail-user">
                   <a href class="fly-link">
-                    <cite>{{item.user?item.user.name:'imooc'}}</cite>
+                    <cite>{{item.cuid?item.cuid.name:'imooc'}}</cite>
                     <!-- <i class="iconfont icon-renzheng" title="认证信息：XXX"></i> -->
-                    <i v-if="item.user && item.user.isVip !== '0'?item.user.isVip:false" class="layui-badge fly-badge-vip">VIP{{item.user.isVip}}</i>
+                    <i
+                      v-if="item.cuid && item.cuid.isVip !== '0'?item.cuid.isVip:false"
+                      class="layui-badge fly-badge-vip"
+                    >VIP{{item.cuid.isVip}}</i>
                   </a>
 
                   <span v-if="index === 0">(楼主)</span>
@@ -122,10 +122,9 @@
                   <span>{{item.created | moment}}</span>
                 </div>
 
-                <!-- <i class="iconfont icon-caina" title="最佳答案"></i> -->
+                <i class="iconfont icon-caina" title="最佳答案" v-show="item.isBest === '1'"></i>
               </div>
-              <div class="detail-body jieda-body photos" v-html="item.content">
-              </div>
+              <div class="detail-body jieda-body photos" v-richtext="item.content"></div>
               <div class="jieda-reply">
                 <span class="jieda-zan" :class="{zanok:item.handed === '1'}" type="zan">
                   <i class="iconfont icon-zan"></i>
@@ -136,9 +135,9 @@
                   回复
                 </span>
                 <div class="jieda-admin">
-                  <span type="edit">编辑</span>
-                  <span type="del">删除</span>
-                  <!-- <span class="jieda-accept" type="accept">采纳</span> -->
+                  <span type="edit" v-show="page.isEnd === '0' && item.cuid._id === user._id" @click="editComment(item)">编辑</span>
+                  <!-- <span type="del">删除</span> -->
+                  <span class="jieda-accept" v-show="page.isEnd === '0' && page.uid._id === user._id"  @click="setBest(item)">采纳</span>
                 </div>
               </div>
             </li>
@@ -147,48 +146,53 @@
             <li class="fly-none" v-if="comments.length === 0">消灭零回复</li>
           </ul>
           <Pagination
+            ref="dyPagination"
             :showType="'icon'"
             :hasSelect="true"
+            :hasTotal="true"
             :showEnd="true"
             :total="total"
             :size="size"
             :current="current"
             @changeCurrent="handleChange"
+            @changeLimit="handLimit"
           />
           <div class="layui-form layui-form-pane">
             <form>
-              <Editor />
-              <div class="layui-form-item">
-                <validation-provider
-                  name="code"
-                  ref="codeFileld"
-                  rules="required|length:4"
-                  v-slot="{errors}"
-                >
-                  <div class="layui-row">
-                    <label for="L_vercode" class="layui-form-label">验证码</label>
-                    <div class="layui-input-inline">
-                      <input
-                        type="text"
-                        name="code"
-                        v-model="code"
-                        placeholder="请输入验证码"
-                        autocomplete="off"
-                        class="layui-input"
-                      />
+              <ValidationObserver ref="observer">
+                <Editor @changeContent="addContent" :initContent="editInfo.content"/>
+                <div class="layui-form-item">
+                  <validation-provider
+                    name="code"
+                    ref="codeFileld"
+                    rules="required|length:4"
+                    v-slot="{errors}"
+                  >
+                    <div class="layui-row">
+                      <label for="L_vercode" class="layui-form-label">验证码</label>
+                      <div class="layui-input-inline">
+                        <input
+                          type="text"
+                          name="code"
+                          v-model="code"
+                          placeholder="请输入验证码"
+                          autocomplete="off"
+                          class="layui-input"
+                        />
+                      </div>
+                      <div class>
+                        <span class="svg" style="color: #c00;" @click="_getCode()" v-html="svg"></span>
+                      </div>
                     </div>
-                    <div class>
-                      <span class="svg" style="color: #c00;" @click="_getCode()" v-html="svg"></span>
+                    <div class="layui-form-mid">
+                      <span style="color: #c00;">{{errors[0]}}</span>
                     </div>
-                  </div>
-                  <div class="layui-form-mid">
-                    <span style="color: #c00;">{{errors[0]}}</span>
-                  </div>
-                </validation-provider>
-              </div>
-              <div class="layui-form-item">
-                <button class="layui-btn" type="button">提交回复</button>
-              </div>
+                  </validation-provider>
+                </div>
+                <div class="layui-form-item">
+                  <button class="layui-btn" type="button" @click="submit">提交回复</button>
+                </div>
+              </ValidationObserver>
             </form>
           </div>
         </div>
@@ -204,7 +208,7 @@
 
 <script>
 import { getDetail } from '@/api/content'
-import { getComments } from '@/api/comments'
+import { getComments, addComment } from '@/api/comments'
 import Links from '@/components/sidebar/Links'
 import HotList from '@/components/sidebar/HotList'
 import Ads from '@/components/sidebar/Ads'
@@ -213,35 +217,57 @@ import CodeMix from '@/mixin/code'
 import Editor from '@/components/modules/editor/Index'
 import Pagination from '@/components/modules/pagination/Index'
 import { escapeHtml } from '@/utils/escapeHtml'
+import { scrollToElm } from '@/utils/common'
 export default {
   name: 'detail',
   mixins: [CodeMix],
   props: ['tid'], // 这样拿 tid 是定义在router。js中    props: true,  path: '/detail/:tid',
   data () {
     return {
-      total: 101,
-      size: 15,
-      current: 6,
+      total: 0,
+      size: 10,
+      current: 0,
       page: {},
-      comments: []
+      comments: [],
+      editInfo: {
+        content: '',
+        code: '',
+        sid: ''
+      }
     }
   },
   created () {},
   mounted () {
+    // 测试下滚动函数
+    // window.vue = scrollToElm
     this.getPostDetail()
     this.getCommentsList()
   },
   computed: {
     content () {
-      if (this.page.content.trim() === '') {
+      if (!this.page.content || this.page.content.trim() === '') {
         return ''
       }
       return escapeHtml(this.page.content)
+    },
+    user () {
+      return this.$store.state.userInfo
     }
   },
   methods: {
+    handLimit (limit) {
+      // 修改limit的值
+      // 每页显示的条数
+      this.size = limit
+      // 获取文章评论列表随limit变化(会重复触发)
+      // this.getCommentsList()
+    },
     handleChange (currentPage) {
       this.current = currentPage
+      // 获取文章评论列表随页码变化
+      this.$nextTick(() => {
+        this.getCommentsList()
+      })
     },
     // 获取文章详情
     getPostDetail () {
@@ -253,11 +279,72 @@ export default {
     },
     // 获取文章评论列表
     getCommentsList () {
-      getComments(this.tid).then(res => {
+      let params = {
+        tid: this.tid,
+        page: this.current,
+        limit: this.size
+      }
+      getComments(params).then(res => {
         if (res.code === 200) {
           this.comments = res.data
+          this.total = res.total
         }
       })
+    },
+    // 提交
+    async submit () {
+      const isValid = await this.$refs.observer.validate()
+      if (!isValid) {
+        // ABORT!!
+        return
+      }
+      // 用户未登录情况
+      const isLogin = this.$store.state.isLogin
+      if (!isLogin) {
+        this.$pop('shake', '请先登录')
+        return
+      }
+      this.editInfo.code = this.code
+      this.editInfo.sid = this.$store.state.sid || localStorage.getItem('sid')
+      this.editInfo.tid = this.tid // 回复哪个文章的评论
+      // 添加评论
+      addComment(this.editInfo).then(res => {
+        if (res.code === 200) {
+          this.$pop('', '发表评论成功')
+          // 添加成功后，验证码也要重新变化（验证码函数在mixin上）
+          this._getCode()
+          // 重新请求评论数据
+          this.getCommentsList()
+          // 发表评论成功后，重置操作
+          this.code = ''
+          this.editInfo.content = ''
+          // 重置表单项
+          // this.$refs.observer.reset()
+          // 或者像下面这样
+          requestAnimationFrame(() => {
+            this.$refs.observer.reset()
+          })
+        }
+      })
+    },
+    // 实时赋值编辑的内容
+    addContent (val) {
+      this.editInfo.content = val
+    },
+    // 编辑评论
+    editComment (item) {
+      // 获取内容
+      this.editInfo.content = item.content
+      // 滚动到富文本编辑器，聚焦
+      scrollToElm('.layui-input-block', 500, -65)
+      document.getElementById('edit').focus()
+    },
+    // 采纳为最佳答案
+    setBest (item) {
+      this.$confirm('确定采纳为最佳答案吗？', () => {
+        // 发送采纳最佳答案接口
+        console.log(item._id)
+      }, () => {})
     }
   },
   components: {
@@ -268,7 +355,12 @@ export default {
     Editor,
     Pagination
   },
-  watch: {}
+  watch: {
+    // comments (newVal, oldVal) {
+    //   // 请空分页器的页码输入，只要数据变化，说明用户操作了分页
+    //   this.$refs.dyPagination.clearPageNum()
+    // }
+  }
 }
 </script>
 <style lang="scss" scoped>

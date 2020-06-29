@@ -1,8 +1,12 @@
 import axios from '@/utils/request'
 
 // 获取文章评论列表接口
-const getComments = tid => axios.get('/public/comments?tid=' + tid)
+const getComments = params => axios.get('/public/comments', { params })
+
+// 添加评论的接口
+const addComment = data => axios.post('/comments/reply', data)
 
 export {
-  getComments
+  getComments,
+  addComment
 }
