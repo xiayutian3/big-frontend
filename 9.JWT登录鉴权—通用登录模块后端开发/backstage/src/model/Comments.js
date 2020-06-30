@@ -29,9 +29,11 @@ CommentsSchema.post('save', function (error, doc, next) {
 })
 
 CommentsSchema.statics = {
+  // 通过帖子id去查评论
   findByTid: function (id) {
     return this.find({ tid: id })
   },
+  // 通过一条评论的id去查这条评论
   findByCid: function (id) {
     return this.findOne({ _id: id })
   },

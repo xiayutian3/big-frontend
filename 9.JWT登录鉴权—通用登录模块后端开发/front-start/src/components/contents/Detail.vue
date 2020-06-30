@@ -208,7 +208,7 @@
 
 <script>
 import { getDetail } from '@/api/content'
-import { getComments, addComment } from '@/api/comments'
+import { getComments, addComment, updateComment, setCommentBest } from '@/api/comments'
 import Links from '@/components/sidebar/Links'
 import HotList from '@/components/sidebar/HotList'
 import Ads from '@/components/sidebar/Ads'
@@ -304,9 +304,46 @@ export default {
         this.$pop('shake', '请先登录')
         return
       }
+
+      // 用户禁言状态判断
+      const user = this.$store.state.userInfo
+      if (user.status !== '0') {
+        this.$pop('shake', '用户已经禁言，请联系管理员')
+        return
+      }
       this.editInfo.code = this.code
       this.editInfo.sid = this.$store.state.sid || localStorage.getItem('sid')
-      this.editInfo.tid = this.tid // 回复哪个文章的评论
+      this.editInfo.tid = this.tid // 回复哪个文章的评论的id
+
+      if (typeof this.editInfo.cid !== 'undefined' && this.editInfo.cid !== '') {
+        const obj = { ...this.editInfo }
+        // 删除 item属性
+        delete obj.item
+
+        // 判断用户是否修改了内容(没有修改就什么都不做)
+        if (this.editInfo.content === this.editInfo.item.content) {
+          this.$pop('shake', '确定编辑了内容~~')
+          return
+        }
+        // 更新评论
+        updateComment(obj).then(res => {
+          if (res.code === 200) {
+            this.$pop('', '更新评论成功')
+            // 重置操作
+            this.code = ''
+            this.editInfo.content = ''
+            this.$refs.observer.reset()
+            // 重新调用评论列表接口
+            this.getCommentsList()
+
+            // 方法一，只用更新特定的一条的content created ， vue的 $set
+            // 方法二，更新整个数组中的这一条
+            // 在点击编辑的时候，评论item 赋值给了this.editInfo.item，所以拿得到这条数据，再替换就行了
+            // this.comments.splice(this.comments.indexof(this.editInfo.item), 1, res.data)
+          }
+        })
+        return
+      }
       // 添加评论
       addComment(this.editInfo).then(res => {
         if (res.code === 200) {
@@ -324,6 +361,8 @@ export default {
           requestAnimationFrame(() => {
             this.$refs.observer.reset()
           })
+        } else {
+          this.$alert(res.msg)
         }
       })
     },
@@ -338,12 +377,26 @@ export default {
       // 滚动到富文本编辑器，聚焦
       scrollToElm('.layui-input-block', 500, -65)
       document.getElementById('edit').focus()
+      // 确定需要去编辑的记录 的 id
+      this.editInfo.cid = item._id
+      this.editInfo.item = item
     },
     // 采纳为最佳答案
     setBest (item) {
       this.$confirm('确定采纳为最佳答案吗？', () => {
         // 发送采纳最佳答案接口
-        console.log(item._id)
+        setCommentBest({
+          cid: item._id,
+          tid: this.tid // 再props上传过来的
+        }).then(res => {
+          if (res.code === 200) {
+            this.$pop('', '设置最佳答案成功!')
+            // 重新请求帖子接口
+            this.getPostDetail()
+            // 重新调用评论列表接口
+            this.getCommentsList()
+          }
+        })
       }, () => {})
     }
   },
