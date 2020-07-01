@@ -126,11 +126,11 @@
               </div>
               <div class="detail-body jieda-body photos" v-richtext="item.content"></div>
               <div class="jieda-reply">
-                <span class="jieda-zan" :class="{zanok:item.handed === '1'}" type="zan">
+                <span class="jieda-zan" :class="{zanok:item.handed === '1'}" type="zan" @click="hands(item)">
                   <i class="iconfont icon-zan"></i>
                   <em>{{item.hands}}</em>
                 </span>
-                <span type="reply">
+                <span type="reply" @click="reply(item)">
                   <i class="iconfont icon-svgmoban53"></i>
                   回复
                 </span>
@@ -208,7 +208,7 @@
 
 <script>
 import { getDetail } from '@/api/content'
-import { getComments, addComment, updateComment, setCommentBest } from '@/api/comments'
+import { getComments, addComment, updateComment, setCommentBest, setHands } from '@/api/comments'
 import Links from '@/components/sidebar/Links'
 import HotList from '@/components/sidebar/HotList'
 import Ads from '@/components/sidebar/Ads'
@@ -244,6 +244,7 @@ export default {
     this.getCommentsList()
   },
   computed: {
+    // 文章的内容
     content () {
       if (!this.page.content || this.page.content.trim() === '') {
         return ''
@@ -398,6 +399,49 @@ export default {
           }
         })
       }, () => {})
+    },
+    // 给评论点赞
+    hands (item) {
+      setHands({ cid: item._id }).then(res => {
+        if (res.code === 200) {
+          this.$pop('', '点赞成功')
+          // 重新调用评论列表接口
+          this.getCommentsList()
+        } else {
+          this.$pop('shake', res.msg)
+        }
+      })
+    },
+    // 回复某条评论
+    reply (item) {
+      // 插入@ + name 到 content
+      // 滚动页面到输入框
+      // focus 输入框
+
+      // 匹配 @name 字段
+      const reg = /^@[\S]+\s/g
+      if (this.editInfo.content) {
+        // 有内容的时候
+
+        console.log(this.editInfo.content.match(reg))
+        if (reg.test(this.editInfo.content)) {
+          // console.log(reg.test(this.editInfo.content))
+          // 有@用户的时候
+          this.editInfo.content = this.editInfo.content.replace(reg, `@${item.cuid.name} `)
+        } else {
+          // 无@用户的时候,有内容，加上 @用户
+          if (this.editInfo.content !== '') {
+            this.editInfo.content = `@${item.cuid.name} ${this.editInfo.content}`
+          }
+        }
+      } else {
+        // 输入框没有内容的时候
+        this.editInfo.content = '@' + item.cuid.name + ' '
+      }
+
+      // 滚动到富文本编辑器，聚焦
+      scrollToElm('.layui-input-block', 500, -65)
+      document.getElementById('edit').focus()
     }
   },
   components: {

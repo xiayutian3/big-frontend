@@ -2,6 +2,7 @@
 import Comments from '../model/Comments'
 import Post from '../model/Post'
 import User from '../model/User'
+import CommentsHands from '../model/CommentsHands'
 // 引入自定义的对比函数(对比redis中存的验证码)
 import { checkCode, getJWTPayload } from '../common/Utils'
 
@@ -31,7 +32,29 @@ class CommentsController {
     const limit = params.limit ? +params.limit : 10
     // console.log(tid, typeof page, typeof limit)
     // 查询到的结果
-    const result = await Comments.getCommentsList(tid, page, limit)
+    let result = await Comments.getCommentsList(tid, page, limit)
+
+    // 判断用户是否登录，已经登录的用户才去判断点赞信息(显示点赞的红色标志)
+    // 获取用户id,从请求头中获取
+    if (ctx.header.authorization && ctx.header.authorization !== 'Bearer') {
+      const obj = await getJWTPayload(ctx.header.authorization)
+      if (obj && typeof obj._id !== 'undefined') {
+        result = result.map(item => item.toJSON())
+        result.forEach(async (item) => {
+          // mongodb查出的数据要 toJSON过后才能能操作
+          item.handed = '0'
+          // 找到这条评论，用户已经点赞的(其实下边已经判断用户id了)
+          const commentsHands = await CommentsHands.findOne({ cid: item._id, uid: obj._id })
+          if (commentsHands && commentsHands.cid) {
+            // 判断用户id是否相等
+            if (commentsHands.uid === obj._id) {
+              item.handed = '1'
+            }
+          }
+        })
+      }
+    }
+
     // 查询到的总条数
     const total = await Comments.queryCount(tid)
     ctx.body = {
@@ -117,7 +140,7 @@ class CommentsController {
     const params = ctx.query
     // 通过文章tid查找这篇文章
     const post = await Post.findOne({ _id: params.tid })
-    console.log(typeof post.uid)
+    // console.log(typeof post.uid)
     // 判断是不是作者本人，帖子为未结帖状态
     // post.uid如果为填充的数据，typeof post.uid，typeofpost.uid._id 都是object类型，不能直接判断相等
     if (post.uid === obj._id && post.isEnd === '0') {
@@ -159,6 +182,44 @@ class CommentsController {
       ctx.body = {
         code: 500,
         msg: '帖子已结帖，无法重复设置'
+      }
+    }
+  }
+
+  // 给评论点赞
+  async setHands (ctx) {
+    // 获取用户id,从请求头中获取
+    const obj = await getJWTPayload(ctx.header.authorization)
+    const params = ctx.query
+    // 判断用户是否已经点赞
+    const tmp = await CommentsHands.find({ cid: params.cid, uid: obj._id })
+    console.log()
+    if (tmp.length > 0) {
+      ctx.body = {
+        code: 500,
+        msg: '您已经点赞，请勿重复点赞'
+      }
+      return
+    }
+
+    // 新增一条点赞记录
+    const newHands = new CommentsHands({
+      cid: params.cid,
+      uid: obj._id
+    })
+    const data = await newHands.save()
+    // 更新comments表中对应的记录的hands信息 +1
+    const result = await Comments.updateOne({ _id: params.cid }, { $inc: { hands: 1 } })
+    if (result.ok === 1) {
+      ctx.body = {
+        code: 200,
+        msg: '点赞成功',
+        data: data
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '保存点赞记录失败！'
       }
     }
   }
