@@ -82,7 +82,7 @@
             </div>
           </div>
           <div class="layui-btn-container fly-detail-admin pt1">
-            <a href class="layui-btn layui-btn-sm jie-admin-collect">编辑</a>
+            <router-link v-show="page.isEnd === '0'" :to="{name:'edit',params:{tid:tid,page:page}}" class="layui-btn layui-btn-sm jie-admin-collect">编辑</router-link>
             <a href class="layui-btn layui-btn-sm jie-admin jie-admin-collect">收藏</a>
           </div>
           <div class="detail-body photos" v-html="content"></div>
@@ -351,6 +351,8 @@ export default {
           this.$pop('', '发表评论成功')
           // 添加成功后，验证码也要重新变化（验证码函数在mixin上）
           this._getCode()
+          // 重新请求帖子接口
+          this.getPostDetail()
           // 重新请求评论数据
           this.getCommentsList()
           // 发表评论成功后，重置操作

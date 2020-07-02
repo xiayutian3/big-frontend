@@ -97,10 +97,19 @@ class CommentsController {
     newComment.cuid = obj._id
     // 存在数据库中
     const comment = await newComment.save()
-    ctx.body = {
-      code: 200,
-      data: comment,
-      msg: '评论成功'
+    // 评论计数（文章有多少条回复） $inc 累加 1
+    const updatePostResult = await Post.updateOne({ _id: body.tid }, { $inc: { answer: 1 } })
+    if (comment._id && updatePostResult.ok === 1) {
+      ctx.body = {
+        code: 200,
+        data: comment,
+        msg: '评论成功'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '评论失败'
+      }
     }
   }
 

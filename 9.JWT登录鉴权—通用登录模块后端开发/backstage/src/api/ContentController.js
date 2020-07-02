@@ -208,6 +208,52 @@ class ContentController {
     }
   }
 
+  // 更新帖子
+  async updatePost (ctx) {
+    const { body } = ctx.request
+
+    // 校验验证码的内容（时效性，有效性）
+    const sid = body.sid
+    const code = body.code
+    // 对比客户端传过来的 sid code，是否与我们在redis中存的一致
+    // 封装一个验证图片验证码的函数
+    const result = await checkCode(sid, code) // 返回了一个promise对象,让它变成异步方法，才能正确返回结果
+    if (result) {
+      // 获得payload数据
+      const obj = await getJWTPayload(ctx.header.authorization)
+      // 判断帖子的作者是否为本人
+      const post = await Post.findOne({ _id: body.tid })
+      // 判断帖子是否结帖
+      if (post.uid === obj._id && post.isEnd === '0') {
+        const result = await Post.updateOne({ _id: body.tid }, body)
+        if (result.ok === 1) {
+          ctx.body = {
+            code: 200,
+            msg: '更新帖子成功',
+            data: result
+          }
+        } else {
+          ctx.body = {
+            code: 500,
+            msg: '编辑帖子，更新失败',
+            data: result
+          }
+        }
+      } else {
+        ctx.body = {
+          code: 401,
+          msg: '没有操作的权限'
+        }
+      }
+    } else {
+      /// 图片验证码验证失败
+      ctx.body = {
+        code: 500,
+        msg: '图片验证码验证失败'
+      }
+    }
+  }
+
   // 获取文章详情
   async getPostDetail (ctx) {
     const params = ctx.query
@@ -222,13 +268,22 @@ class ContentController {
 
     // 查找返回相应的数据，（包括帖子中的用户信息）
     const post = await Post.findByTid(params.tid)
+    // 更新文章阅读记数  $in 累加 1
+    const result = await Post.updateOne({ _id: params.tid }, { $inc: { reads: 1 } })
+    if (post._id && result.ok === 1) {
+      ctx.body = {
+        code: 200,
+        data: post,
+        msg: '查询文章详情'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '获取文章详情失败'
+      }
+    }
     // rename方法,把uid改成user字段
     // const result = rename(post.toJSON(), 'uid', 'user')
-    ctx.body = {
-      code: 200,
-      data: post,
-      msg: '查询文章详情'
-    }
   }
 }
 

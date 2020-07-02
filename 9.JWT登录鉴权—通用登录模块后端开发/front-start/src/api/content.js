@@ -49,6 +49,9 @@ const addPost = data => axios.post('/content/add', data)
 // 获取文章详情
 const getDetail = tid => axios.get('/public/content/detail?tid=' + tid)
 
+// 更新文章，编辑帖子
+const updatePost = data => axios.post('/content/update', data)
+
 export {
   getList,
   getTips,
@@ -56,5 +59,6 @@ export {
   getTop,
   uploadImg,
   addPost,
-  getDetail
+  getDetail,
+  updatePost
 }
