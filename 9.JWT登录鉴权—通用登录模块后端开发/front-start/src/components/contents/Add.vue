@@ -239,10 +239,10 @@ export default {
         if (res.code === 200) {
           // 发帖成功后对存到localstorage表单内容，进行清空
           localStorage.setItem('addData', '')
-          this.$alert('发帖成功~~2s后跳转')
+          this.$pop('', '发帖成功!')
           setTimeout(() => {
-            this.$router.push({ name: 'index' })
-          }, 2000)
+            this.$router.push({ name: 'detail', params: { tid: res.data._id } })
+          }, 1000)
         } else {
           this.$alert(res.msg)
         }

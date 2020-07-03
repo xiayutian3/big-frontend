@@ -1,9 +1,9 @@
 <template>
   <div class="fly-header layui-bg-black">
     <div class="layui-container">
-      <a class="fly-logo" href="/">
+      <router-link class="fly-logo" to="/">
         <img src="../assets/logo-2.png" alt="layui" />
-      </a>
+      </router-link>
       <ul class="layui-nav fly-nav layui-hide-xs">
         <li class="layui-nav-item layui-this">
           <a href="/">

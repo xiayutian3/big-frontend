@@ -169,6 +169,10 @@ export default {
       }
     }
   },
+  beforeDestroy () {
+    // 离开当前页就要做清空
+    localStorage.setItem('editData', '')
+  },
   computed: {},
   methods: {
     chooseCatalog (item, index) {
@@ -187,7 +191,13 @@ export default {
         favIndex: this.favIndex
       }
       if (this.title.trim() !== '' && this.content.trim() !== '') {
-        localStorage.setItem('editData', JSON.stringify(saveData))
+        // 还要添加上page的数据
+        const editData = localStorage.getItem('editData')
+        let newObj = { ...saveData }
+        if (editData && editData !== '') {
+          newObj = { ...saveData, ...JSON.parse(editData) }
+        }
+        localStorage.setItem('editData', JSON.stringify(newObj))
       }
     },
     async submit () {
@@ -214,10 +224,10 @@ export default {
         if (res.code === 200) {
           // 发帖成功后对存到localstorage表单内容，进行清空
           localStorage.setItem('editData', '')
-          this.$alert('发帖成功~~2s后跳转')
+          this.$pop('', '更新成功!')
           setTimeout(() => {
-            this.$router.push({ name: 'index' })
-          }, 2000)
+            this.$router.push({ name: 'detail', params: { tid: this.tid } })
+          }, 1000)
         } else {
           this.$alert(res.msg)
         }

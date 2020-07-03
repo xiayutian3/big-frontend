@@ -82,7 +82,11 @@
             </div>
           </div>
           <div class="layui-btn-container fly-detail-admin pt1">
-            <router-link v-show="page.isEnd === '0'" :to="{name:'edit',params:{tid:tid,page:page}}" class="layui-btn layui-btn-sm jie-admin-collect">编辑</router-link>
+            <router-link
+              v-show="page.isEnd === '0'"
+              :to="{name:'edit',params:{tid:tid,page:page}}"
+              class="layui-btn layui-btn-sm jie-admin-collect"
+            >编辑</router-link>
             <a href class="layui-btn layui-btn-sm jie-admin jie-admin-collect">收藏</a>
           </div>
           <div class="detail-body photos" v-html="content"></div>
@@ -126,7 +130,12 @@
               </div>
               <div class="detail-body jieda-body photos" v-richtext="item.content"></div>
               <div class="jieda-reply">
-                <span class="jieda-zan" :class="{zanok:item.handed === '1'}" type="zan" @click="hands(item)">
+                <span
+                  class="jieda-zan"
+                  :class="{zanok:item.handed === '1'}"
+                  type="zan"
+                  @click="hands(item)"
+                >
                   <i class="iconfont icon-zan"></i>
                   <em>{{item.hands}}</em>
                 </span>
@@ -135,9 +144,17 @@
                   回复
                 </span>
                 <div class="jieda-admin">
-                  <span type="edit" v-show="page.isEnd === '0' && item.cuid._id === user._id" @click="editComment(item)">编辑</span>
+                  <span
+                    type="edit"
+                    v-show="page.isEnd === '0' && item.cuid._id === user._id"
+                    @click="editComment(item)"
+                  >编辑</span>
                   <!-- <span type="del">删除</span> -->
-                  <span class="jieda-accept" v-show="page.isEnd === '0' && page.uid._id === user._id"  @click="setBest(item)">采纳</span>
+                  <span
+                    class="jieda-accept"
+                    v-show="page.isEnd === '0' && page.uid._id === user._id"
+                    @click="setBest(item)"
+                  >采纳</span>
                 </div>
               </div>
             </li>
@@ -146,10 +163,11 @@
             <li class="fly-none" v-if="comments.length === 0">消灭零回复</li>
           </ul>
           <Pagination
+            v-show="comments.length > 0"
             ref="dyPagination"
             :showType="'icon'"
-            :hasSelect="true"
-            :hasTotal="true"
+            :hasSelect="false"
+            :hasTotal="false"
             :showEnd="true"
             :total="total"
             :size="size"
@@ -160,7 +178,7 @@
           <div class="layui-form layui-form-pane">
             <form>
               <ValidationObserver ref="observer">
-                <Editor @changeContent="addContent" :initContent="editInfo.content"/>
+                <Editor @changeContent="addContent" :initContent="editInfo.content" />
                 <div class="layui-form-item">
                   <validation-provider
                     name="code"
@@ -208,7 +226,13 @@
 
 <script>
 import { getDetail } from '@/api/content'
-import { getComments, addComment, updateComment, setCommentBest, setHands } from '@/api/comments'
+import {
+  getComments,
+  addComment,
+  updateComment,
+  setCommentBest,
+  setHands
+} from '@/api/comments'
 import Links from '@/components/sidebar/Links'
 import HotList from '@/components/sidebar/HotList'
 import Ads from '@/components/sidebar/Ads'
@@ -316,7 +340,10 @@ export default {
       this.editInfo.sid = this.$store.state.sid || localStorage.getItem('sid')
       this.editInfo.tid = this.tid // 回复哪个文章的评论的id
 
-      if (typeof this.editInfo.cid !== 'undefined' && this.editInfo.cid !== '') {
+      if (
+        typeof this.editInfo.cid !== 'undefined' &&
+        this.editInfo.cid !== ''
+      ) {
         const obj = { ...this.editInfo }
         // 删除 item属性
         delete obj.item
@@ -386,21 +413,25 @@ export default {
     },
     // 采纳为最佳答案
     setBest (item) {
-      this.$confirm('确定采纳为最佳答案吗？', () => {
-        // 发送采纳最佳答案接口
-        setCommentBest({
-          cid: item._id,
-          tid: this.tid // 再props上传过来的
-        }).then(res => {
-          if (res.code === 200) {
-            this.$pop('', '设置最佳答案成功!')
-            // 重新请求帖子接口
-            this.getPostDetail()
-            // 重新调用评论列表接口
-            this.getCommentsList()
-          }
-        })
-      }, () => {})
+      this.$confirm(
+        '确定采纳为最佳答案吗？',
+        () => {
+          // 发送采纳最佳答案接口
+          setCommentBest({
+            cid: item._id,
+            tid: this.tid // 再props上传过来的
+          }).then(res => {
+            if (res.code === 200) {
+              this.$pop('', '设置最佳答案成功!')
+              // 重新请求帖子接口
+              this.getPostDetail()
+              // 重新调用评论列表接口
+              this.getCommentsList()
+            }
+          })
+        },
+        () => {}
+      )
     },
     // 给评论点赞
     hands (item) {
@@ -429,7 +460,10 @@ export default {
         if (reg.test(this.editInfo.content)) {
           // console.log(reg.test(this.editInfo.content))
           // 有@用户的时候
-          this.editInfo.content = this.editInfo.content.replace(reg, `@${item.cuid.name} `)
+          this.editInfo.content = this.editInfo.content.replace(
+            reg,
+            `@${item.cuid.name} `
+          )
         } else {
           // 无@用户的时候,有内容，加上 @用户
           if (this.editInfo.content !== '') {
@@ -459,6 +493,12 @@ export default {
     //   // 请空分页器的页码输入，只要数据变化，说明用户操作了分页
     //   this.$refs.dyPagination.clearPageNum()
     // }
+
+    // 在详情页点击右侧文章推荐列表时，要发生变化(重新请求数据)
+    tid (newVal, oldVal) {
+      this.getPostDetail()
+      this.getCommentsList()
+    }
   }
 }
 </script>

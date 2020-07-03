@@ -33,6 +33,8 @@ class CommentsController {
     // console.log(tid, typeof page, typeof limit)
     // 查询到的结果
     let result = await Comments.getCommentsList(tid, page, limit)
+    // 查询到的总条数
+    const total = await Comments.queryCount(tid)
 
     // 判断用户是否登录，已经登录的用户才去判断点赞信息(显示点赞的红色标志)
     // 获取用户id,从请求头中获取
@@ -40,7 +42,8 @@ class CommentsController {
       const obj = await getJWTPayload(ctx.header.authorization)
       if (obj && typeof obj._id !== 'undefined') {
         result = result.map(item => item.toJSON())
-        result.forEach(async (item) => {
+        for (let i = 0; i < result.length; i++) {
+          const item = result[i]
           // mongodb查出的数据要 toJSON过后才能能操作
           item.handed = '0'
           // 找到这条评论，用户已经点赞的(其实下边已经判断用户id了)
@@ -51,12 +54,9 @@ class CommentsController {
               item.handed = '1'
             }
           }
-        })
+        }
       }
     }
-
-    // 查询到的总条数
-    const total = await Comments.queryCount(tid)
     ctx.body = {
       code: 200,
       total,
@@ -202,7 +202,6 @@ class CommentsController {
     const params = ctx.query
     // 判断用户是否已经点赞
     const tmp = await CommentsHands.find({ cid: params.cid, uid: obj._id })
-    console.log()
     if (tmp.length > 0) {
       ctx.body = {
         code: 500,

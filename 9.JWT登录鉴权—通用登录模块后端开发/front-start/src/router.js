@@ -101,7 +101,29 @@ const router = new Router({
       props: true,
       name: 'edit',
       meta: { requiresAuth: true },
-      component: Edit
+      component: Edit,
+      beforeEnter (to, from, next) {
+        // 正常情况，从文章detail页面过来
+        if (from.name === 'detail' && to.params.page && to.params.page.isEnd === '0') {
+          next()
+        } else {
+          debugger
+          // 用户在edit页面刷新新的情况
+          const editData = localStorage.getItem('editData')
+          if (editData && editData !== '') {
+            const editObj = JSON.parse(editData)
+            if (editObj.isEnd === '0') {
+              next()
+            } else {
+              // 其他不正常情况，比如，用户手动修改地址
+              next('/')
+            }
+          } else {
+            // 其他不正常情况，比如，用户手动修改地址
+            next('/')
+          }
+        }
+      }
     },
     {
       path: '/detail/:tid',
