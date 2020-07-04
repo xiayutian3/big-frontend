@@ -13,4 +13,9 @@ router.post('/basic', userController.updateUserInfo)
 // 更改密码接口（用户登陆成功后再个人中心那里修改密码）
 router.post('/change-password', userController.changePasswd)
 
+// 取消 设置收藏文章
+router.get('/set-collect', userController.setCollect)
+
+// 获取收藏列表
+
 export default router

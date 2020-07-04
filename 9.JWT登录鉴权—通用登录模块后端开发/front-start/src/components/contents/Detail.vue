@@ -87,7 +87,11 @@
               :to="{name:'edit',params:{tid:tid,page:page}}"
               class="layui-btn layui-btn-sm jie-admin-collect"
             >编辑</router-link>
-            <a href class="layui-btn layui-btn-sm jie-admin jie-admin-collect">收藏</a>
+            <a
+              class="layui-btn layui-btn-sm jie-admin jie-admin-collect"
+              :class="{'layui-btn-primary':page.isFav}"
+              @click.prevent="setCollect"
+            >{{page.isFav?'取消收藏':'收藏'}}</a>
           </div>
           <div class="detail-body photos" v-html="content"></div>
         </div>
@@ -226,6 +230,7 @@
 
 <script>
 import { getDetail } from '@/api/content'
+import { addCollect } from '@/api/user'
 import {
   getComments,
   addComment,
@@ -478,6 +483,29 @@ export default {
       // 滚动到富文本编辑器，聚焦
       scrollToElm('.layui-input-block', 500, -65)
       document.getElementById('edit').focus()
+    },
+    // 收藏，取消收藏文章
+    setCollect () {
+      const isLogin = this.$store.state.isLogin
+      if (isLogin) {
+        // 登录的情况
+        const collect = {
+          tid: this.tid,
+          title: this.page.title,
+          isFav: this.page.isFav ? 1 : 0
+        }
+        // 发起收藏的请求
+        addCollect(collect).then(res => {
+          if (res.code === 200) {
+            this.getPostDetail()
+            // this.page.isFav = !this.page.isFav
+            this.$pop('', this.page.isFav ? '取消收藏成功' : '设置收藏成功')
+          }
+        })
+      } else {
+        // 未登录的情况
+        this.$pop('shake', '请先登录后再经行收藏')
+      }
     }
   },
   components: {

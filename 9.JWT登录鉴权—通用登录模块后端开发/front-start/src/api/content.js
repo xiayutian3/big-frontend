@@ -1,4 +1,5 @@
 import axios from '@/utils/request'
+import store from '@/store'
 import qs from 'qs' // 对get接口请求参数做的简化操作 query string的简称，做了字符串的转换，查询字符串拼接到url后边
 
 // 没使用qs库之前
@@ -47,7 +48,18 @@ const uploadImg = formData => axios.post('/content/upload', formData)
 const addPost = data => axios.post('/content/add', data)
 
 // 获取文章详情
-const getDetail = tid => axios.get('/public/content/detail?tid=' + tid)
+const getDetail = tid => {
+  const token = store.state.token
+  let headers = {}
+  if (token !== '') {
+    headers = {
+      headers: {
+        Authorization: 'Bearer ' + store.state.token
+      }
+    }
+  }
+  return axios.get('/public/content/detail?tid=' + tid, headers)
+}
 
 // 更新文章，编辑帖子
 const updatePost = data => axios.post('/content/update', data)

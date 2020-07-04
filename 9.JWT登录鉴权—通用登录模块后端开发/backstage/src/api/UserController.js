@@ -11,7 +11,7 @@ import config from '@/config/index'
 import jwt from 'jsonwebtoken'
 // 加密密码的库(捉着可以用bcryptjs，api一样，node版的bcrypt)
 import bcrypt from 'bcrypt'
-
+import UserCollect from '@/model/UserCollect'
 class UserController {
   // 用户签到接口
   async userSign (ctx) {
@@ -261,6 +261,36 @@ class UserController {
       ctx.body = {
         code: 500,
         msg: '更新密码错误，请检查！'
+      }
+    }
+  }
+
+  // 取消设置收藏文章
+  async setCollect (ctx) {
+    const params = ctx.query
+    // 取用户的id
+    const obj = await getJWTPayload(ctx.header.authorization)
+    // isFav 值是 0或 1
+    if (parseInt(params.isFav)) {
+      // 说明用户收藏了帖子U
+      await UserCollect.deleteOne({ uid: obj._id, tid: params.tid })
+      ctx.body = {
+        code: 200,
+        msg: '取消成功'
+      }
+    } else {
+      const newCollect = new UserCollect({
+        uid: obj._id,
+        tid: params.tid,
+        title: params.title
+      })
+      const result = await newCollect.save()
+      if (result.uid) {
+        ctx.body = {
+          code: 200,
+          data: result,
+          msg: '收藏成功'
+        }
       }
     }
   }

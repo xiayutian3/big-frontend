@@ -12,6 +12,7 @@ import makeDir from 'make-dir'
 // 引入自定义的对比函数(对比redis中存的验证码 checkCode)
 import { checkCode, getJWTPayload } from '../common/Utils'
 import User from '../model/User'
+import UserCollect from '@/model/UserCollect'
 
 class ContentController {
   // 获取文章列表
@@ -268,12 +269,29 @@ class ContentController {
 
     // 查找返回相应的数据，（包括帖子中的用户信息）
     const post = await Post.findByTid(params.tid)
+    // 判断是用户是否收藏文章 的字段 isFav
+    let isFav = 0
+    // 判断用户是否传递authorization的数据，即是否登录
+    if (typeof ctx.header.authorization !== 'undefined' && ctx.header.authorization !== '') {
+      // 获得payload数据
+      const obj = await getJWTPayload(ctx.header.authorization)
+      const userCollect = await UserCollect.findOne({
+        uid: obj._id,
+        tid: params.tid
+      })
+      if (userCollect && userCollect.tid) {
+        isFav = 1
+      }
+    }
+    // 操作文章，给文章添加收藏字段
+    const newPost = post.toJSON()
+    newPost.isFav = isFav
     // 更新文章阅读记数  $in 累加 1
     const result = await Post.updateOne({ _id: params.tid }, { $inc: { reads: 1 } })
     if (post._id && result.ok === 1) {
       ctx.body = {
         code: 200,
-        data: post,
+        data: newPost,
         msg: '查询文章详情'
       }
     } else {

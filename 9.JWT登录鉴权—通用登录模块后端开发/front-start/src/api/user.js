@@ -23,10 +23,18 @@ const updateUserPwd = (data) => axios.post('/public/pwd', data)
 // 修改用户密码
 const changePasswd = data => axios.post('/user/change-password', data)
 
+// 文章的收藏或取消
+const addCollect = (params) => axios.get('/user/set-collect', { params })
+
+// 获取收藏列表
+const getCollect = (params) => axios.get('/user/collect', { params })
+
 export {
   userSign,
   updateUserInfo,
   updateUsername,
   updateUserPwd,
-  changePasswd
+  changePasswd,
+  addCollect,
+  getCollect
 }
