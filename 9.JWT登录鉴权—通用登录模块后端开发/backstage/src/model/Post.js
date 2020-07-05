@@ -85,6 +85,17 @@ PostSchema.statics = {
       path: 'uid', // 通过‘uid’-》映射user表
       select: 'name pic isVip _id' // 获取相应的字段 ，之间用空格隔开，_id要加上，不然uid会被替换掉
     })
+  },
+  // 获取用户发帖记录
+  getListByUid: function (id, page, limit) {
+    return this.find({ uid: id })
+      .skip(page * limit)
+      .limit(limit)
+      .sort({ created: -1 }) // -1 倒序排列
+  },
+  // 计算返回列表的数量
+  countByUid: function (id) {
+    return this.find({ uid: id }).countDocuments()
   }
 
 }

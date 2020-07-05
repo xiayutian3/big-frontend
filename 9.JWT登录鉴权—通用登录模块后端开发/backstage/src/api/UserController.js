@@ -252,7 +252,7 @@ class UserController {
     // 对比成功后重新加密客户端传过来的密码，再存到数据库中
     if (await bcrypt.compare(body.oldpwd, user.password)) {
       const newpasswd = await bcrypt.hash(body.newpwd, 5)
-      const result = await User.updateOne({ _id: obj._id }, { $set: { password: newpasswd } })
+      await User.updateOne({ _id: obj._id }, { $set: { password: newpasswd } })
       ctx.body = {
         code: 200,
         msg: '更新密码成功'
@@ -292,6 +292,28 @@ class UserController {
           msg: '收藏成功'
         }
       }
+    }
+  }
+
+  // 获取用户基本信息
+  async getBasicInfo (ctx) {
+    const params = ctx.query
+    const uid = params.uid
+    let user = await User.findByID(uid)
+    // 获取用户的签到记录 有没有 》 today 00：00:00
+    // toJSON()后才能操作user
+    user = user.toJSON()
+    const date = moment().format('YYYY-MM-DD')
+    const result = await SignRecord.findOne({ uid: uid, created: { $gte: (date + ' 00:00:00') } })
+    if (result && result.uid) {
+      user.isSign = true
+    } else {
+      user.isSign = false
+    }
+    ctx.body = {
+      code: 200,
+      data: user,
+      msg: '查询成功'
     }
   }
 }

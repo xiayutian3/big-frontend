@@ -104,10 +104,9 @@ const router = new Router({
       component: Edit,
       beforeEnter (to, from, next) {
         // 正常情况，从文章detail页面过来
-        if (from.name === 'detail' && to.params.page && to.params.page.isEnd === '0') {
+        if (['detail', 'mypost'].indexOf(from.name) !== -1 && to.params.page && to.params.page.isEnd === '0') {
           next()
         } else {
-          debugger
           // 用户在edit页面刷新新的情况
           const editData = localStorage.getItem('editData')
           if (editData && editData !== '') {
@@ -204,6 +203,7 @@ const router = new Router({
     },
     {
       path: '/404',
+      name: '404',
       component: NoFound
     },
     {

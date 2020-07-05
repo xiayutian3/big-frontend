@@ -16,10 +16,10 @@
         </li>
         <template v-if="isLogin">
           <li class="layui-hide-xs">
-                  <a href>我发表的贴</a>
+                  <router-link :to="{name:'mypost'}">我发表的贴</router-link>
                 </li>
                 <li class="layui-hide-xs">
-                  <a href>我收藏的贴</a>
+                  <router-link :to="{name:'mycollection'}">我收藏的贴</router-link>
                 </li>
         </template>
 
@@ -81,7 +81,7 @@ export default {
   watch: {}
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 @media (max-width: 768px) {
   .panel {
     height: auto !important;

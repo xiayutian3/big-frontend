@@ -29,6 +29,18 @@ const addCollect = (params) => axios.get('/user/set-collect', { params })
 // 获取收藏列表
 const getCollect = (params) => axios.get('/user/collect', { params })
 
+// 获取用户发表的文章列表
+const getPostListByUid = (params) => axios.get('/user/post', { params })
+
+// 删除指定文章
+const deletePostByUid = (params) => axios.get('/user/delete-post', { params })
+
+// 获取用户的基本信息
+const getInfo = (params) => axios.get('/public/info', { params })
+
+// 获取用户最近评论列表
+const getCommentList = (params) => axios.get('/public/latest-comment', { params })
+
 export {
   userSign,
   updateUserInfo,
@@ -36,5 +48,9 @@ export {
   updateUserPwd,
   changePasswd,
   addCollect,
-  getCollect
+  getCollect,
+  getPostListByUid,
+  deletePostByUid,
+  getInfo,
+  getCommentList
 }

@@ -303,6 +303,83 @@ class ContentController {
     // rename方法,把uid改成user字段
     // const result = rename(post.toJSON(), 'uid', 'user')
   }
+
+  // 获取用户发帖记录
+  async getPostByUid (ctx) {
+    const params = ctx.query
+    // 获得payload数据
+    const obj = await getJWTPayload(ctx.header.authorization)
+    const result = await Post.getListByUid(obj._id, params.page, params.limit ? parseInt(params.limit) : 10)
+    const total = await Post.countByUid(obj._id)
+    // mongdb查出的数据经过 toJSON 后才能操作
+    // const newResult = result.toJSON()
+    // newResult.total = total
+    if (result.length > 0) {
+      ctx.body = {
+        code: 200,
+        data: result,
+        total,
+        msg: '查询列表成功'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '查询列表失败'
+      }
+    }
+  }
+
+  // 获取用户收藏的帖子
+  async collect (ctx) {
+    const params = ctx.query
+    // 获得payload数据
+    const obj = await getJWTPayload(ctx.header.authorization)
+    const result = await UserCollect.getListByUid(obj._id, params.page, params.limit ? parseInt(params.limit) : 10)
+    const total = await UserCollect.countByUid(obj._id)
+    if (result.length > 0) {
+      ctx.body = {
+        code: 200,
+        data: result,
+        total,
+        msg: '查询列表成功'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '查询列表失败'
+      }
+    }
+  }
+
+  // 删除发帖记录
+  async deletePostByUid (ctx) {
+    const params = ctx.query
+    // 获得payload数据
+    const obj = await getJWTPayload(ctx.header.authorization)
+    // 判断发帖的作者是不是本人
+    const post = await Post.findOne({ uid: obj._id, _id: params.tid })
+    // 已结帖的文章是不允许删除的（能删除的是没有结帖的帖子），删除后，积分是不归还给用户的
+    if (post.id === params.tid && post.isEnd === '0') {
+      // 删除操作
+      const result = await Post.deleteOne({ _id: params.tid })
+      if (result.ok === 1) {
+        ctx.body = {
+          code: 200,
+          msg: '删除成功'
+        }
+      } else {
+        ctx.body = {
+          code: 500,
+          msg: '执行删除失败！'
+        }
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '删除失败，无权限！'
+      }
+    }
+  }
 }
 
 export default new ContentController()

@@ -67,6 +67,7 @@ export default {
   position: fixed;
   left: 50%;
   top: 50%;
+  z-index: 2000;
 }
 .animation{
   animation-fill-mode: both;

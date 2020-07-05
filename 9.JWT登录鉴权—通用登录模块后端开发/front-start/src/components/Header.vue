@@ -54,7 +54,7 @@
         <template v-else>
           <!-- 登入后的状态 -->
           <li class="layui-nav-item" @mouseenter="show" @mouseleave="hide">
-            <a class="fly-nav-avatar" href="javascript:;">
+            <router-link :to="{name:'center'}" class="fly-nav-avatar" href="javascript:;">
               <cite class="layui-hide-xs">{{userInfo.name}}</cite>
               <!-- <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i> -->
               <i
@@ -62,7 +62,7 @@
                 v-show="userInfo.isVip != 0"
               >VIP{{userInfo.isVip}}</i>
               <img :src="userInfo.pic" />
-            </a>
+            </router-link>
             <dl class="layui-nav-child layui-anim layui-anim-upbit" :class="{'layui-show':isHover}">
               <dd>
                 <router-link :to="{name:'info'}">
@@ -75,7 +75,7 @@
                 </router-link>
               </dd>
               <dd>
-                <router-link :to="{name:'center'}">
+                <router-link :to="{name:'home',params:{uid:userInfo._id}}">
                   <i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页
                 </router-link>
               </dd>

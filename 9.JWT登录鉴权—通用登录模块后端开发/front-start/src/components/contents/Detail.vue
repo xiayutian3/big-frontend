@@ -109,14 +109,14 @@
                   <img :src="item.cuid?item.cuid.pic:'/img/bear.jpg'" alt=" " />
                 </a>
                 <div class="fly-detail-user">
-                  <a href class="fly-link">
+                  <router-link :to="{name:'home',params:{uid:item.cuid._id}}" class="fly-link">
                     <cite>{{item.cuid?item.cuid.name:'imooc'}}</cite>
                     <!-- <i class="iconfont icon-renzheng" title="认证信息：XXX"></i> -->
                     <i
                       v-if="item.cuid && item.cuid.isVip !== '0'?item.cuid.isVip:false"
                       class="layui-badge fly-badge-vip"
                     >VIP{{item.cuid.isVip}}</i>
-                  </a>
+                  </router-link>
 
                   <span v-if="index === 0">(楼主)</span>
                   <!--
