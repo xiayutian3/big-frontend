@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- //只要客户端存在，重启服务端的socket会自动连接 ，可以断线重连-->
+  <!-- 第一种只用方法  express 服务暴露出来的-->
+  <!-- <script src="/socket.io/socket.io.js"></script> -->
+
+  <!-- 第二种直接使用cdn -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
+</head>
+<body>
+  hello server
+  <input type="text" id="msg">
+  <button type="button" id="btn">发送</button>
+</body>
+<script>
+  var socket = io()
+
+document.getElementById('btn').addEventListener('click',function(){
+  var value = document.getElementById('msg').value
+  //发送消息
+  socket.emit('chatEvent',value)
+  //清空input 输入框
+  document.getElementById('msg').value = ''
+})
+
+//接受服务端的消息（只能一对一的消息）
+// socket.on('message',function(msg){
+//   console.log(msg)
+// })
+//接受广播的消息，才能多人聊天（不会广播给作者本人）
+socket.on('ServerMsg',function(msg){
+  console.log(msg)
+})
+</script>
+</html>
