@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>websocket</title>
+</head>
+
+<body>
+
+  <input type="text" id="msg">
+  <button type="button" id="send">发送消息</button>
+  <button type="button" id="app">点击断开websocket</button>
+  <script>
+    var ws = new WebSocket('ws://127.0.0.1:3000')
+
+    //连接成功
+    ws.onopen = function () {
+      console.log('open' + ws.readyState)
+      //发送消息
+      // ws.send('hello from client')
+    }
+    //接受服务端消息
+    ws.onmessage = function (event) {
+      console.log('message' + ws.readyState)
+      console.log("ws.onmessage -> msg", event.data)
+    }
+
+    //连接断开的时候（服务端断开，客户端主动断开都可以触发）
+    ws.onclose = function () {
+      console.log('close' + ws.readyState)
+      console.log('已关闭websocket')
+    }
+
+    //当连接出错的时候
+    ws.onerror = function () {
+      console.log('error' + ws.readyState)
+      console.log('websocket连接失败')
+    }
+
+
+    // 断开websocket（客户端主动断开）
+    document.getElementById('app').addEventListener('click',function(){
+      ws.close()
+    })
+
+
+    //发送消息
+    document.getElementById('send').addEventListener('click', function () {
+
+      var inputValue = document.getElementById('msg').value
+      ws.send(inputValue)
+      document.getElementById('msg').value = ''
+    })
+
+  </script>
+</body>
+
+</html>

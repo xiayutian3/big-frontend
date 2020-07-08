@@ -4,42 +4,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
   <title>websocket</title>
 </head>
 
 <body>
-  <button type="button" id="app">点击断开websocket</button>
+
+  <div id="app">
+    <div v-if="isShow">
+      <input type="text" v-model="name">
+      <button type="button" @click="enter">进入聊天室</button>
+    </div>
+    <div v-else>
+      <ul>
+        <li v-for="(item,index) in lists" :key="index">{{item}}</li>
+        <li>在线人数{{num}}</li>
+      </ul>
+      <div class="ctrl">
+        <input type="text" v-model="message">
+        <button type="button" @click="send">发送消息</button>
+        <!-- <button type="button" id="app">点击断开websocket</button> -->
+      </div>
+    </div>
+  </div>
   <script>
-    var ws = new WebSocket('ws://127.0.0.1:3000')
 
-    //连接成功
-    ws.onopen = function () {
-      console.log('open' + ws.readyState)
-      ws.send('hello from client')
-    }
-    //接受服务端消息
-    ws.onmessage = function (event) {
-      console.log('message' + ws.readyState)
-      console.log("ws.onmessage -> msg", event)
-    }
-
-    //连接断开的时候（服务端断开，客户端主动断开都可以触发）
-    ws.onclose = function () {
-      console.log('close' + ws.readyState)
-      console.log('已关闭websocket')
-    }
-
-    //当连接出错的时候
-    ws.onerror = function(){
-      console.log('error' + ws.readyState)
-      console.log('websocket连接失败')
-    }
-
-
-    //断开websocket
-    document.getElementById('app').addEventListener('click',function(){
-      ws.close()
+    var app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          message: '',
+          lists: [],
+          ws: {},
+          name: '',
+          isShow: true,
+          num: 0 //聊天室的人数
+        }
+      },
+      mounted() {
+        //初始化websocket
+        this.ws = new WebSocket('ws://127.0.0.1:3000')
+        this.ws.onopen = this.onOpen
+        this.ws.onmessage = this.onMessage
+        this.ws.onclose = this.onClose
+        this.ws.onerror = this.onError
+      },
+      methods: {
+        onOpen() {
+          console.log('open' + this.ws.readyState)
+        },
+        onMessage(event) {
+          //当用户未进入聊天室，则不接受消息
+          if (this.isShow) {
+            return
+          }
+          // console.log('message' + this.ws.readyState)
+          //把消息放到列表里
+          //接收服务端发送过来的消息
+          var obj = JSON.parse(event.data)
+          if (obj.event === 'enter') {
+            //当有一个新用户进入聊天室
+            this.lists.push(`欢迎：${obj.message}加入聊天室`)
+          } else if (obj.event === 'out') {
+            this.lists.push(obj.name + '已经推出了聊天室！')
+          } else {
+            // 不给自己推送消息，由客户端判断
+            if (obj.name !== this.name) {
+              //接受正常的聊天
+              this.lists.push(obj.name + ':' + obj.message)
+            }
+          }
+          //在线人数
+          this.num = obj.num
+        },
+        onClose() {
+          console.log('close' + this.ws.readyState)
+          console.log('已关闭websocket')
+        },
+        onError() {
+          console.log('error' + this.ws.readyState)
+          console.log('websocket连接失败')
+        },
+        //发送消息
+        send() {
+          this.lists.push(this.name + ':' + this.message)
+          this.ws.send(JSON.stringify({
+            event: 'message',
+            message: this.message
+          }))
+          this.message = ''
+        },
+        //进入聊天室
+        enter() {
+          if (this.name.trim() === '') {
+            alert('用户名不得为空')
+            return
+          }
+          this.isShow = false
+          this.ws.send(JSON.stringify({
+            event: 'enter',
+            message: this.name
+          }))
+        }
+      }
     })
+
+    // // 断开websocket（客户端主动断开）
+    // document.getElementById('app').addEventListener('click', function () {
+    //   ws.close()
+    // })
+
+
+    // //发送消息
+    // document.getElementById('send').addEventListener('click', function () {
+
+    //   var inputValue = document.getElementById('msg').value
+    //   ws.send(inputValue)
+    //   document.getElementById('msg').value = ''
+    // })
+
   </script>
 </body>
 
