@@ -12,7 +12,8 @@
 
   <div id="app">
     <div v-if="isShow">
-      <input type="text" v-model="name">
+      <p>昵称:  <input type="text" v-model="name"></p>
+      <p>房间号:  <input type="text" v-model="roomid"></p>
       <button type="button" @click="enter">进入聊天室</button>
     </div>
     <div v-else>
@@ -38,7 +39,8 @@
           ws: {},
           name: '',
           isShow: true,
-          num: 0 //聊天室的人数
+          num: 0, //聊天室的人数
+          roomid: '' //聊天室id
         }
       },
       mounted() {
@@ -52,6 +54,13 @@
       methods: {
         onOpen() {
           console.log('open' + this.ws.readyState)
+          //发起鉴权请求(直接给令牌，拿着令牌去连接服务器)
+          this.ws.send(JSON.stringify({
+            event:'auth',
+            //jwt token
+            //自己生成的  const restoken = jwt.sign({ name: 'imooc' }, 'secret');
+            message:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaW1vb2MiLCJpYXQiOjE1OTQzMDc3MjJ9.c0NvMn16hgD5mrRVVt5lMMb81oyKOmRooL3Ejhmyc0w'
+          }))
         },
         onMessage(event) {
           //当用户未进入聊天室，则不接受消息
@@ -62,6 +71,13 @@
           //把消息放到列表里
           //接收服务端发送过来的消息
           var obj = JSON.parse(event.data)
+
+          //鉴权失败的情况处理
+          if(obj.event === 'noauth'){
+            //鉴权失败
+            //路由跳转到 /login  重新获取token等，然后再重新this.ws.send 鉴权
+            return
+          }
           if (obj.event === 'enter') {
             //当有一个新用户进入聊天室
             this.lists.push(`欢迎：${obj.message}加入聊天室`)
@@ -103,7 +119,8 @@
           this.isShow = false
           this.ws.send(JSON.stringify({
             event: 'enter',
-            message: this.name
+            message: this.name,
+            roomid:this.roomid
           }))
         }
       }
