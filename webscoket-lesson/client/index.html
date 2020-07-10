@@ -12,8 +12,8 @@
 
   <div id="app">
     <div v-if="isShow">
-      <p>昵称:  <input type="text" v-model="name"></p>
-      <p>房间号:  <input type="text" v-model="roomid"></p>
+      <p>昵称: <input type="text" v-model="name"></p>
+      <p>房间号: <input type="text" v-model="roomid"></p>
       <button type="button" @click="enter">进入聊天室</button>
     </div>
     <div v-else>
@@ -40,27 +40,38 @@
           name: '',
           isShow: true,
           num: 0, //聊天室的人数
-          roomid: '' //聊天室id
+          roomid: '', //聊天室id
+          handle:{} //定时器
         }
       },
       mounted() {
-        //初始化websocket
-        this.ws = new WebSocket('ws://127.0.0.1:3000')
-        this.ws.onopen = this.onOpen
-        this.ws.onmessage = this.onMessage
-        this.ws.onclose = this.onClose
-        this.ws.onerror = this.onError
       },
       methods: {
+        //websocket初始化
+        init() {
+          //初始化websocket
+          this.ws = new WebSocket('ws://127.0.0.1:3000')
+          this.ws.onopen = this.onOpen
+          this.ws.onmessage = this.onMessage
+          this.ws.onclose = this.onClose
+          this.ws.onerror = this.onError
+        },
         onOpen() {
-          console.log('open' + this.ws.readyState)
           //发起鉴权请求(直接给令牌，拿着令牌去连接服务器)
           this.ws.send(JSON.stringify({
-            event:'auth',
+            event: 'auth',
             //jwt token
             //自己生成的  const restoken = jwt.sign({ name: 'imooc' }, 'secret');
-            message:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaW1vb2MiLCJpYXQiOjE1OTQzMDc3MjJ9.c0NvMn16hgD5mrRVVt5lMMb81oyKOmRooL3Ejhmyc0w'
+            message: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaW1vb2MiLCJpYXQiOjE1OTQzMDc3MjJ9.c0NvMn16hgD5mrRVVt5lMMb81oyKOmRooL3Ejhmyc0w'
           }))
+          // 建立连接成功后进入聊天室
+          this.ws.send(JSON.stringify({
+            event: 'enter',
+            message: this.name,
+            roomid: this.roomid
+          }))
+          console.log('open' + this.ws.readyState)
+
         },
         onMessage(event) {
           //当用户未进入聊天室，则不接受消息
@@ -72,34 +83,54 @@
           //接收服务端发送过来的消息
           var obj = JSON.parse(event.data)
 
-          //鉴权失败的情况处理
-          if(obj.event === 'noauth'){
-            //鉴权失败
-            //路由跳转到 /login  重新获取token等，然后再重新this.ws.send 鉴权
-            return
+          switch (obj.event) {
+            //鉴权失败的情况处理
+            case 'noauth':
+              //鉴权失败
+              //路由跳转到 /login  重新获取token等，然后再重新this.ws.send 鉴权
+              break;
+            case 'enter':
+              //当有一个新用户进入聊天室
+              this.lists.push(`欢迎：${obj.message}加入聊天室`)
+              break;
+            case 'out':
+              this.lists.push(obj.name + '已经推出了聊天室！')
+              break;
+            case 'heartbeat':
+              //客户端检查服务器端，心跳，有请求回来就，清空定时器，没有就断开重新连接websocket服务器
+              //时间是 服务端返回心跳的一次时长timeInterval + t0(请求消耗的时间（500-1000ms）)
+              this.checkServer()
+              //心跳检测
+              this.ws.send(JSON.stringify({
+                event: 'heartbeat',
+                message: 'pong'
+              }))
+              break;
+            default:
+              // 不给自己推送消息，由客户端判断
+              if (obj.name !== this.name) {
+                //接受正常的聊天
+                this.lists.push(obj.name + ':' + obj.message)
+              }
+              break;
           }
-          if (obj.event === 'enter') {
-            //当有一个新用户进入聊天室
-            this.lists.push(`欢迎：${obj.message}加入聊天室`)
-          } else if (obj.event === 'out') {
-            this.lists.push(obj.name + '已经推出了聊天室！')
-          } else {
-            // 不给自己推送消息，由客户端判断
-            if (obj.name !== this.name) {
-              //接受正常的聊天
-              this.lists.push(obj.name + ':' + obj.message)
-            }
-          }
+
           //在线人数
           this.num = obj.num
         },
         onClose() {
           console.log('close' + this.ws.readyState)
           console.log('已关闭websocket')
+          //主动断开websocket连接
+          this.ws.close()
         },
         onError() {
           console.log('error' + this.ws.readyState)
           console.log('websocket连接失败')
+          //连接出错误,失败 的时候发起 重连
+          setTimeout(()=>{
+            this.init()
+          },1000)
         },
         //发送消息
         send() {
@@ -116,12 +147,21 @@
             alert('用户名不得为空')
             return
           }
+          //当用户进入聊天室，才初始化websocket连接
+          this.init()
           this.isShow = false
-          this.ws.send(JSON.stringify({
-            event: 'enter',
-            message: this.name,
-            roomid:this.roomid
-          }))
+        },
+        //心跳检测，重连 服务器
+        checkServer(){
+          //清空定时器
+          clearTimeout(this.handle)
+          this.handle = setTimeout(()=>{
+            //关闭，重新连接 websocket
+            this.onClose()
+            setTimeout(()=>{
+              this.init()
+            },1000)  //断开连接后，1s 再重新连接
+          },1000+500)  //收到服务端的请求时间（时间是 服务端返回心跳的一次时长timeInterval + t0(请求消耗的时间（500-1000ms）)）
         }
       }
     })

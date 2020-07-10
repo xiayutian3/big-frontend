@@ -1,16 +1,14 @@
 // ws作为服务端来使用
-
-// const http = require('http');//鉴权，使用（从http协议升级到ws协议，session（cookie）鉴权），在这里我们用的是jwt来验证，实现了自定义验证
-// const server = http.createServer();
+const http = require('http');//鉴权，使用（从http协议升级到ws协议，session（cookie）鉴权），在这里我们用的是jwt来验证，实现了自定义验证
 const WebSocket = require('ws')
-const wss = new WebSocket.Server({ port:3000 })
-
+const wss = new WebSocket.Server({ noServer: true })
+const server = http.createServer();
 //鉴权
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 
 //心跳检测时间
-let timeInterval = 30000
+let timeInterval = 1000
 
 // 另一种统计人数
 // let num = 0
@@ -40,32 +38,30 @@ wss.on('connection', function (ws) {
       }
     }
 
-    //开发消息缓存功能用不上鉴权，所以注释掉了
-
-    // //鉴权判断
-    // if (msgObj.event === 'auth') {
-    //   jwt.verify(msgObj.message, 'secret', (err, decode) => {
-    //     if (err) {
-    //       //websocket返回前台鉴权失败的消息
-    //       ws.send(JSON.stringify({
-    //         event: 'noauth',
-    //         message: 'please auth again'
-    //       }))
-    //       console.log('auth err')
-    //       return
-    //     } else {
-    //       //鉴权通过
-    //       // console.log(decode)
-    //       ws.isAuth = true
-    //       return
-    //     }
-    //   })
-    //   return
-    // }
-    // //拦截非鉴权的请求
-    // if (!ws.isAuth) {
-    //   return
-    // }
+    //鉴权判断
+    if (msgObj.event === 'auth') {
+      jwt.verify(msgObj.message, 'secret', (err, decode) => {
+        if (err) {
+          //websocket返回前台鉴权失败的消息
+          ws.send(JSON.stringify({
+            event: 'noauth',
+            message: 'please auth again'
+          }))
+          console.log('auth err')
+          return
+        } else {
+          //鉴权通过
+          // console.log(decode)
+          ws.isAuth = true
+          return
+        }
+      })
+      return
+    }
+    //拦截非鉴权的请求
+    if (!ws.isAuth) {
+      return
+    }
 
     //心跳检测(来自客户端的请求)
     if (msgObj.event === 'heartbeat' && msgObj.message === 'pong') {
@@ -139,24 +135,24 @@ wss.on('connection', function (ws) {
 // https://www.npmjs.com/package/ws  从这里可以跳到下面的连接，也可以直接打开下面的连接
 // 可以参考 https://github.com/websockets/ws/tree/d09daaf67c282e301eeebe21797215ddffd819c5/examples/express-session-parse
 
-// server.on('upgrade', function upgrade(request, socket, head) {
-//   console.log("upgrade -> request", request.headers)
-//   // This function is not defined on purpose. Implement it with your own logic.
-//   // authenticate(request, (err, client) => {
-//   //   if (err || !client) {
-//   //     socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
-//   //     socket.destroy();
-//   //     return;
-//   //   }
+server.on('upgrade', function upgrade(request, socket, head) {
+  console.log("upgrade -> request", request.headers)
+  // This function is not defined on purpose. Implement it with your own logic.
+  // authenticate(request, (err, client) => {
+  //   if (err || !client) {
+  //     socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+  //     socket.destroy();
+  //     return;
+  //   }
 
-//   wss.handleUpgrade(request, socket, head, function done(ws) {
-//     //鉴权后必须要通过升级后的 （http协议升级到ws协议）服务 发送回来websocket消息
-//     wss.emit('connection', ws, request);
-//   });
-//   // });
-// });
+  wss.handleUpgrade(request, socket, head, function done(ws) {
+    //鉴权后必须要通过升级后的 （http协议升级到ws协议）服务 发送回来websocket消息
+    wss.emit('connection', ws, request);
+  });
+  // });
+});
 
-// server.listen(3000);
+server.listen(3000);
 
 
 //心跳检测定时器
