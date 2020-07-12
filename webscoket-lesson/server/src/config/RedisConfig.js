@@ -1,12 +1,12 @@
-import redis from 'redis'
+const redis =require('redis') 
 // 使用bluebird转换所有关于get的方法为promise方法
-import { promisifyAll } from 'bluebird'
-import redisConfig from './index'
+const { promisifyAll } = require('bluebird') 
+const redisConfig = require('./index') 
 
 const options = {
   host: redisConfig.REDIS.host,
   port: redisConfig.REDIS.port,
-  password: redisConfig.REDIS.password, // 连接redis的密码
+  // password: redisConfig.REDIS.password, //连接redis的密码
   detect_buffers: true, // 设置为true，处理数据完后，返回bufer，为不是转化为string
   retry_strategy: function (options) { // 相当于timeout功能
     if (options.error && options.error.code === 'ECONNREFUSED') {
@@ -92,10 +92,24 @@ const delValue = (key) => {
   })
 }
 
-export {
+//检查key是否存在的方法 bluebird 代理redis的原生方法 exists 为existsAsync
+const existKey = async function(key){
+  const result = await client.existsAsync(key)
+  return result
+}
+
+//删除key  bluebird代理redis的原生方法
+const deleteKey = async function(key){
+  const result = await client.delAsync(key)
+  return result
+}
+
+module.exports =  {
   client,
   setValue,
   getValue,
   getHValue,
-  delValue
+  delValue,
+  existKey,
+  deleteKey
 }

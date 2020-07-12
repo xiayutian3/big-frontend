@@ -3,7 +3,16 @@
 // const http = require('http');//鉴权，使用（从http协议升级到ws协议，session（cookie）鉴权），在这里我们用的是jwt来验证，实现了自定义验证
 // const server = http.createServer();
 const WebSocket = require('ws')
-const wss = new WebSocket.Server({ port:3000 })
+const wss = new WebSocket.Server({ port: 3000 })
+//引入redis
+const { setValue, getValue, existKey } = require('./config/RedisConfig')
+// //测试redis的使用
+// const run = async ()=>{
+//   setValue('imooc','hello')
+//   const result = await getValue('imooc')
+//   console.log("run -> result", result)
+// }
+// run()
 
 //鉴权
 // const jwt = require('jsonwebtoken');
@@ -11,6 +20,9 @@ const wss = new WebSocket.Server({ port:3000 })
 
 //心跳检测时间
 let timeInterval = 30000
+
+//用于roomid的prefix
+let prefix = 'prefix-'
 
 // 另一种统计人数
 // let num = 0
@@ -26,12 +38,33 @@ wss.on('connection', function (ws) {
 
   console.log('one client is connected')
   //接受客户端的消息
-  ws.on('message', function (msg) {
+  ws.on('message', async function (msg) {
     let msgObj = JSON.parse(msg)
+    let roomid = prefix + (msgObj.roomid ? msgObj.roomid : ws.roomid)
     //获取进入聊天室的人的名字，绑定再ws上
     if (msgObj.event === 'enter') {
+      //做消息缓存
+      //当用户进入之后，需要判断用户的房间是或否存在
+      //如果用户的房间不存在，则再redis中创建房间号，用于保存房间内用户的信息
+      //主要是用于统计房间里的人数，用于后面进行消息发送
       ws.name = msgObj.message
       ws.roomid = msgObj.roomid
+      ws.uid = msgObj.uid
+      //判断redis中是否有对应的roomid的键值
+      const result = await existKey(roomid)
+      if (result === 0) {
+        //初始化一个房间数据(roomid 不存在)
+        setValue(roomid, ws.uid)
+      } else {
+        //已经存在该房间的缓存数据
+        const arrStr = await getValue(roomid)
+        let arr = arrStr.split(',')
+        if (arr.indexOf(ws.uid) === -1) {
+          //说明进来的用户，之前不存在这个房间
+          setValue(roomid, arrStr + ',' + ws.uid)
+        }
+      }
+
       //对应每个房间人数的计数
       if (typeof group[ws.roomid] === 'undefined') {
         group[ws.roomid] = 1
@@ -95,16 +128,79 @@ wss.on('connection', function (ws) {
 
 
     //广播消息
+    //离线消息缓存，获取房间里的所有的用户信息
+    const arrStr = await getValue(roomid)
+    let users = arrStr.split(',')
+
     //为了拿到进入聊天室的人数 ， 广播消息(去除 判断非自己的客户端条件) 因为传那么给客户端了，客户端可以自己判断
-    wss.clients.forEach(client => {
+    wss.clients.forEach(async client => {
       // （并且发送者是连接着的） ws 代表当前客户端 ,roomid相同的聊天室，才进行广播
       if (client.readyState === WebSocket.OPEN && client.roomid === ws.roomid) {
         //返回msgObj给上名字，材质到是哪个人说的这句话
         msgObj.name = ws.name
         msgObj.num = group[ws.roomid]
         client.send(JSON.stringify(msgObj))
+
+        //排除已经发送了消息的客户端 -> （在线的客户端，实时接受信息）
+        if (users.indexOf(client.uid) !== -1) {
+          users.splice(users.indexOf(client.uid), 1)
+        }
+        //消息缓存信息：取redis中的该用户uid数据
+        let result = await existKey(ws.uid)
+        if (result !== 0) {
+          //存在未发送的离线数据
+          let tmpArr = await getValue(ws.uid)
+          let tmpObj = JSON.parse(tmpArr)
+          let uid = ws.uid
+          if (tmpObj.length > 0) {
+            let i = []
+            //遍历该用户的离线缓存数据
+            //判断用户的房间id是否与当前一致
+            tmpObj.forEach(item => {
+              if (item.roomid === client.roomid && uid === client.uid) {
+                client.send(JSON.stringify(item))
+                i.push(item)
+              }
+            })
+            //删除已经发送的缓存消息数据
+            if (i.length > 0) {
+              i.forEach(item => {
+                tmpObj.splice(item, 1)
+              })
+            }
+            //再次保存没有发送出去的消息数据
+            setValue(ws.uid, JSON.stringify(tmpObj))
+          }
+        }
       }
     })
+
+    //断开了与服务端连接的用户的id ，并且其他的客户端发送了消息
+    if (users.length > 0 && msgObj.event === 'message') {
+      users.forEach(async function (item) {
+        //判断用户是否存在离线消息
+        const result = await existKey(item)
+        if (result !== 0) {
+          //说明已经存在其他房间该用户的离线消息数据
+          let userData = await getValue(item)
+          let msgs = JSON.parse(userData)
+          msgs.push({
+            roomid: ws.roomid,
+            ...msgObjs
+          })
+          setValue(item, JSON.stringify(msgs))
+        } else {
+          //说明先前这个用户一直在线，并且无离线消息数据，就直接发送新产生的数据
+          setValue(item, JSON.stringify([{
+            roomid: ws.roomid,
+            // msg: msgObj.message,
+            // name: msgObj.name
+            ...msgObj
+          }]))
+        }
+      })
+
+    }
   })
   //当ws客户端断开链接的时候
   ws.on('close', function () {
@@ -160,26 +256,26 @@ wss.on('connection', function (ws) {
 
 
 //心跳检测定时器
-setInterval(() => {
+// setInterval(() => {
 
-  wss.clients.forEach(ws => {
-    if (!ws.isAlive && ws.roomid) {
-      //客户端断开，离开 对应的房间的人数 减减
-      group[ws.roomid]--
-      //删除对应客户端的 roomid  不然客户端一直不回，服务器一直进入这段代码， ws.roomid 会变成负数
-      delete ws.roomid
-      // ws库自带的方法terminate，（服务器主动关闭）关闭websocket连接
-      return ws.terminate()
-    }
-    //主动发送心跳检测请求
-    //当客户端返回了消息之后，主动设置flag为在线
-    //isAlive连接正常的标识
-    ws.isAlive = false
-    ws.send(JSON.stringify({
-      event: 'heartbeat',
-      message: 'ping',
-      num:group[ws.roomid]
-    }))
-  })
+//   wss.clients.forEach(ws => {
+//     if (!ws.isAlive && ws.roomid) {
+//       //客户端断开，离开 对应的房间的人数 减减
+//       group[ws.roomid]--
+//       //删除对应客户端的 roomid  不然客户端一直不回，服务器一直进入这段代码， ws.roomid 会变成负数
+//       delete ws.roomid
+//       // ws库自带的方法terminate，（服务器主动关闭）关闭websocket连接
+//       return ws.terminate()
+//     }
+//     //主动发送心跳检测请求
+//     //当客户端返回了消息之后，主动设置flag为在线
+//     //isAlive连接正常的标识
+//     ws.isAlive = false
+//     ws.send(JSON.stringify({
+//       event: 'heartbeat',
+//       message: 'ping',
+//       num: group[ws.roomid]
+//     }))
+//   })
 
-}, timeInterval)
+// }, timeInterval)

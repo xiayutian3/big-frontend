@@ -13,6 +13,7 @@
   <div id="app">
     <div v-if="isShow">
       <p>昵称: <input type="text" v-model="name"></p>
+      <p>uid: <input type="text" v-model="uid"></p>
       <p>房间号: <input type="text" v-model="roomid"></p>
       <button type="button" @click="enter">进入聊天室</button>
     </div>
@@ -38,6 +39,7 @@
           lists: [],
           ws: {},
           name: '',
+          uid:'', //唯一标识 ，使用redis的时候用到
           isShow: true,
           num: 0, //聊天室的人数
           roomid: '', //聊天室id
@@ -58,17 +60,18 @@
         },
         onOpen() {
           //发起鉴权请求(直接给令牌，拿着令牌去连接服务器)
-          this.ws.send(JSON.stringify({
-            event: 'auth',
-            //jwt token
-            //自己生成的  const restoken = jwt.sign({ name: 'imooc' }, 'secret');
-            message: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaW1vb2MiLCJpYXQiOjE1OTQzMDc3MjJ9.c0NvMn16hgD5mrRVVt5lMMb81oyKOmRooL3Ejhmyc0w'
-          }))
+          // this.ws.send(JSON.stringify({
+          //   event: 'auth',
+          //   //jwt token
+          //   //自己生成的  const restoken = jwt.sign({ name: 'imooc' }, 'secret');
+          //   message: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaW1vb2MiLCJpYXQiOjE1OTQzMDc3MjJ9.c0NvMn16hgD5mrRVVt5lMMb81oyKOmRooL3Ejhmyc0w'
+          // }))
           // 建立连接成功后进入聊天室
           this.ws.send(JSON.stringify({
             event: 'enter',
             message: this.name,
-            roomid: this.roomid
+            roomid: this.roomid,
+            uid:this.uid //唯一标识 使用redis的时候用到
           }))
           console.log('open' + this.ws.readyState)
 
@@ -99,7 +102,7 @@
             case 'heartbeat':
               //客户端检查服务器端，心跳，有请求回来就，清空定时器，没有就断开重新连接websocket服务器
               //时间是 服务端返回心跳的一次时长timeInterval + t0(请求消耗的时间（500-1000ms）)
-              this.checkServer()
+              // this.checkServer()
               //心跳检测
               this.ws.send(JSON.stringify({
                 event: 'heartbeat',
@@ -161,7 +164,7 @@
             setTimeout(()=>{
               this.init()
             },1000)  //断开连接后，1s 再重新连接
-          },1000+500)  //收到服务端的请求时间（时间是 服务端返回心跳的一次时长timeInterval + t0(请求消耗的时间（500-1000ms）)）
+          },30000+500)  //收到服务端的请求时间（时间是 服务端返回心跳的一次时长timeInterval + t0(请求消耗的时间（500-1000ms）)）
         }
       }
     })
