@@ -186,7 +186,7 @@ wss.on('connection', function (ws) {
           let msgs = JSON.parse(userData)
           msgs.push({
             roomid: ws.roomid,
-            ...msgObjs
+            ...msgObj
           })
           setValue(item, JSON.stringify(msgs))
         } else {
@@ -255,27 +255,27 @@ wss.on('connection', function (ws) {
 // server.listen(3000);
 
 
-//心跳检测定时器
-// setInterval(() => {
+// 心跳检测定时器
+setInterval(() => {
 
-//   wss.clients.forEach(ws => {
-//     if (!ws.isAlive && ws.roomid) {
-//       //客户端断开，离开 对应的房间的人数 减减
-//       group[ws.roomid]--
-//       //删除对应客户端的 roomid  不然客户端一直不回，服务器一直进入这段代码， ws.roomid 会变成负数
-//       delete ws.roomid
-//       // ws库自带的方法terminate，（服务器主动关闭）关闭websocket连接
-//       return ws.terminate()
-//     }
-//     //主动发送心跳检测请求
-//     //当客户端返回了消息之后，主动设置flag为在线
-//     //isAlive连接正常的标识
-//     ws.isAlive = false
-//     ws.send(JSON.stringify({
-//       event: 'heartbeat',
-//       message: 'ping',
-//       num: group[ws.roomid]
-//     }))
-//   })
+  wss.clients.forEach(ws => {
+    if (!ws.isAlive && ws.roomid) {
+      //客户端断开，离开 对应的房间的人数 减减
+      group[ws.roomid]--
+      //删除对应客户端的 roomid  不然客户端一直不回，服务器一直进入这段代码， ws.roomid 会变成负数
+      delete ws.roomid
+      // ws库自带的方法terminate，（服务器主动关闭）关闭websocket连接
+      return ws.terminate()
+    }
+    //主动发送心跳检测请求
+    //当客户端返回了消息之后，主动设置flag为在线
+    //isAlive连接正常的标识
+    ws.isAlive = false
+    ws.send(JSON.stringify({
+      event: 'heartbeat',
+      message: 'ping',
+      num: group[ws.roomid]
+    }))
+  })
 
-// }, timeInterval)
+}, timeInterval)

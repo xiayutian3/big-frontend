@@ -102,7 +102,7 @@
             case 'heartbeat':
               //客户端检查服务器端，心跳，有请求回来就，清空定时器，没有就断开重新连接websocket服务器
               //时间是 服务端返回心跳的一次时长timeInterval + t0(请求消耗的时间（500-1000ms）)
-              // this.checkServer()
+              this.checkServer()
               //心跳检测
               this.ws.send(JSON.stringify({
                 event: 'heartbeat',
