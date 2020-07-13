@@ -33,23 +33,71 @@
             </p>
           </li>
         </ul>
+          <Pagination
+            v-show="total>0"
+            ref="dyPagination"
+            :showType="'icon'"
+            :hasSelect="true"
+            :hasTotal="true"
+            :showEnd="true"
+            :total="total"
+            :size="size"
+            :current="page"
+            :align="'left'"
+            @changeCurrent="handleChange"
+            @changeLimit="handLimit"
+          />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getMsg } from '@/api/user'
+import Pagination from '@/components/modules/pagination/Index'
 export default {
   name: 'user-msg',
   props: {},
   data () {
-    return {}
+    return {
+      lists: [],
+      page: 0, // 当前页码
+      limit: 10, // 默认每页多少条
+      total: 100 // 总条数
+    }
   },
   created () {},
-  mounted () {},
+  mounted () {
+    this.getMsgAll()
+  },
   computed: {},
-  methods: {},
-  components: {},
+  methods: {
+    getMsgAll () {
+      getMsg({
+        page: this.page,
+        limit: this.limit
+      }).then(res => {
+        if (res.code === 200) {
+          this.lists = res.data
+        }
+      })
+    },
+    handLimit (limit) {
+      // 修改limit的值
+      // 每页显示的条数
+      this.limit = limit
+      // 获取文章评论列表随limit变化(会重复触发)
+      // this.getCommentsList()
+    },
+    handleChange (currentPage) {
+      this.page = currentPage
+      // 获取文章评论列表随页码变化
+      this.$nextTick(() => {
+        this.getMsgAll()
+      })
+    }
+  },
+  components: { Pagination },
   watch: {}
 }
 </script>

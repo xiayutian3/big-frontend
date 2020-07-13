@@ -85,6 +85,17 @@
               </dd>
             </dl>
           </li>
+          <div class="fly-nav-msg">
+            1
+            <transition name="fade">
+              <div class="layui-layer-tips" v-show="hasMsg">
+                <div class="layui-layer-content">
+                  您有一条未读消息
+                  <i class="layui-layer-TipsG layui-layer-TipsB"></i>
+                </div>
+              </div>
+            </transition>
+          </div>
         </template>
       </ul>
     </div>
@@ -97,8 +108,12 @@ export default {
   data () {
     return {
       isHover: false,
-      hoverCtrl: {}
+      hoverCtrl: {},
+      hasMsg: false
     }
+  },
+  created () {
+    // window.vue = this
   },
   computed: {
     isShow () {
@@ -110,15 +125,19 @@ export default {
   },
   methods: {
     logout () {
-      this.$confirm('确定退出吗？', () => {
-        // 清楚本地，vuex上的用户数据
-        localStorage.clear()
-        this.$store.commit('setToken', '')
-        this.$store.commit('setUserInfo', '')
-        this.$store.commit('setIsLogin', false)
-        // 后边的回调是错误处理
-        this.$router.push('/', () => {})
-      }, () => {})
+      this.$confirm(
+        '确定退出吗？',
+        () => {
+          // 清楚本地，vuex上的用户数据
+          localStorage.clear()
+          this.$store.commit('setToken', '')
+          this.$store.commit('setUserInfo', '')
+          this.$store.commit('setIsLogin', false)
+          // 后边的回调是错误处理
+          this.$router.push('/', () => {})
+        },
+        () => {}
+      )
     },
     show () {
       // 鼠标移入头像显示用户的操作菜单
@@ -143,5 +162,12 @@ export default {
   left: -15px;
   top: -10px;
   margin-left: 15px;
+}
+.layui-layer-tips {
+  position: absolute;
+  white-space: nowrap;
+  right: -93px;
+  top: 42px;
+  z-index: 2000;
 }
 </style>

@@ -41,6 +41,9 @@ const getInfo = (params) => axios.get('/public/info', { params })
 // 获取用户最近评论列表
 const getCommentList = (params) => axios.get('/public/latest-comment', { params })
 
+// 获取用户未读消息
+const getMsg = (params) => axios.get('/user/getmsg', { params })
+
 export {
   userSign,
   updateUserInfo,
@@ -52,5 +55,6 @@ export {
   getPostListByUid,
   deletePostByUid,
   getInfo,
-  getCommentList
+  getCommentList,
+  getMsg
 }
