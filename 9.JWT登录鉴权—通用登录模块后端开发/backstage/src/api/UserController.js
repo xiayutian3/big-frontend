@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken'
 // 加密密码的库(捉着可以用bcryptjs，api一样，node版的bcrypt)
 import bcrypt from 'bcrypt'
 import UserCollect from '@/model/UserCollect'
+import Comments from '@/model/Comments'
 class UserController {
   // 用户签到接口
   async userSign (ctx) {
@@ -314,6 +315,26 @@ class UserController {
       code: 200,
       data: user,
       msg: '查询成功'
+    }
+  }
+
+  // 获取历史消息
+  // 记录评论之后，给作者发送消息
+  async getMsg (ctx) {
+    const params = ctx.query
+    const page = params.page ? params.page : 0
+    // mongoose 传递的limit 是int类型，parseInt()转换
+    const limit = params.limit ? parseInt(params.limit) : 0
+    // 方法一：嵌套查询（聚合查询）-》 通过 aggregate
+    // 取用户的id
+    const obj = await getJWTPayload(ctx.header.authorization)
+    const result = await Comments.getMsgList(obj._id, page, limit)
+
+    // 方法二：通过冗余换时间
+
+    ctx.body = {
+      code: 200,
+      data: result
     }
   }
 }

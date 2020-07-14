@@ -95,6 +95,9 @@ class CommentsController {
     // 获取用户id,从请求头中获取
     const obj = await getJWTPayload(ctx.header.authorization)
     newComment.cuid = obj._id
+    // 查询帖子的作者，以便发送消息
+    const post = await Post.findOne({ _id: body.tid })
+    newComment.uid = post.uid
     // 存在数据库中
     const comment = await newComment.save()
     // 评论计数（文章有多少条回复） $inc 累加 1

@@ -63,9 +63,9 @@ CommentsSchema.statics = {
   getMsgList: function (id, page, limit) {
     return this.find({
       uid: id,
-      cuid: { $ne: id },
-      isRead: { $eq: '0' }, // 未读状态
-      status: { $eq: '1' } // 是否显示
+      cuid: { $ne: id }, // cuid 不等于 uid ，$ne 不等于 （排除评论是作者本人）
+      isRead: { $eq: '0' }, // 未读状态， $eq 是等于
+      status: { $eq: '1' } // 是否显示， $eq 是等于
     })
       .populate({
         path: 'tid',
