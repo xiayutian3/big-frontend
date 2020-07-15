@@ -26,10 +26,16 @@ import errorHandle from './common/ErrorHandle.js'
 const helmet = require('koa-helmet')
 // 设置静态资源目录
 const statics = require('koa-static')
+//引入websocket服务
+import WebSocketServer from './config/WebSocket'
 
 const isDevMode = process.env.NODE_ENV !== 'production'
 
 const app = new Koa()
+//使用websocket服务
+const ws = new WebSocketServer()
+ws.init()
+
 // app.use(helmet())
 // app.use(router())
 // app.use(statics(path.join(__dirname,'../public')))

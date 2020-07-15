@@ -234,6 +234,10 @@ router.beforeEach((to, from, next) => {
       store.commit('setToken', token)
       store.commit('setUserInfo', userInfo)
       store.commit('setIsLogin', true)
+      // 如果websocket不存在，就初始化websocket
+      if (!store.state.ws) {
+        store.commit('initWebSocket', {})
+      }
     } else {
       // token过期，清空用户数据
       localStorage.clear()

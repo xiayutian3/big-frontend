@@ -41,7 +41,7 @@
             :hasTotal="true"
             :showEnd="true"
             :total="total"
-            :size="size"
+            :size="limit"
             :current="page"
             :align="'left'"
             @changeCurrent="handleChange"

@@ -264,7 +264,7 @@ CommentsSchema.statics = {
   //     from: 'posts',
   //     let: { pid: { $toObjectId: '$tid' } },
   //     pipeline: [
-  //       { $match: { $expr: { $eq: ['$_id', '$$pid'] } } },
+  //       { $match: { $expr: { $eq: ['$_id', '$$pid'] } } },  // 使用$expr运算符联合多个运算，选出_idt值等于pid值的数据
   //       { $project: { _id: 1, uid: 1, content: 1 } }
   //     ],
   //     as: 'post'

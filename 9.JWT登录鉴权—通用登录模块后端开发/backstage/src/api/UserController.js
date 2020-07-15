@@ -326,12 +326,10 @@ class UserController {
     // mongoose 传递的limit 是int类型，parseInt()转换
     const limit = params.limit ? parseInt(params.limit) : 0
     // 方法一：嵌套查询（聚合查询）-》 通过 aggregate
+    // 方法二：通过冗余换时间(现在用的是方法二)
     // 取用户的id
     const obj = await getJWTPayload(ctx.header.authorization)
     const result = await Comments.getMsgList(obj._id, page, limit)
-
-    // 方法二：通过冗余换时间
-
     ctx.body = {
       code: 200,
       data: result
