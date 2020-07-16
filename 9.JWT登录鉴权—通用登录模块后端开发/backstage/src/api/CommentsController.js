@@ -100,6 +100,15 @@ class CommentsController {
     newComment.uid = post.uid
     // 存在数据库中
     const comment = await newComment.save()
+
+    // websoket推送服务(给指定的用户，作者本人)
+    // 未阅读的条数
+    const num = await Comments.getTotal(post.uid)
+    global.ws.send(post.uid, JSON.stringify({
+      event: 'message',
+      message: num
+    }))
+
     // 评论计数（文章有多少条回复） $inc 累加 1
     const updatePostResult = await Post.updateOne({ _id: body.tid }, { $inc: { answer: 1 } })
     if (comment._id && updatePostResult.ok === 1) {

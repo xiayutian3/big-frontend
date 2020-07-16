@@ -29,10 +29,12 @@ class WebSocketClient {
 
   // 发送消息
   send (msg) {
+    // this 指向 WebSocketClient 类
     this.ws.send(msg)
   }
 
   onOpen () {
+    // this 指向websocket实例
     // 发起鉴权请求(直接给令牌，拿着令牌去连接服务器)
     this.send(JSON.stringify({
       event: 'auth',

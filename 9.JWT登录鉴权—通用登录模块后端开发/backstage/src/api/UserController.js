@@ -329,10 +329,40 @@ class UserController {
     // 方法二：通过冗余换时间(现在用的是方法二)
     // 取用户的id
     const obj = await getJWTPayload(ctx.header.authorization)
+    // 获取total 总数
+    const num = await Comments.getTotal(obj._id)
     const result = await Comments.getMsgList(obj._id, page, limit)
     ctx.body = {
       code: 200,
-      data: result
+      data: result,
+      total: num
+    }
+  }
+
+  // 设置未读消息为已读
+  async setMsg (ctx) {
+    const params = ctx.query
+    if (params.id) {
+      // 更新某一条未读评论为已读
+      const result = await Comments.updateOne({ _id: params.id }, { isRead: '1' })
+      if (result.ok === 1) {
+        ctx.body = {
+          code: 200,
+          msg: '更新成功'
+        }
+      }
+    } else {
+      // 取用户的id
+      const obj = await getJWTPayload(ctx.header.authorization)
+      // 更新该用户的全部未读评论为已读
+      const result = await Comments.updateMany({ uid: obj._id }, { isRead: '1' })
+
+      if (result.ok === 1) {
+        ctx.body = {
+          code: 200,
+          msg: '更新成功'
+        }
+      }
     }
   }
 }

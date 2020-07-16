@@ -11,7 +11,9 @@ export default new Vuex.Store({
     isLogin: false,
     token: '',
     userInfo: JSON.parse(localStorage.getItem('userInfo')) || {}, // 设置用户的基本信息
-    ws: null
+    ws: null, // websoxket客户端
+    num: 0 // 未读消息条数
+
   },
   mutations: {
     initWebSocket (state, config) {
@@ -38,10 +40,12 @@ export default new Vuex.Store({
       state.isLogin = value
     },
     setMessage (state, value) {
-      console.log(value)
+      // 设置未读的评论条数（头部那里显示）
+      state.num = value
     }
   },
   actions: {
+    // 设置未读的评论条数（头部那里显示）
     message ({ commit }, msg) {
       commit('setMessage', msg)
     }

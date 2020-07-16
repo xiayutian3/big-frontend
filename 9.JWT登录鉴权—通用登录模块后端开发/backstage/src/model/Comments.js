@@ -84,6 +84,8 @@ CommentsSchema.statics = {
       .sort({ created: -1 })
   },
   getTotal: function (id) {
+    // 查询作者，没有阅读的评论条数
+    // isRead: '0'未阅读的，status: '1'可以显示的  .countDocuments() 计数  mongoose自带方法
     return this.find({ uid: id, isRead: '0', status: '1' }).countDocuments()
   },
   getCommentsOptions: function (options, page, limit) {

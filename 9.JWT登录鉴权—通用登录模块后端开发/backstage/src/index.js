@@ -22,19 +22,21 @@ import compress from 'koa-compress'
 import config from './config/index'
 // koa-jwt鉴权 错误处理中间件
 import errorHandle from './common/ErrorHandle.js'
+// 引入websocket服务
+import WebSocketServer from './config/WebSocket'
 // koa通信安全头
 const helmet = require('koa-helmet')
 // 设置静态资源目录
 const statics = require('koa-static')
-//引入websocket服务
-import WebSocketServer from './config/WebSocket'
 
 const isDevMode = process.env.NODE_ENV !== 'production'
 
 const app = new Koa()
-//使用websocket服务
+// 使用websocket服务
 const ws = new WebSocketServer()
 ws.init()
+// 绑定websocket服务到全局对象上
+global.ws = ws
 
 // app.use(helmet())
 // app.use(router())

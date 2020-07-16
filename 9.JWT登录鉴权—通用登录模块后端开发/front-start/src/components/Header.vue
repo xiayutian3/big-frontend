@@ -85,12 +85,12 @@
               </dd>
             </dl>
           </li>
-          <div class="fly-nav-msg">
-            1
+          <div class="fly-nav-msg" v-show="num.message&&num.message !== 0">
+            {{num.message}}
             <transition name="fade">
               <div class="layui-layer-tips" v-show="hasMsg">
                 <div class="layui-layer-content">
-                  您有一条未读消息
+                  您有{{num.message}}条未读消息
                   <i class="layui-layer-TipsG layui-layer-TipsB"></i>
                 </div>
               </div>
@@ -103,6 +103,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'Header',
   data () {
@@ -115,7 +116,23 @@ export default {
   created () {
     // window.vue = this
   },
+  watch: {
+    num (newval, oldval) {
+      // console.log('num -> oldval', oldval)
+      // console.log('num -> newval', newval)
+      // console.log(newval === oldval)
+      if (newval.event && newval !== oldval) {
+        this.hasMsg = true
+        setTimeout(() => {
+          this.hasMsg = false
+        }, 5000)
+      }
+    }
+  },
   computed: {
+    ...mapState({
+      num: state => state.num
+    }),
     isShow () {
       return this.$store.state.isLogin
     },
@@ -154,6 +171,7 @@ export default {
       }, 200)
     }
   }
+
 }
 </script>
 

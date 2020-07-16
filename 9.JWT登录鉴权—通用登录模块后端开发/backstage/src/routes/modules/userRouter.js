@@ -28,4 +28,7 @@ router.get('/delete-post', contentController.deletePostByUid)
 // 获取历史消息
 router.get('/getmsg', userController.getMsg)
 
+// 设置用户未读消息为已读
+router.get('/setmsg', userController.setMsg)
+
 export default router
