@@ -118,10 +118,10 @@ export default {
   },
   watch: {
     num (newval, oldval) {
-      // console.log('num -> oldval', oldval)
-      // console.log('num -> newval', newval)
+      console.log('num -> oldval', oldval)
+      console.log('num -> newval', newval)
       // console.log(newval === oldval)
-      if (newval.event && newval !== oldval) {
+      if (newval.event && newval.message !== oldval.message) {
         this.hasMsg = true
         setTimeout(() => {
           this.hasMsg = false

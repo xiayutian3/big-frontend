@@ -8,7 +8,7 @@ class WebSocketServer {
     // 默认的配置
     const defaultConfig = {
       port: 3001, // 端口号
-      timeInterval: 30 * 1000, // 心跳检测的时间
+      timeInterval: 5 * 1000, // 心跳检测的时间
       isAuth: true // 是否需要认证
     }
     // 最终配置
@@ -27,12 +27,13 @@ class WebSocketServer {
     this.wss = new WebSocket.Server({ port: this.port, ...this.options })
 
     // 心跳检测
-    // this.heartbeat()
+    this.heartbeat()
 
     // 连接信息
     this.wss.on('connection', (ws) => {
       // 连接成功
       ws.isAlive = true
+
       // 接受到消息
       ws.on('message', (msg) => this.onMessage(ws, msg))
       // 断开连接的时候
@@ -130,9 +131,7 @@ class WebSocketServer {
     // 心跳检测定时器
     this.interval = setInterval(() => {
       this.wss.clients.forEach(ws => {
-        if (!ws.isAlive && ws.roomid) {
-          // 删除对应客户端的 roomid  不然客户端一直不回，服务器一直进入这段代码， ws.roomid 会变成负数
-          delete ws.roomid
+        if (!ws.isAlive) {
           // ws库自带的方法terminate，（服务器主动关闭）关闭websocket连接
           return ws.terminate()
         }
