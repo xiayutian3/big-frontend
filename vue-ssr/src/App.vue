@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    123
-    <Hello></Hello>
+    <router-view></router-view>
+    <!-- <Hello></Hello> -->
   </div>
 </template>
 
 <script>
-import Hello from "./components/Hello.vue";
+// import Hello from "./components/Hello.vue";
 export default {
   name: "app",
   props: {},
@@ -18,7 +18,7 @@ export default {
   computed: {},
   methods: {},
   components: {
-    Hello
+    // Hello
   },
   watch: {}
 };

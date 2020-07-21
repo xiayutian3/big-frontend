@@ -1,14 +1,12 @@
 <template>
   <div >
-    hello world!{{item}}
-  <div></div>
-  <router-link to="/hello1"> hello1 link</router-link>
+    hello world1{{item}}
   </div>
 </template>
 
 <script>
 export default {
-  name: 'hello',
+  name: 'hello1',
   props: {},
   //组件形成之前，是拿不到实例的，不能用this (数据预取)
   asyncData({store}){
