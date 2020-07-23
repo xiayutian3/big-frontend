@@ -53,15 +53,42 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
   ],
+  server: {
+    port: 8080, // default: 3000
+    host: '0.0.0.0', // default: localhost,
+  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    baseURL: 'http://localhost:3000',
+  },
   /*
    ** Build configuration
    ** See https://nuxtjs.org/api/configuration-build/
    */
   build: {},
+  auth: {
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '/login/login',
+            method: 'post',
+            propertyName: 'token', // 跟返回的接口中的字段相对应
+          },
+          logout: { url: '/api/auth/logout', method: 'post' },
+          // user接口会自动请求(这里用的是token的验证的方式)
+          user: { url: '/public/info', method: 'get', propertyName: 'data' }, // 跟返回的接口中的字段相对应
+        },
+        // tokenRequired: true,
+        // tokenType: 'bearer',
+        // globalToken: true,
+        // autoFetchUser: true
+      },
+    },
+  },
 }

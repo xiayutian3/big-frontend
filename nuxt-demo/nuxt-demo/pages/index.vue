@@ -25,7 +25,12 @@
         </a>
       </div>
       <!-- userAgent: {{ userAgent }} -->
-      <div>{{ posts }}</div>
+      <!-- <div>{{ posts }}</div> -->
+      <div>邮箱：<input v-model="username" type="text" /></div>
+      <div>密码：<input v-model="password" type="text" /></div>
+      <div>图片验证：<input v-model="code" type="text" /></div>
+      <div>sid：<input v-model="sid" type="text" /></div>
+      <button type="button" @click="login">登录</button>
     </div>
   </div>
 </template>
@@ -64,19 +69,44 @@ export default {
   // },
 
   // 数据预取
-  async asyncData({ $axios }) {
-    // 第一种方法  $axios.get
-    // const result = await $axios.get('http://localhost:8080/posts')
-    // console.log('Data -> result', result)
-    // return {
-    //   posts: result.data,
-    // }
+  // async asyncData({ $axios }) {
+  //   // 第一种方法  $axios.get
+  //   // const result = await $axios.get('http://localhost:8080/posts')
+  //   // console.log('Data -> result', result)
+  //   // return {
+  //   //   posts: result.data,
+  //   // }
 
-    // 第二种方法  $axios.$get
-    const result = await $axios.$get('http://localhost:8080/posts')
+  //   // 第二种方法  $axios.$get
+  //   const result = await $axios.$get('http://localhost:8080/posts')
+  //   return {
+  //     posts: result,
+  //   }
+  // },
+  data() {
     return {
-      posts: result,
+      username: '',
+      password: '',
+      code: '',
+      sid: '',
     }
+  },
+  mounted() {
+    // 调试用的,看看window.vue.$auth上的东西
+    window.vue = this
+  },
+  methods: {
+    login() {
+      // nuxt 集成的auth（发请求用的是集成的nuxt axios） 自带的方法loginWith，nuxt.config.js有相关配置
+      this.$auth.loginWith('local', {
+        data: {
+          username: this.username,
+          password: this.password,
+          code: this.code,
+          sid: this.sid,
+        },
+      })
+    },
   },
 }
 </script>
