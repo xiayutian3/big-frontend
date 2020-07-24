@@ -1,0 +1,36 @@
+.m-6 {
+  margin: 60px !important;
+}
+
+.m-7 {
+  margin: 70px !important;
+}
+
+.mx-6 {
+  margin-left: 60px !important;
+  margin-right: 60px !important;
+}
+
+.mx-7 {
+  margin-left: 70px !important;
+  margin-right: 70px !important;
+}
+
+.p-6 {
+  padding: 60px !important;
+}
+
+.p-7 {
+  padding: 70px !important;
+}
+
+.px-6 {
+  padding-left: 60px !important;
+  padding-right: 60px !important;
+}
+
+.px-7 {
+  padding-left: 70px !important;
+  padding-right: 70px !important;
+}
+/*# sourceMappingURL=test.css.map */
