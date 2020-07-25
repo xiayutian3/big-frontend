@@ -34,7 +34,7 @@ export default {
    ** Plugins to load before mounting the App
    ** https://nuxtjs.org/guide/plugins
    */
-  plugins: [],
+  plugins: ['~plugins/filter'],
   /*
    ** Auto import components
    ** See https://nuxtjs.org/api/configuration-components
@@ -81,7 +81,7 @@ export default {
             propertyName: 'token', // 跟返回的接口中的字段相对应
           },
           logout: { url: '/api/auth/logout', method: 'post' },
-          // user接口会自动请求(这里用的是token的验证的方式)
+          // user接口会自动请求(这里用的是token的验证的方式),当登录调用前面 login的方法时候
           user: { url: '/public/info', method: 'get', propertyName: 'data' }, // 跟返回的接口中的字段相对应
         },
         // tokenRequired: true,

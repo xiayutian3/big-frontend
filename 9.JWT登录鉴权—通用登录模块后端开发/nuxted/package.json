@@ -24,7 +24,8 @@
     "@nuxtjs/axios": "^5.12.0",
     "dayjs": "^1.8.30",
     "moment": "^2.27.0",
-    "nuxt": "^2.13.0"
+    "nuxt": "^2.13.0",
+    "qs": "^6.9.4"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^3.0.0",

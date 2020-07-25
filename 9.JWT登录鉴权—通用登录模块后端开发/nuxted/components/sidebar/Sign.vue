@@ -84,7 +84,7 @@ export default {
       return result
     },
     count () {
-      if (this.$store.state.userInfo !== {}) {
+      if (this.$store.state.userInfo && this.$store.state.userInfo !== {}) {
         if (typeof this.$store.state.userInfo.count !== 'undefined') {
           return this.$store.state.userInfo.count
         } else {
@@ -108,6 +108,10 @@ export default {
     // 刷新，倒计时同步的问题
     if (localStorage.getItem('timeLeft')) {
       this.countDown()
+    }
+    // 如果不存在 userInfo 直接返回
+    if(!this.$store.state.userInfo){
+      return
     }
 
     // 解决刷新的时候isSign的问题，因为是取localstore，过了24小时再刷新，localstorage还是不变，除非token过期重新请求

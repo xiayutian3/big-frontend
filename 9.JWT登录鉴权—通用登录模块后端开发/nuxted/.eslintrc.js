@@ -18,5 +18,6 @@ module.exports = {
   // add your custom rules here
   rules: {
     'prettier/prettier': 'off',
+    'vue/no-template-shadow':'off'
   },
 }
