@@ -1,0 +1,17 @@
+[
+  {
+    "path": "/",
+    "component": "F:\\\\study\\\\big-frontend\\\\9.JWT登录鉴权—通用登录模块后端开发\\\\nuxted\\\\pages\\\\index.vue",
+    "chunkName": "pages/index",
+    "children": [
+      {
+        "name": "index",
+        "path": "",
+        "component": "F:\\\\study\\\\big-frontend\\\\9.JWT登录鉴权—通用登录模块后端开发\\\\nuxted\\\\pages\\\\index\\\\index.vue",
+        "chunkName": "pages/index/index",
+        "_name": "_d5a9629a"
+      }
+    ],
+    "_name": "_56acaaef"
+  }
+]
