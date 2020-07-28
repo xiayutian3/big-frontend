@@ -14,12 +14,21 @@
         </span>
       </Input>
     </FormItem>
+        <FormItem prop="code">
+      <Input class="imooc-input" type="text" v-model="form.code" placeholder="请输入验证码">
+        <span slot="prepend">
+          <Icon :size="14" type="md-image"></Icon>
+        </span>
+         <span class="imooc-code" slot="append" v-html="svg" @click="_getCode"></span>
+      </Input>
+    </FormItem>
     <FormItem>
       <Button @click="handleSubmit" type="primary" long>登录</Button>
     </FormItem>
   </Form>
 </template>
 <script>
+import axios from 'axios'
 export default {
   name: 'LoginForm',
   props: {
@@ -42,9 +51,11 @@ export default {
   },
   data () {
     return {
+      svg: '',
       form: {
-        userName: 'super_admin',
-        password: ''
+        userName: '',
+        password: '',
+        code: ''
       }
     }
   },
@@ -56,6 +67,10 @@ export default {
       }
     }
   },
+  mounted () {
+    // 获取验证码
+    this._getCode()
+  },
   methods: {
     handleSubmit () {
       this.$refs.loginForm.validate((valid) => {
@@ -66,7 +81,43 @@ export default {
           })
         }
       })
+    },
+    // 获取图片验证码
+    _getCode () {
+      const sid = 'toimc'
+      axios.get('http://localhost:3000/public/getCaptcha', {
+        params: {
+          sid
+        }
+      }).then(res => {
+        const obj = res.data
+        if (res.status === 200) {
+          this.svg = obj.data
+        }
+      })
     }
   }
 }
 </script>
+<style lang="less">
+.imooc-input{
+  .ivu-input-group-append{
+    padding: 0;
+  }
+  .ivu-input-group-prepend{
+    width: 32px;
+  }
+}
+
+.imooc-code{
+  display: inline-block;
+  padding: 0;
+  height: 28px;
+  overflow: hidden;
+  svg{
+    width: 120px;
+    position: relative;
+    top: -12px;
+  }
+}
+</style>

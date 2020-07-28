@@ -20,13 +20,13 @@
     "dayjs": "^1.8.30",
     "echarts": "^4.8.0",
     "html2canvas": "^1.0.0-rc.5",
-    "iview": "^3.5.4",
     "iview-area": "^1.6.0",
     "js-cookie": "^2.2.1",
     "simplemde": "^1.11.2",
     "sortablejs": "^1.10.2",
     "tree-table-vue": "^1.1.0",
     "v-org-tree": "^1.0.12",
+    "view-design": "^4.3.2",
     "vue": "^2.6.11",
     "vue-i18n": "^8.19.0",
     "vue-router": "^3.3.4",
@@ -52,8 +52,8 @@
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.2.2",
     "husky": "^4.2.5",
-    "less": "^2.7.3",
-    "less-loader": "^4.0.5",
+    "less": "^3.12.2",
+    "less-loader": "^6.2.0",
     "lint-staged": "^10.2.11",
     "mockjs": "^1.1.0",
     "prettier-eslint": "^11.0.0",
@@ -67,9 +67,9 @@
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
-  "husky":{
-    "hooks":{
-      "pre-commit":"lint-staged"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
