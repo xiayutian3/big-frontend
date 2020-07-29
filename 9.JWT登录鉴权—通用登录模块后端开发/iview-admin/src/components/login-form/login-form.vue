@@ -1,7 +1,7 @@
 <template>
   <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
-    <FormItem prop="userName">
-      <Input v-model="form.userName" placeholder="请输入用户名">
+    <FormItem prop="username">
+      <Input v-model="form.username" placeholder="请输入用户名">
         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
@@ -28,7 +28,11 @@
   </Form>
 </template>
 <script>
-import axios from 'axios'
+// import axios from '@/libs/request'
+import { getCode } from '@/api/login'
+// uuid 生成唯一的id
+// import uuidv4 from 'uuid/v4'  //也可以写成这样
+import { v4 as uuidv4 } from 'uuid'
 export default {
   name: 'LoginForm',
   props: {
@@ -53,46 +57,51 @@ export default {
     return {
       svg: '',
       form: {
-        userName: '',
+        username: '',
         password: '',
-        code: ''
+        code: '',
+        sid: ''
       }
     }
   },
   computed: {
     rules () {
       return {
-        userName: this.userNameRules,
+        username: this.userNameRules,
         password: this.passwordRules
       }
     }
   },
   mounted () {
+    let sid = ''
+    if (localStorage.getItem('sid')) {
+      sid = localStorage.getItem('sid')
+    } else {
+      sid = uuidv4()
+      // console.log('sid:', sid)
+      localStorage.setItem('sid', sid)
+      // 更新vuex的sid
+      this.$store.commit('setSid', sid)
+    }
+    this.form.sid = sid
     // 获取验证码
-    this._getCode()
+    this._getCode(sid)
   },
   methods: {
     handleSubmit () {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.$emit('on-success-valid', {
-            userName: this.form.userName,
-            password: this.form.password
+            ...this.form
           })
         }
       })
     },
     // 获取图片验证码
-    _getCode () {
-      const sid = 'toimc'
-      axios.get('http://localhost:3000/public/getCaptcha', {
-        params: {
-          sid
-        }
-      }).then(res => {
-        const obj = res.data
-        if (res.status === 200) {
-          this.svg = obj.data
+    _getCode (sid) {
+      getCode(sid).then(res => {
+        if (res.code === 200) {
+          this.svg = res.data
         }
       })
     }

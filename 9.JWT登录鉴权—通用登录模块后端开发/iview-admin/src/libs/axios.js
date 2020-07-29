@@ -1,78 +1,120 @@
 import axios from 'axios'
 import store from '@/store'
+// 定义请求头不需要添加token的路径
+import publicConfig from '@/config'
 // import { Spin } from 'view-design'
-const addErrorLog = errorInfo => {
-  const { statusText, status, request: { responseURL } } = errorInfo
-  const info = {
-    type: 'ajax',
-    code: status,
-    mes: statusText,
-    url: responseURL
-  }
-  if (!responseURL.includes('save_error_logger')) store.dispatch('addErrorLog', info)
-}
-
+// 错误处理函数
+import errorHandle from './errorHandle'
+// 取消请求函数
+const CancelToken = axios.CancelToken
 class HttpRequest {
-  constructor (baseUrl = baseURL) {
+  constructor (baseUrl) {
     this.baseUrl = baseUrl
-    this.queue = {}
+    // 全局的变量，用于取消请求
+    this.pending = {}
   }
 
+  // 获取axios实例的配置
   getInsideConfig () {
     const config = {
       baseURL: this.baseUrl,
       headers: {
-        //
-      }
+        'Content-Type': 'application/json;charset=utf-8'
+      },
+      timeout: 1000 * 10
     }
     return config
   }
 
-  destroy (url) {
-    delete this.queue[url]
-    if (!Object.keys(this.queue).length) {
-      // Spin.hide()
+  // 取消请求函数
+  removePending (key, isRequest = false) {
+    if (this.pending[key] && isRequest) {
+      this.pending[key]('取消重复请求')
     }
+    delete this.pending[key] // 防止内存泄漏,还有删除对象上没有的属性不会报错
   }
 
-  interceptors (instance, url) {
-    // 请求拦截
-    instance.interceptors.request.use(config => {
-      // 添加全局的loading...
-      if (!Object.keys(this.queue).length) {
-        // Spin.show() // 不建议开启，因为界面不友好
+  // 设定拦截器
+  interceptors (instance) {
+    // 添加请求拦截器
+    instance.interceptors.request.use((config) => {
+      // 判断是否是公共路径，是的话，就不要添加token
+      let isPublic = false
+      publicConfig.publicPath.map(path => {
+        isPublic = isPublic || path.test(config.url)
+      })
+      // 添加token
+      const token = store.state.token
+      if (!isPublic && token) {
+        config.headers.Authorization = 'Bearer ' + token
       }
-      this.queue[url] = true
+
+      // console.log('config:' + JSON.stringify(config))
+      // 取消请求的配置
+      const key = config.url + '&' + config.method
+      this.removePending(key, true)
+      config.cancelToken = new CancelToken((c) => {
+        this.pending[key] = c
+      })
+      // 在发送请求之前做些什么
       return config
-    }, error => {
+    }, (error) => {
+      // 对请求错误做些什么
+      errorHandle(error)
       return Promise.reject(error)
     })
-    // 响应拦截
-    instance.interceptors.response.use(res => {
-      this.destroy(url)
-      const { data, status } = res
-      return { data, status }
-    }, error => {
-      this.destroy(url)
-      let errorInfo = error.response
-      if (!errorInfo) {
-        const { request: { statusText, status }, config } = JSON.parse(JSON.stringify(error))
-        errorInfo = {
-          statusText,
-          status,
-          request: { responseURL: config.url }
-        }
+
+    // 添加响应拦截器
+    instance.interceptors.response.use((response) => {
+      // console.log('response:' + JSON.stringify(response))
+      // 对响应数据做点什么
+
+      // 正常的请求，关于取消请求的（数据回来了，不需要取消请求了，但是要删除请求对应的key）
+      const key = response.config.url + '&' + response.config.method
+      this.removePending(key)
+
+      if (response.status === 200) {
+        // return response.data
+        // 跟上边直接返回都是一样的（也可以不加Promise.resolve）
+        return Promise.resolve(response.data)
+      } else {
+        return Promise.reject(response)
       }
-      addErrorLog(errorInfo)
+    }, (error) => {
+      // 对响应错误做点什么
+
+      errorHandle(error)
+      // debugger
       return Promise.reject(error)
     })
   }
 
+  // 创建实例
   request (options) {
     const instance = axios.create()
-    options = Object.assign(this.getInsideConfig(), options)
-    this.interceptors(instance, options.url)
-    return instance(options)
+    // 整合配置
+    const newOptions = Object.assign(this.getInsideConfig(), options)
+    this.interceptors(instance)
+
+    // 实际上是调用request方法，然后直接省略调用，创建axios实例
+    // return instance.request(newOptions)
+    return instance(newOptions)
+  }
+
+  get (url, config) {
+    const options = Object.assign({
+      method: 'get',
+      url: url
+    }, config)
+    return this.request(options)
+  }
+
+  post (url, data) {
+    return this.request({
+      method: 'post',
+      url: url,
+      data: data
+    })
   }
 }
 export default HttpRequest
