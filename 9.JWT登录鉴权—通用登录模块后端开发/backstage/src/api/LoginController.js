@@ -84,7 +84,7 @@ class LoginController {
         // 除了token还要返回用户信息
         // toJSON（） mongoose提供的方法,拿到用户信息
         const userObj = user.toJSON()
-        const arr = ['password', 'username', 'roles']
+        const arr = ['password', 'username']
         // 删除user里边不需要返回的字段
         arr.map(item => {
           delete userObj[item]
