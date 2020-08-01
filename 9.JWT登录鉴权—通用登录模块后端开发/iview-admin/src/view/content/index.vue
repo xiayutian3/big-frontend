@@ -1,8 +1,30 @@
 <template>
   <div>
     <Card>
-      <tables ref="tables" editable searchable search-place="top" v-model="tableData" :columns="columns" @on-delete="handleDelete"/>
-      <Button style="margin: 10px 0;" type="primary" @click="exportExcel">导出为Csv文件</Button>
+      <tables
+        ref="tables"
+        editable
+        searchable
+        search-place="top"
+        v-model="tableData"
+        :columns="columns"
+        @on-delete="handleDelete"
+      />
+
+      <Row type="flex" justify="space-between" align="middle">
+        <Button style="margin: 10px 0;" type="primary" @click="exportExcel">导出为Csv文件</Button>
+        <Page
+          :total="total"
+          :current="page"
+          :page-size="limit"
+          :page-size-opts="pageSizeArr"
+          show-elevator
+          show-sizer
+          show-total
+          @on-change="onPageChange"
+          @on-page-size-change="onPageSizeChange"
+        />
+      </Row>
     </Card>
   </div>
 </template>
@@ -10,6 +32,7 @@
 <script>
 import Tables from '_c/tables'
 import { getList } from '@/api/content'
+import dayjs from 'dayjs'
 export default {
   name: 'content_management',
   components: {
@@ -17,7 +40,17 @@ export default {
   },
   data () {
     return {
+      page: 1,
+      limit: 10,
+      total: 40,
+      pageSizeArr: [10, 30, 50, 100],
       columns: [
+        {
+          type: 'selection',
+          width: 60,
+          align: 'center',
+          hidden: true
+        },
         {
           title: '标题',
           key: 'title',
@@ -27,19 +60,70 @@ export default {
           title: '创建时间',
           key: 'created',
           width: 200,
-          align: 'center'
+          align: 'center',
+          // 方法二：使用 render 方法结构化数据
+          render: (h, params) => {
+            return h('div', [
+              h(
+                'span',
+                dayjs(params.row.created).format('YYYY-MM-DD HH:mm:ss')
+              )
+            ])
+          }
         },
         {
           title: '作者',
           key: 'user',
           width: 120,
-          align: 'center'
+          align: 'center',
+          // 方法二：使用render 方法结构化数据
+          render: (h, params) => {
+            return h(
+              'div',
+              params.row.uid.name
+              // [
+              // h('Icon', {
+              //   props: {
+              //     type: 'person'
+              //   }
+              // }),
+              // h('strong', params.row.name)
+              // ]
+            )
+          }
         },
         {
           title: '分类',
           key: 'catalog',
           width: 100,
-          align: 'center'
+          align: 'center',
+          render: (h, params) => {
+            const catalog = params.row.catalog
+            let result = ''
+            switch (catalog) {
+              case 'ask':
+                result = '提问'
+                break
+              case 'advise':
+                result = '建议'
+                break
+              case 'discuss':
+                result = '交流'
+                break
+              case 'share':
+                result = '分享'
+                break
+              case 'logs':
+                result = '动态'
+                break
+              case 'notice':
+                result = '公告'
+                break
+              default:
+                result = '全部'
+            }
+            return h('div', result)
+          }
         },
         {
           title: '积分',
@@ -51,13 +135,21 @@ export default {
           title: '标签',
           key: 'tags',
           width: 120,
-          align: 'center'
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('span', params.row.tags.map((o) => o.name).join(',') || '')
+            ])
+          }
         },
         {
           title: '是否结束',
           key: 'isEnd',
           width: 100,
-          align: 'center'
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [h('span', params.row.isEnd === '0' ? '否' : '是')])
+          }
         },
         {
           title: '阅读记数',
@@ -75,13 +167,37 @@ export default {
           title: '状态',
           key: 'status',
           width: 120,
-          align: 'center'
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('Tag', {
+                class: 'test',
+                props: {
+                  color: params.row.status === '0' ? 'success' : 'error'
+                },
+                domProps: {
+                  innerHTML: params.row.status === '0' ? 'on' : 'off'
+                }
+              })
+            ])
+          }
         },
         {
           title: '是否置顶',
           key: 'isTop',
           width: 100,
-          align: 'center'
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('Icon', {
+                props: {
+                  color: '#19be6b',
+                  type: params.row.isTop === '1' ? 'md-checkmark' : '',
+                  size: 20
+                }
+              })
+            ])
+          }
         }
         // {
         //   title: '设置',
@@ -101,20 +217,47 @@ export default {
     },
     exportExcel () {
       this.$refs.tables.exportCsv({
-        filename: `table-${(new Date()).valueOf()}.csv`
+        filename: `table-${new Date().valueOf()}.csv`
+      })
+    },
+    onPageChange (page) {
+      this.page = page
+      this._getList()
+    },
+    onPageSizeChange (size) {
+      this.limit = size
+      this._getList()
+    },
+    _getList () {
+      getList({ page: this.page - 1, limit: this.limit }).then(({ code, data, total }) => {
+        if (code === 200) {
+        // 方法一： 结构化数据
+        // const newdata = data
+        // newdata.forEach(item => {
+        //   if (item.status === 0) {
+        //     item.status = '打开回复'
+        //   } else {
+        //     item.status = '禁止回复'
+        //   }
+        // })
+        // this.tableData = newdata
+
+          this.tableData = data
+          this.total = total
+        }
       })
     }
   },
   mounted () {
-    getList({ page: 0, limit: 10 }).then(({ code, data }) => {
-      if (code === 200) {
-        this.tableData = data
-      }
-    })
+    this._getList()
   }
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+.ctrls {
+  button {
+    margin-right: 10px;
+  }
+}
 </style>

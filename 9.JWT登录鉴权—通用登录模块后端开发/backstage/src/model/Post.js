@@ -68,6 +68,9 @@ PostSchema.statics = {
         select: 'name isVip pic' // 从相应的数据中拿到相应的字段（指向引用的集合中）填充回来
       })
   },
+  countList: function (options) {
+    return this.find(options).countDocuments() // mongoose自带的方法，计算查询回来的list总数
+  },
   getTopWeek: function () {
     return this.find({
       created: { // 根据创建时间来筛选

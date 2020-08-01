@@ -3170,10 +3170,10 @@ data-urls@^1.1.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
-dayjs@^1.8.30:
-  version "1.8.30"
-  resolved "https://registry.npm.taobao.org/dayjs/download/dayjs-1.8.30.tgz?cache=0&sync_timestamp=1595385473489&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fdayjs%2Fdownload%2Fdayjs-1.8.30.tgz#d3b314d3ccdc179015d915fd3c6e14422c026378"
-  integrity sha1-07MU08zcF5AV2RX9PG4UQiwCY3g=
+dayjs@^1.8.31:
+  version "1.8.31"
+  resolved "https://registry.npm.taobao.org/dayjs/download/dayjs-1.8.31.tgz#0cd1114c2539dd5ad9428be0c38df6d4bb40b9d3"
+  integrity sha1-DNERTCU53VrZQovgw4321LtAudM=
 
 de-indent@^1.0.2:
   version "1.0.2"

@@ -17,7 +17,7 @@
     "core-js": "^3.6.5",
     "countup": "^1.8.2",
     "cropperjs": "^1.5.7",
-    "dayjs": "^1.8.30",
+    "dayjs": "^1.8.31",
     "echarts": "^4.8.0",
     "html2canvas": "^1.0.0-rc.5",
     "iview-area": "^1.6.0",

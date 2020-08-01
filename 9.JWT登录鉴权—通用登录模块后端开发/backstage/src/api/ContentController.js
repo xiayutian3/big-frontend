@@ -66,10 +66,12 @@ class ContentController {
       options.tags = { $elemMatch: { name: body.tag } }
     }
     const result = await Post.getList(options, sort, page, limit)
+    const total = await Post.countList(options)
     ctx.body = {
       code: 200,
       data: result,
-      msg: '获取文章列表成功'
+      msg: '获取文章列表成功',
+      total
     }
   }
 
