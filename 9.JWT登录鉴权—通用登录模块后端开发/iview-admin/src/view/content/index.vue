@@ -8,7 +8,8 @@
         search-place="top"
         v-model="tableData"
         :columns="columns"
-        @on-delete="handleDelete"
+        @on-row-edit="handleRowEdit"
+        @on-row-remove="handleRowRemove"
       />
 
       <Row type="flex" justify="space-between" align="middle">
@@ -26,20 +27,31 @@
         />
       </Row>
     </Card>
+    <EditModel
+      :isShow="showEdit"
+      :item="currentItem"
+      @editEvent="handleItemEdit"
+      @changeEvent="handleChangeEvent"
+    ></EditModel>
   </div>
 </template>
 
 <script>
+import EditModel from './editModel'
 import Tables from '_c/tables'
-import { getList } from '@/api/content'
+import { getList, deletePostById, updatePostById } from '@/api/content'
 import dayjs from 'dayjs'
 export default {
   name: 'content_management',
   components: {
-    Tables
+    Tables,
+    EditModel
   },
   data () {
     return {
+      showEdit: false,
+      // currentIndex: 0,
+      currentItem: {},
       page: 1,
       limit: 10,
       total: 40,
@@ -47,6 +59,7 @@ export default {
       columns: [
         {
           type: 'selection',
+          key: '',
           width: 60,
           align: 'center',
           hidden: true
@@ -198,23 +211,20 @@ export default {
               })
             ])
           }
+        },
+        {
+          title: '设置',
+          key: 'settings',
+          slot: 'action',
+          fixed: 'right',
+          width: 160,
+          align: 'center'
         }
-        // {
-        //   title: '设置',
-        //   key: 'settings',
-        //   slot: 'action',
-        //   fixed: 'right',
-        //   width: 160,
-        //   align: 'center'
-        // }
       ],
       tableData: []
     }
   },
   methods: {
-    handleDelete (params) {
-      console.log(params)
-    },
     exportExcel () {
       this.$refs.tables.exportCsv({
         filename: `table-${new Date().valueOf()}.csv`
@@ -229,23 +239,62 @@ export default {
       this._getList()
     },
     _getList () {
-      getList({ page: this.page - 1, limit: this.limit }).then(({ code, data, total }) => {
-        if (code === 200) {
-        // 方法一： 结构化数据
-        // const newdata = data
-        // newdata.forEach(item => {
-        //   if (item.status === 0) {
-        //     item.status = '打开回复'
-        //   } else {
-        //     item.status = '禁止回复'
-        //   }
-        // })
-        // this.tableData = newdata
+      getList({ page: this.page - 1, limit: this.limit }).then(
+        ({ code, data, total }) => {
+          if (code === 200) {
+            // 方法一： 结构化数据
+            // const newdata = data
+            // newdata.forEach(item => {
+            //   if (item.status === 0) {
+            //     item.status = '打开回复'
+            //   } else {
+            //     item.status = '禁止回复'
+            //   }
+            // })
+            // this.tableData = newdata
 
-          this.tableData = data
-          this.total = total
+            this.tableData = data
+            this.total = total
+          }
+        }
+      )
+    },
+    handleRowEdit (row, index) {
+      this.showEdit = true
+      // this.currentIndex = index
+      this.currentItem = { ...row }
+    },
+    handleRowRemove (row, index) {
+      this.$Modal.confirm({
+        title: '确定删除文章吗？',
+        content: `删除第${index + 1}条数据，文章标题"${row.title}"的文章吗？`,
+        onOk: () => {
+          deletePostById(row._id)
+            .then((res) => {
+              if (res.code === 200) {
+                this.$Message.info('成功删除！')
+                this._getList()
+              }
+            })
+            .catch((err) => {
+              this.$Message.info('删除失败!原因：' + err)
+            })
+        },
+        onCancel: () => {
+          this.$Message.info('取消操作！')
         }
       })
+    },
+    handleItemEdit (item) {
+      updatePostById(item).then(res => {
+        if (res.code === 200) {
+          // 更新列表
+          this._getList()
+        }
+      })
+    },
+    handleChangeEvent (value) {
+      this.showEdit = value
     }
   },
   mounted () {

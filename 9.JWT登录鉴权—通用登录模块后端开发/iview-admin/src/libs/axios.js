@@ -1,10 +1,11 @@
 import axios from 'axios'
-import store from '@/store'
+// import store from '@/store'
 // 定义请求头不需要添加token的路径
 import publicConfig from '@/config'
 // import { Spin } from 'view-design'
 // 错误处理函数
 import errorHandle from './errorHandle'
+import { getToken } from './util'
 // 取消请求函数
 const CancelToken = axios.CancelToken
 class HttpRequest {
@@ -44,7 +45,7 @@ class HttpRequest {
         isPublic = isPublic || path.test(config.url)
       })
       // 添加token
-      const token = store.state.token
+      const token = getToken()
       if (!isPublic && token) {
         config.headers.Authorization = 'Bearer ' + token
       }

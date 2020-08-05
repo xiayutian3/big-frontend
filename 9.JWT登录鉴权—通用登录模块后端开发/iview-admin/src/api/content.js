@@ -9,6 +9,18 @@ const getList = options => {
   return axios.get('/public/list?' + qs.stringify(options))
 }
 
+// 删除文章
+const deletePostById = id => {
+  return axios.get('/content/delete?tid=' + id)
+}
+
+// 更新（编辑）文章
+const updatePostById = data => {
+  return axios.post('/content/update-id', data)
+}
+
 export {
-  getList
+  getList,
+  deletePostById,
+  updatePostById
 }

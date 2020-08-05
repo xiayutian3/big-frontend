@@ -211,7 +211,7 @@ class ContentController {
     }
   }
 
-  // 更新帖子
+  // 更新帖子(前端项目，作者本人操作)
   async updatePost (ctx) {
     const { body } = ctx.request
 
@@ -253,6 +253,25 @@ class ContentController {
       ctx.body = {
         code: 500,
         msg: '图片验证码验证失败'
+      }
+    }
+  }
+
+  // 更新帖子，（iview）系统管理，管理员操作
+  async updatePostByTid (ctx) {
+    const { body } = ctx.request
+    const result = await Post.updateOne({ _id: body._id }, body)
+    if (result.ok === 1) {
+      ctx.body = {
+        code: 200,
+        msg: '更新帖子成功',
+        data: result
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '编辑帖子，更新失败',
+        data: result
       }
     }
   }
@@ -353,7 +372,7 @@ class ContentController {
     }
   }
 
-  // 删除发帖记录
+  // 删除发帖记录（front start中的 作者本人的操作）
   async deletePostByUid (ctx) {
     const params = ctx.query
     // 获得payload数据
@@ -362,23 +381,45 @@ class ContentController {
     const post = await Post.findOne({ uid: obj._id, _id: params.tid })
     // 已结帖的文章是不允许删除的（能删除的是没有结帖的帖子），删除后，积分是不归还给用户的
     if (post.id === params.tid && post.isEnd === '0') {
+      // 不能直接使用 await this.deletePost(ctx),因为我们导出的不是纯的class 而是 new ContentController()，他的实例
+      // 所以使用ContentController.prototype.deletePost(ctx)获取
+
+      await ContentController.prototype.deletePost(ctx)
       // 删除操作
-      const result = await Post.deleteOne({ _id: params.tid })
-      if (result.ok === 1) {
-        ctx.body = {
-          code: 200,
-          msg: '删除成功'
-        }
-      } else {
-        ctx.body = {
-          code: 500,
-          msg: '执行删除失败！'
-        }
-      }
+      // const result = await Post.deleteOne({ _id: params.tid })
+      // if (result.ok === 1) {
+      //   ctx.body = {
+      //     code: 200,
+      //     msg: '删除成功'
+      //   }
+      // } else {
+      //   ctx.body = {
+      //     code: 500,
+      //     msg: '执行删除失败！'
+      //   }
+      // }
     } else {
       ctx.body = {
         code: 500,
         msg: '删除失败，无权限！'
+      }
+    }
+  }
+
+  // 删除帖子记录（iview 管理系统中的，管理员的操作）
+  async deletePost (ctx) {
+    const params = ctx.query
+    // 删除操作
+    const result = await Post.deleteOne({ _id: params.tid })
+    if (result.ok === 1) {
+      ctx.body = {
+        code: 200,
+        msg: '删除成功'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '执行删除失败！'
       }
     }
   }
