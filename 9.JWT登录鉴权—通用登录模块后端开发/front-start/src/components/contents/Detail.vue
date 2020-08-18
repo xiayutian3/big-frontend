@@ -43,6 +43,43 @@
               :key="'tag'+index"
             >{{tag.name}}</span>
 
+            <!-- method1: vuex -> userInfo -> roles -> includes admin -->
+            <!-- method2: 组件级权限控制 richtext ,就是做一个自定义指令，v-hasRole，像v-richtext 一样 -->
+            <div v-hasRole="'admin'">
+              <div class="fly-admin-box" data-id="123">
+                <span
+                  v-hasPermission="['get','delete']"
+                  class="layui-btn layui-btn-xs jie-admin"
+                  type="del"
+                >删除</span>
+
+                <span
+                  class="layui-btn layui-btn-xs jie-admin"
+                  type="set"
+                  field="stick"
+                  rank="1"
+                  v-if="page.isTop === '0'"
+                >置顶</span>
+                <span
+                  class="layui-btn layui-btn-xs jie-admin"
+                  type="set"
+                  field="stick"
+                  rank="0"
+                  style="background-color:#ccc;"
+                  v-else
+                >取消置顶</span>
+
+                <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span>
+                <span
+                  class="layui-btn layui-btn-xs jie-admin"
+                  type="set"
+                  field="status"
+                  rank="0"
+                  style="background-color:#ccc;"
+                >取消加精</span>-->
+              </div>
+            </div>
+
             <div class="fly-admin-box" v-if="false">
               <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
 
@@ -541,7 +578,12 @@ export default {
     margin-right: 5px;
   }
 }
+.fly-admin-box{
+  margin-left: 0;
+  margin-top: 15px;
+}
 .jieda-body {
   margin: 25px 0 20px !important;
 }
+
 </style>
