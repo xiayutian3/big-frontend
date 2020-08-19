@@ -26,5 +26,24 @@ export default {
         el.parentNode.removeChild(el)
       }
     }
+  },
+  hasPermission: {
+    // 按钮级别的操作权限
+    inserted: function (el, binding, vnode) {
+      // console.log('binding', binding.value) // ["get", "delete"]
+      // console.log('vnode', vnode.context) // 路由meta上面["get", "add", "delete"]
+      let types = vnode.context.$route.meta.types
+      let values = binding.value
+      let flag = true
+      for (let v of values) {
+        if (!types.includes(v)) {
+          flag = false
+        }
+      }
+      // 只有所有的操作都包含，才显示el，不然不显示
+      if (!flag) {
+        el.parentNode.removeChild(el)
+      }
+    }
   }
 }
