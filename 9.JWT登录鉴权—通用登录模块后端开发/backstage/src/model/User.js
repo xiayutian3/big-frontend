@@ -58,6 +58,17 @@ UserSchema.statics = {
       username: 0,
       mobile: 0
     })
+  },
+  // 获取用户列表
+  getList: function (options, sort, page, limit) {
+    return this.find(options, { password: 0, mobile: 0 }) // 筛选的一些参数,password:0,mobile:0 排除这些字段
+      .sort({ [sort]: -1 }) // -1倒序进行排列
+      .skip(page * limit) // 跳过多少页数据
+      .limit(limit) // 获取多少条数据
+  },
+  // 获取查到的总数
+  countList: function (options) {
+    return this.find(options).countDocuments() // mongoose自带的方法，计算查询回来的list总数
   }
 }
 

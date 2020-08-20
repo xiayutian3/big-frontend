@@ -367,6 +367,22 @@ class UserController {
       }
     }
   }
+
+  // 获取用户列表
+  async getUsers (ctx) {
+    const params = ctx.query
+    const page = params.page ? params.page : 0
+    // mongoose 传递的limit 是int类型，parseInt()转换
+    const limit = params.limit ? parseInt(params.limit) : 0
+    const sort = params.sort || 'created'
+    const result = await User.getList({}, sort, page, limit)
+    const total = await User.countList({})
+    ctx.body = {
+      code: 200,
+      data: result,
+      total
+    }
+  }
 }
 
 export default new UserController()

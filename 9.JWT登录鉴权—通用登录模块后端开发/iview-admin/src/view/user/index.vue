@@ -36,16 +36,25 @@
         </Col>
       </Row>
     </Card>
+    <EditModel
+      :isShow="showEdit"
+      :item="currentItem"
+      @editEvent="handleItemEdit"
+      @changeEvent="handleChangeEvent"
+    ></EditModel>
   </div>
 </template>
 
 <script>
+import EditModel from './edit'
+import { getUserList } from '@/api/admin'
 import Tables from '_c/tables'
 import dayjs from 'dayjs'
 export default {
   name: 'user_management',
   components: {
-    Tables
+    Tables,
+    EditModel
   },
   data () {
     return {
@@ -59,6 +68,7 @@ export default {
       columns: [
         {
           type: 'selection',
+          key: '',
           width: 60,
           align: 'center',
           hidden: true
@@ -86,7 +96,6 @@ export default {
           minWidth: 160,
           render: (h, params) => {
             const roleNames = params.row.roles
-              .map((o) => this.roleNames[o])
               .join(',')
             return h('div', [h('span', roleNames)])
           },
@@ -200,6 +209,17 @@ export default {
     }
   },
   methods: {
+    handleItemEdit (item) {
+      updatePostById(item).then(res => {
+        if (res.code === 200) {
+          // 更新列表
+          this._getList()
+        }
+      })
+    },
+    handleChangeEvent (value) {
+      this.showEdit = value
+    },
     handleSelectAll (status) {
       this.$refs.selection.selectAll(status)
     },
@@ -230,10 +250,20 @@ export default {
           this.$Message.info('取消操作！')
         }
       })
+    },
+    _getList () {
+      getUserList({ page: this.page - 1, limit: this.limit }).then(
+        ({ code, data, total }) => {
+          if (code === 200) {
+            this.tableData = data
+            this.total = total
+          }
+        }
+      )
     }
   },
   mounted () {
-    // this._getList()
+    this._getList()
   }
 }
 </script>
