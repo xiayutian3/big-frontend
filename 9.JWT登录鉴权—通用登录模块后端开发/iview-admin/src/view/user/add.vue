@@ -1,32 +1,46 @@
 <template>
   <div>
-    <Modal v-model="showStatus" title="编辑用户信息" @on-ok="ok" @on-cancel="cancel" :loading="loading">
-      <Form :model="localItem" :label-width="80" :rules="ruleValidate"  ref="table">
-        <FormItem label="用户名称" prop="name">
-          <Input v-model="localItem.name" placeholder="请输入用户名称"></Input>
-        </FormItem>
+    <Modal v-model="showStatus" title="新增用户信息" @on-ok="ok" @on-cancel="cancel" :loading="loading">
+      <Form :model="localItem" :label-width="80" :rules="ruleValidate" ref="table">
         <FormItem label="登录名" prop="username">
-          <Input v-model="localItem.username" placeholder="请输入登录名"></Input>
+          <Input prefix="md-mail" v-model="localItem.username" placeholder="请输入登录名"></Input>
         </FormItem>
-        <FormItem label="密码">
-          <Input v-model="localItem.password" placeholder="请输入密码"></Input>
+        <FormItem label="密码" prop="password">
+          <Input prefix="md-lock" v-model="localItem.password" placeholder="请输入密码"></Input>
         </FormItem>
-
-         <FormItem label="是否禁用">
+        <FormItem label="用户名称" prop="name">
+          <Input prefix="md-person" v-model="localItem.name" placeholder="请输入用户名称"></Input>
+        </FormItem>
+        <FormItem label="手机号" prop="mobile">
+          <Input v-model="localItem.mobile" placeholder="请输入手机号"></Input>
+        </FormItem>
+        <FormItem label="是否禁用">
           <RadioGroup v-model="localItem.status">
             <Radio label="0">否</Radio>
             <Radio label="1">是</Radio>
           </RadioGroup>
         </FormItem>
-          <FormItem label="是否是VIP">
+        <FormItem label="是否是VIP">
           <RadioGroup v-model="localItem.isVip">
             <Radio label="0">否</Radio>
             <Radio label="1">是</Radio>
           </RadioGroup>
         </FormItem>
-         <FormItem label="用户积分" prop="favs">
-           <Input v-model="localItem.favs"  style="width: 120px;"></Input>
-            <!-- <Slider v-model="localItem.favs" show-input :step="10"></Slider> -->
+        <FormItem label="用户积分" prop="favs">
+          <Input v-model="localItem.favs" style="width: 120px;"></Input>
+          <!-- <Slider v-model="localItem.favs" show-input :step="10"></Slider> -->
+        </FormItem>
+        <FormItem label="所在城市">
+          <Input prefix="md-pin" v-model="localItem.location" placeholder="请输入所在城市"></Input>
+        </FormItem>
+        <FormItem label="性别">
+          <RadioGroup v-model="localItem.gender">
+            <Radio label="0">男</Radio>
+            <Radio label="1">女</Radio>
+          </RadioGroup>
+        </FormItem>
+        <FormItem label="个性签名">
+          <Input  placeholder="请输入个性签名" type="textarea" v-model="localItem.regmark"></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -52,7 +66,7 @@ const validatePass = (rule, value, callback) => {
 
 // 异步校验用户名是否已存在
 const userNamePassCheck = (rule, value, callback) => {
-  checkUsername(value).then(res => {
+  checkUsername(value).then((res) => {
     if (res.code === 200) {
       const data = res.data
       if (data === 1) {
@@ -64,6 +78,15 @@ const userNamePassCheck = (rule, value, callback) => {
       }
     }
   })
+}
+
+// 验证手机号校验规则
+const mobileCheck = (rule, value, callback) => {
+  if (/^1[3456789]\d{9}$/.test(value)) {
+    callback()
+  } else {
+    callback(new Error('用户名冲突！请更换'))
+  }
 }
 export default {
   props: {
@@ -96,7 +119,11 @@ export default {
         password: '',
         status: '0',
         favs: 0,
-        isVip: '0'
+        isVip: '0',
+        mobile: '',
+        gender: '0',
+        location: '',
+        regmark: ''
       },
       ruleValidate: {
         name: [
@@ -141,6 +168,10 @@ export default {
         favs: [
           // { required: true, message: '请输入积分', trigger: 'blur' },
           { validator: validatePass, trigger: 'blur' }
+        ],
+        mobile: [
+          { validator: mobileCheck, trigger: 'blur' }
+          // { required: true, message: '请输入手机号', trigger: 'blur' }
         ]
       }
     }
@@ -152,7 +183,7 @@ export default {
           this.loading = false
           this.$emit('editEvent', this.localItem)
           this.$emit('changeEvent', false)
-          this.$Message.info('编辑成功')
+          this.$Message.info('添加成功')
         } else {
           this.loading = false
           this.$Message.error('请检查输入的数据')

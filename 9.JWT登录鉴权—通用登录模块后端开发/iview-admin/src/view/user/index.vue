@@ -10,15 +10,20 @@
         :columns="columns"
         @on-row-edit="handleRowEdit"
         @on-row-remove="handleRowRemove"
-      />
+      >
+        <template v-slot:table-header>
+          <Button @click="handleAddUser" class="search-btn" type="primary">
+            <Icon type="md-person" />&nbsp;&nbsp;新增用户
+          </Button>
+        </template>
+      </tables>
 
       <Row type="flex" justify="space-between" align="middle">
         <Col class="ctrls">
           <Button @click="handleSelectAll(true)">批量全选</Button>
           <Button @click="handleSelectAll(false)">取消全选</Button>
           <Button style="margin: 10px 0;" type="primary" @click="exportExcel">
-            <Icon type="md-download"></Icon>
-            导出表格
+            <Icon type="md-download"></Icon>导出表格
           </Button>
         </Col>
         <Col>
@@ -42,23 +47,31 @@
       @editEvent="handleItemEdit"
       @changeEvent="handleChangeEvent"
     ></EditModel>
+    <AddModel
+      :isShow="showAdd"
+      @editEvent="handleItemAdd"
+      @changeEvent="handleAddChangeEvent"
+    ></AddModel>
   </div>
 </template>
 
 <script>
 import EditModel from './edit'
-import { getUserList } from '@/api/admin'
+import AddModel from './add'
+import { getUserList, updateUserById, deleteUserById } from '@/api/admin'
 import Tables from '_c/tables'
 import dayjs from 'dayjs'
 export default {
   name: 'user_management',
   components: {
     Tables,
-    EditModel
+    EditModel,
+    AddModel
   },
   data () {
     return {
       showEdit: false,
+      showAdd: false,
       // currentIndex: 0,
       currentItem: {},
       page: 1,
@@ -95,8 +108,7 @@ export default {
           align: 'center',
           minWidth: 160,
           render: (h, params) => {
-            const roleNames = params.row.roles
-              .join(',')
+            const roleNames = params.row.roles.join(',')
             return h('div', [h('span', roleNames)])
           },
           search: {
@@ -209,8 +221,25 @@ export default {
     }
   },
   methods: {
+    // 处理新增用户
+    handleItemAdd (item) {
+      addUser(item).then(res => {
+        if (res.code === 200) {
+        // 更新列表
+          this._getList()
+        }
+      })
+    },
+    // 处理新增用户模态框
+    handleAddChangeEvent (value) {
+      this.showAdd = value
+    },
+    // 新增用户按钮点击
+    handleAddUser () {
+      this.showAdd = true
+    },
     handleItemEdit (item) {
-      updatePostById(item).then(res => {
+      updateUserById(item).then((res) => {
         if (res.code === 200) {
           // 更新列表
           this._getList()
@@ -243,9 +272,15 @@ export default {
     },
     handleRowRemove (row, index) {
       this.$Modal.confirm({
-        title: '确定删除文章吗？',
-        content: `删除第${index + 1}条数据，文章标题"${row.title}"的文章吗？`,
-        onOk: () => {},
+        title: '确定删除用户吗？',
+        content: `删除${row.name}的用户？`,
+        onOk: () => {
+          deleteUserById(row._id).then((res) => {
+            this.$Message.success('删除成功！')
+            // 更新列表
+            this._getList()
+          })
+        },
         onCancel: () => {
           this.$Message.info('取消操作！')
         }

@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid'
 import { setValue, getValue } from '@/config/RedisConfig'
 import config from '@/config/index'
 import jwt from 'jsonwebtoken'
-// 加密密码的库(捉着可以用bcryptjs，api一样，node版的bcrypt)
+// 加密密码的库(或着可以用bcryptjs，api一样，node版的bcrypt)
 import bcrypt from 'bcrypt'
 import UserCollect from '@/model/UserCollect'
 import Comments from '@/model/Comments'
@@ -381,6 +381,87 @@ class UserController {
       code: 200,
       data: result,
       total
+    }
+  }
+
+  // （管理员） 删除用户
+  async deleteUserById (ctx) {
+    const params = ctx.query
+    const user = await User.findOne({ _id: params.id })
+    if (user) {
+      const result = await User.deleteOne({ _id: params.id })
+      // console.log('deleteUserById -> result', result)
+      ctx.body = {
+        code: 200,
+        msg: '删除成功',
+        data: result
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '用户不存在或者id信息错误！'
+      }
+    }
+  }
+
+  // （管理员）更新用户信息
+  async updateUserById (ctx) {
+    const { body } = ctx.request
+    const user = await User.findOne({ _id: body._id })
+    // 1.校验用户是否存在 -》用户名是否冲突
+    if (!user) {
+      ctx.body = {
+        code: 500,
+        msg: '用户不存在或者id信息错误！'
+      }
+      return
+    }
+    // 前端已经有校验了，所以注释点用户名的校验
+
+    // 只用当用户名传递过来，并且不等于查询出来的用户的名字的时候
+    // if (body.username && body.username !== user.username) {
+    //   const userCheckName = await User.findOne({ username: body.username })
+    //   if (userCheckName) {
+    //     ctx.body = {
+    //       code: 501,
+    //       msg: '用户名已经存在，跟新失败'
+    //     }
+    //     return
+    //   }
+    // }
+    // 2.判断密码是否传递 -》 进行加密保存
+    if (body.password) {
+      // 加密密码
+      body.password = await bcrypt.hash(body.password, 5)
+    }
+    const result = await User.updateOne({ _id: body._id }, body)
+    // console.log('updateUserById -> result', result)
+    if (result.ok === 1 && result.nModified === 1) {
+      ctx.body = {
+        code: 200,
+        msg: '更新成功'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '服务异常，更新失败'
+      }
+    }
+  }
+
+  // （管理员）判断用户名是否存在
+  async checkUsername (ctx) {
+    const params = ctx.query
+    const user = await User.findOne({ username: params.username })
+    // 默认是1 - 校验通过  0 - 校验不通过
+    let result = 1
+    if (user) {
+      result = 0
+    }
+    ctx.body = {
+      code: 200,
+      data: result,
+      msg: '用户名已经存在，跟新失败'
     }
   }
 }

@@ -26,18 +26,18 @@ router.post('/editTag', contentController.updateTag)
 router.get('/users', userController.getUsers)
 
 // // 删除
-// router.post('/deleteUser', userController.deleteUserById)
+router.get('/delete-user', userController.deleteUserById)
 
 // // 更新特定用户
-// router.post('/updateUser', userController.updateUserById)
+router.post('/update-user', userController.updateUserById)
+
+// 校验用户名是否冲突
+router.get('/checkname', userController.checkUsername)
 
 // router.post('/updateUserSettings', userController.updateUserBatch)
 
 // // 添加用户
 // router.post('/addUser', userController.addUser)
-
-// // 校验用户名是否冲突
-// router.get('/checkname', userController.checkUsername)
 
 // // 添加菜单
 // router.post('/addMenu', adminController.addMenu)

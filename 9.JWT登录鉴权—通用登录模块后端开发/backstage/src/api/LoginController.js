@@ -1,5 +1,5 @@
 import send from '../config/MailConfig'
-// 加密密码的库(捉着可以用bcryptjs，api一样，node版的bcrypt)
+// 加密密码的库(或着可以用bcryptjs，api一样，node版的bcrypt)
 import bcrypt from 'bcrypt'
 // 时间库moment（大，功能多）  dayjs（小） 一样的用法
 // import moment from 'moment'
