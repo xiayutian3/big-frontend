@@ -386,22 +386,26 @@ class UserController {
 
   // （管理员） 删除用户
   async deleteUserById (ctx) {
-    const params = ctx.query
-    const user = await User.findOne({ _id: params.id })
-    if (user) {
-      const result = await User.deleteOne({ _id: params.id })
-      // console.log('deleteUserById -> result', result)
-      ctx.body = {
-        code: 200,
-        msg: '删除成功',
-        data: result
-      }
-    } else {
-      ctx.body = {
-        code: 500,
-        msg: '用户不存在或者id信息错误！'
-      }
+    const { body } = ctx.request
+    // const user = await User.findOne({ _id: params.id })
+    // if (user) {
+    // const result = await User.deleteOne({ _id: params.id })
+
+    // mongodb 提供的$in方法，后边接数组，前端传过来的要删除的ids数组
+    // https://docs.mongodb.com/manual/reference/operator/query/in/#op._S_in
+    const result = await User.deleteMany({ _id: { $in: body.ids } })
+    // console.log('deleteUserById -> result', result)
+    ctx.body = {
+      code: 200,
+      msg: '删除成功',
+      data: result
     }
+    // } else {
+    //   ctx.body = {
+    //     code: 500,
+    //     msg: '用户不存在或者id信息错误！'
+    //   }
+    // }
   }
 
   // （管理员）更新用户信息
@@ -462,6 +466,34 @@ class UserController {
       code: 200,
       data: result,
       msg: '用户名已经存在，跟新失败'
+    }
+  }
+
+  // 添加用户接口
+  async addUser (ctx) {
+    const { body } = ctx.request
+    // 加密密码
+    body.password = await bcrypt.hash(body.password, 5)
+    const user = new User(body)
+    const result = await user.save()
+    // toJSON（） mongoose提供的方法,拿到用户信息
+    const userObj = result.toJSON()
+    const arr = ['password']
+    // 删除user里边不需要返回的字段
+    arr.map(item => {
+      delete userObj[item]
+    })
+    if (result) {
+      ctx.body = {
+        code: 200,
+        data: userObj,
+        msg: '添加用户成功'
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: '服务接口异常'
+      }
     }
   }
 }

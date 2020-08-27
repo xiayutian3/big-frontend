@@ -113,7 +113,6 @@ export default {
       loading: true,
       showStatus: false,
       localItem: {
-        _id: '',
         name: '',
         username: '',
         password: '',
@@ -184,6 +183,9 @@ export default {
           this.$emit('editEvent', this.localItem)
           this.$emit('changeEvent', false)
           this.$Message.info('添加成功')
+          setTimeout(() => {
+            this.$refs.table.resetFields()
+          }, 0)
         } else {
           this.loading = false
           this.$Message.error('请检查输入的数据')

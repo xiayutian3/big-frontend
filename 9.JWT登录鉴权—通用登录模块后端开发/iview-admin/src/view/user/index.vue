@@ -10,6 +10,7 @@
         :columns="columns"
         @on-row-edit="handleRowEdit"
         @on-row-remove="handleRowRemove"
+        @on-selection-change="handleSelect"
       >
         <template v-slot:table-header>
           <Button @click="handleAddUser" class="search-btn" type="primary">
@@ -20,8 +21,8 @@
 
       <Row type="flex" justify="space-between" align="middle">
         <Col class="ctrls">
-          <Button @click="handleSelectAll(true)">批量全选</Button>
-          <Button @click="handleSelectAll(false)">取消全选</Button>
+          <Button @click="handleDeleteBatch">批量删除</Button>
+          <Button @click="handleSetBatch">批量设置</Button>
           <Button style="margin: 10px 0;" type="primary" @click="exportExcel">
             <Icon type="md-download"></Icon>导出表格
           </Button>
@@ -58,7 +59,7 @@
 <script>
 import EditModel from './edit'
 import AddModel from './add'
-import { getUserList, updateUserById, deleteUserById } from '@/api/admin'
+import { getUserList, updateUserById, deleteUserById, addUser } from '@/api/admin'
 import Tables from '_c/tables'
 import dayjs from 'dayjs'
 export default {
@@ -217,10 +218,42 @@ export default {
           align: 'center'
         }
       ],
-      tableData: []
+      tableData: [],
+      selection: []
     }
   },
   methods: {
+    // 批量删除
+    handleDeleteBatch () {
+      if (this.selection.length === 0) {
+        this.$Message.info('请选择需要删除的数据')
+        return
+      }
+      const msg = this.selection.map(o => o.username).join(',')
+
+      this.$Modal.confirm({
+        title: '确定删除用户吗？',
+        content: `删除${msg}的用户？`,
+        onOk: () => {
+          // 删除的用户id的数组
+          const arr = this.selection.map(o => o._id)
+          deleteUserById(arr).then((res) => {
+            this.$Message.success('删除成功！')
+            // 更新列表
+            this._getList()
+          })
+        },
+        onCancel: () => {
+          this.$Message.info('取消操作！')
+        }
+      })
+    },
+    // 批量设置 -> vip 禁言， 角色
+    handleSetBatch () {},
+    // 全选
+    handleSelect (selection) {
+      this.selection = selection
+    },
     // 处理新增用户
     handleItemAdd (item) {
       addUser(item).then(res => {

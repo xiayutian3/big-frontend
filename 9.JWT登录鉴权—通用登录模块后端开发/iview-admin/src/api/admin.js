@@ -11,14 +11,18 @@ const getUserList = (params) => {
 const updateUserById = (data) => axios.post('/admin/update-user', data)
 
 // 删除用户
-const deleteUserById = (id) => axios.get('/admin/delete-user?id=' + id)
+const deleteUserById = (ids) => axios.post('/admin/delete-user', { ids })
 
 // 校验用户名是否已经存在
 const checkUsername = (username) => axios.get('/admin/checkname?username=' + username)
+
+// 添加用户的接口
+const addUser = (data) => axios.post('/admin/add-user', data)
 
 export {
   getUserList,
   updateUserById,
   deleteUserById,
-  checkUsername
+  checkUsername,
+  addUser
 }

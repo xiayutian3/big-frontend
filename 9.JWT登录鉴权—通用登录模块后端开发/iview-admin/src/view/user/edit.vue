@@ -51,7 +51,12 @@ const validatePass = (rule, value, callback) => {
 }
 
 // 异步校验用户名是否已存在
-const userNamePassCheck = (rule, value, callback) => {
+const userNamePassCheck = (rule, value, callback, vm) => {
+  // 编辑的时候 用户没有修改username，直接不校验
+  if (vm.item.username === vm.localItem.username) {
+    callback()
+    return
+  }
   checkUsername(value).then(res => {
     if (res.code === 200) {
       const data = res.data
@@ -78,7 +83,7 @@ export default {
   },
   watch: {
     item (newval, oldval) {
-      this.localItem = newval
+      this.localItem = { ...newval }
     },
     // 控制modal的显示隐藏
     isShow () {
@@ -121,7 +126,7 @@ export default {
             message: '请检查邮箱的格式',
             trigger: 'blur'
           },
-          { validator: userNamePassCheck, trigger: 'blur' }
+          { validator: (rule, value, callback) => userNamePassCheck(rule, value, callback, this), trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
