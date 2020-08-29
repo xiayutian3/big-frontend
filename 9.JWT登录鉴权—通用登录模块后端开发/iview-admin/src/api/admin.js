@@ -10,6 +10,9 @@ const getUserList = (params) => {
 // 更新用户
 const updateUserById = (data) => axios.post('/admin/update-user', data)
 
+// 批量设置用户数据（传递的是ids）
+const updateUserBatchById = (data) => axios.post('/admin/update-user-settings', data)
+
 // 删除用户
 const deleteUserById = (ids) => axios.post('/admin/delete-user', { ids })
 
@@ -22,6 +25,7 @@ const addUser = (data) => axios.post('/admin/add-user', data)
 export {
   getUserList,
   updateUserById,
+  updateUserBatchById,
   deleteUserById,
   checkUsername,
   addUser

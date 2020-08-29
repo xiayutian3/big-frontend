@@ -37,7 +37,8 @@ router.get('/checkname', userController.checkUsername)
 // 添加用户
 router.post('/add-user', userController.addUser)
 
-// router.post('/updateUserSettings', userController.updateUserBatch)
+// 批量设置用户数据
+router.post('/update-user-settings', userController.updateUserBatch)
 
 // // 添加菜单
 // router.post('/addMenu', adminController.addMenu)

@@ -53,13 +53,19 @@
       @editEvent="handleItemAdd"
       @changeEvent="handleAddChangeEvent"
     ></AddModel>
+     <BatchSet
+      :isShow="showSet"
+      @editEvent="handleItemSet"
+      @changeEvent="handleSetChangeEvent"
+    ></BatchSet>'
   </div>
 </template>
 
 <script>
 import EditModel from './edit'
 import AddModel from './add'
-import { getUserList, updateUserById, deleteUserById, addUser } from '@/api/admin'
+import BatchSet from './batchSet'
+import { getUserList, updateUserById, deleteUserById, addUser, updateUserBatchById } from '@/api/admin'
 import Tables from '_c/tables'
 import dayjs from 'dayjs'
 export default {
@@ -67,12 +73,14 @@ export default {
   components: {
     Tables,
     EditModel,
-    AddModel
+    AddModel,
+    BatchSet
   },
   data () {
     return {
       showEdit: false,
       showAdd: false,
+      showSet: false,
       // currentIndex: 0,
       currentItem: {},
       page: 1,
@@ -249,7 +257,41 @@ export default {
       })
     },
     // 批量设置 -> vip 禁言， 角色
-    handleSetBatch () {},
+    handleSetBatch () {
+      if (this.selection.length === 0) {
+        this.$Message.info('请选择需要设置的数据')
+        return
+      }
+      this.showSet = true
+    },
+    // 批量设置 modal
+    handleItemSet (settings) {
+      // console.log('handleItemSet -> settings', settings)
+
+      const msg = this.selection.map(o => o.username).join(',')
+
+      this.$Modal.confirm({
+        title: '确定修改用户吗？',
+        content: `修改${msg}的用户？`,
+        onOk: () => {
+          // 删除的用户id的数组
+          const arr = this.selection.map(o => o._id)
+          updateUserBatchById({ ids: arr, settings }).then((res) => {
+            this.$Message.success('设置成功！')
+            // 更新列表
+            this._getList()
+          })
+        },
+        onCancel: () => {
+          this.$Message.info('取消操作！')
+        }
+      })
+    },
+    // 批量设置
+    handleSetChangeEvent (value) {
+      this.showSet = value
+    },
+
     // 全选
     handleSelect (selection) {
       this.selection = selection

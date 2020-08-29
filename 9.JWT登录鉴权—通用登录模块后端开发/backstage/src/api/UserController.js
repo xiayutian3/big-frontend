@@ -453,6 +453,19 @@ class UserController {
     }
   }
 
+  // （管理员）批量设置用户数据
+  // 方法一：新增一个接口处理，方法二：option，-》用type做判断action 'one' 'many'
+  async updateUserBatch (ctx) {
+    const { body } = ctx.request
+    // mongodb 提供的$in方法，后边接数组，前端传过来的要设置的ids数组，$set: 设置body中传过来的属性
+    // https://docs.mongodb.com/manual/reference/operator/query/in/#op._S_in
+    const result = await User.updateMany({ _id: { $in: body.ids } }, { $set: { ...body.settings } })
+    ctx.body = {
+      code: 200,
+      data: result
+    }
+  }
+
   // （管理员）判断用户名是否存在
   async checkUsername (ctx) {
     const params = ctx.query
