@@ -11,6 +11,7 @@
         @on-row-edit="handleRowEdit"
         @on-row-remove="handleRowRemove"
         @on-selection-change="handleSelect"
+        @searchEvent="searchEventHandle"
       >
         <template v-slot:table-header>
           <Button @click="handleAddUser" class="search-btn" type="primary">
@@ -83,6 +84,7 @@ export default {
       showSet: false,
       // currentIndex: 0,
       currentItem: {},
+      option: {},
       page: 1,
       limit: 10,
       total: 40,
@@ -231,6 +233,16 @@ export default {
     }
   },
   methods: {
+    // 搜索的数据
+    searchEventHandle (value) {
+      // 判断是否有新的查询内容的传递，把分页数据归0
+      if ((typeof this.option.search !== 'undefined' && value.search !== this.option.search) || this.option === {}) {
+        // page的初始值是从1开始
+        this.page = 1
+      }
+      this.option = value
+      this._getList()
+    },
     // 批量删除
     handleDeleteBatch () {
       if (this.selection.length === 0) {
@@ -362,7 +374,7 @@ export default {
       })
     },
     _getList () {
-      getUserList({ page: this.page - 1, limit: this.limit }).then(
+      getUserList({ page: this.page - 1, limit: this.limit, option: this.option }).then(
         ({ code, data, total }) => {
           if (code === 200) {
             this.tableData = data

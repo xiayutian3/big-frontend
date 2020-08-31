@@ -375,7 +375,9 @@ class UserController {
     // mongoose 传递的limit 是int类型，parseInt()转换
     const limit = params.limit ? parseInt(params.limit) : 0
     const sort = params.sort || 'created'
-    const result = await User.getList({}, sort, page, limit)
+    // 搜索的一些参数
+    const option = params.option || {}
+    const result = await User.getList(option, sort, page, limit)
     const total = await User.countList({})
     ctx.body = {
       code: 200,

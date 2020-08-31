@@ -61,7 +61,35 @@ UserSchema.statics = {
   },
   // 获取用户列表
   getList: function (options, sort, page, limit) {
-    return this.find(options, { password: 0, mobile: 0 }) // 筛选的一些参数,password:0,mobile:0 排除这些字段
+    // json格式转换为object
+    options = JSON.parse(options)
+    // 1.(查询的时间段)datepicker -> item: string,search -> array starttime,endtime
+    // 2.（单选）radio -> key -value $in
+    // 3.（多选）select -> key-array $in
+    // 查询的sql
+    let query = {}
+    // 有search字段而且不为空才进行如下的判断
+    if (typeof options.search !== 'undefined' && options.search.trim() !== '') {
+      // 如果是时间段
+      if (options.item === 'created') {
+        const start = options.search[0]
+        const end = options.search[1]
+        query = { created: { $gte: new Date(start), $lt: new Date(end) } }
+      } else if (options.item === 'roles') {
+        // console.log(options.item)
+        query = { roles: { $in: options.search } }
+      } else if (['name', 'username'].includes(options.item)) {
+        // 模糊匹配
+        // $regex mongodb 查询关键字
+        // 类似于 {name:{$regex:new RegExp(/admin/)}}  =》 mysql like %admin%
+        query[options.item] = { $regex: new RegExp(options.search) }
+      } else {
+        // radio类型
+        query[options.item] = options.search
+      }
+    }
+    // console.log('query', query)
+    return this.find(query, { password: 0, mobile: 0 }) // 筛选的一些参数,password:0,mobile:0 排除这些字段
       .sort({ [sort]: -1 }) // -1倒序进行排列
       .skip(page * limit) // 跳过多少页数据
       .limit(limit) // 获取多少条数据
