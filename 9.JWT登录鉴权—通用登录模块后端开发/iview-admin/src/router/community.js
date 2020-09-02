@@ -57,5 +57,45 @@ export default [
         component: () => import('@/view/user/index.vue')
       }
     ]
+  },
+  {
+    path: '/menu',
+    name: 'menu',
+    meta: {
+      icon: 'logo-buffer',
+      title: '菜单管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'index',
+        name: 'menu_management',
+        meta: {
+          icon: 'ios-menu',
+          title: '菜单管理'
+        },
+        component: () => import('@/view/menu/index.vue')
+      }
+    ]
+  },
+  {
+    path: '/roles',
+    name: 'roles',
+    meta: {
+      icon: 'logo-buffer',
+      title: '权限管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'index',
+        name: 'roles_management',
+        meta: {
+          icon: 'md-key',
+          title: '角色权限'
+        },
+        component: () => import('@/view/roles/index.vue')
+      }
+    ]
   }
 ]

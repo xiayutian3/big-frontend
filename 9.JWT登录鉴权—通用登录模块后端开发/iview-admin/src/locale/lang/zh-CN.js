@@ -46,5 +46,11 @@ export default {
   article_management: '文章管理',
   content_management: '内容管理',
   tags_management: '标签管理',
-  user_management: '用户管理'
+  user_management: '用户管理',
+  menu_management: '菜单管理',
+  menu: '系统菜单配置',
+  roles_management: '角色管理',
+  roles: '角色设置',
+  'Menu Otionps': '菜单选项',
+  Resources: '资源选项'
 }
