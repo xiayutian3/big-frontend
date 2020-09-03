@@ -33,6 +33,19 @@ module.exports = {
     config.resolve.alias
       .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
       .set('_c', resolve('src/components'))
+
+    config.module // 添加view-load
+      .rule('vue')
+      .test(/\.vue$/)
+      .use('iview-loader') // vue loader已经有了，就不用添加了，直接加iview-loader
+      .loader('iview-loader') // 使用iview-loader里的属性
+      .tap(options => { // 要添加的一些配置项
+        return {
+          prefix: false,
+          ...options
+        }
+      })
+      .end()
   },
   // 设为false打包时不生成.map文件
   productionSourceMap: false,

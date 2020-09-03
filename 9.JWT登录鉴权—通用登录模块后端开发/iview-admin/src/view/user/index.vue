@@ -344,10 +344,12 @@ export default {
         filename: `table-${new Date().valueOf()}.csv`
       })
     },
+    // 页码发生改变
     onPageChange (page) {
       this.page = page
       this._getList()
     },
+    // 分页数量大小发生改变
     onPageSizeChange (size) {
       this.limit = size
       this._getList()
