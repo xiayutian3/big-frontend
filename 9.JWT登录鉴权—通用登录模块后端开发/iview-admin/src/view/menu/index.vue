@@ -5,12 +5,23 @@
         <Card dis-hover shadow>
           <Row type="flex" align="middle" justify="center">
             <ButtonGroup class="imooc-btn-group">
-              <Button size="small" icon="md-add">新增</Button>
-              <Button size="small" type="primary" icon="ios-create">修改</Button>
+              <Button size="small">
+                <Dropdown @on-click="addMenu">
+                  <a href="javascript:void(0)">
+                    <Icon type="md-add"></Icon>
+                    <span class="imooc-dropdown">新增</span>
+                  </a>
+                  <DropdownMenu slot="list">
+                    <DropdownItem name="bro">兄弟节点</DropdownItem>
+                    <DropdownItem name="child">子节点</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </Button>
+              <Button size="small" type="primary" icon="ios-create" @click="editMenu">修改</Button>
               <Button size="small" type="error" icon="md-trash">删除</Button>
             </ButtonGroup>
           </Row>
-          <Tree :data="data1"></Tree>
+          <Tree ref="tree" :data="data1" @on-select-change="handleTreeChange"></Tree>
         </Card>
       </Col>
       <Col :sm="24" :md="15" :lg="19">
@@ -119,6 +130,7 @@ export default {
   data () {
     return {
       isEdit: false,
+      selectNode: [],
       data1: [
         {
           title: 'parent 1',
@@ -250,9 +262,34 @@ export default {
     }
   },
   created () {},
-  mounted () {},
+  mounted () {
+    // 调试方法
+    window.vue = this
+  },
   computed: {},
   methods: {
+    // 添加菜单
+    addMenu (type) {
+      console.log('addMenu -> type', type)
+
+      if (this.selectNode.length > 0) {
+        this.isEdit = true
+      } else {
+        this.$Message.error('请选择菜单节点后在添加！')
+      }
+    },
+    // 编辑菜单
+    editMenu () {
+      if (this.selectNode.length > 0) {
+        this.isEdit = true
+      } else {
+        this.$Message.error('请选择菜单节点后在添编辑！')
+      }
+    },
+    // 点击树形节点选中
+    handleTreeChange (item) {
+      this.selectNode = item
+    },
     // 编辑
     handleRowEdit () {},
     // 删除
@@ -320,6 +357,9 @@ export default {
       & + span {
         display: none;
       }
+    }
+    .imooc-dropdown {
+      display: none;
     }
   }
 }
