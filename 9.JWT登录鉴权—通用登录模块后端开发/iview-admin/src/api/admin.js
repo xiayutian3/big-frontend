@@ -1,4 +1,5 @@
 import axios from '@/libs/request'
+// import Dispatch from '@/libs/dispatch'
 
 // 用户管理列表接口
 const getUserList = (params) => {
@@ -22,11 +23,30 @@ const checkUsername = (username) => axios.get('/admin/checkname?username=' + use
 // 添加用户的接口
 const addUser = (data) => axios.post('/admin/add-user', data)
 
+// 添加菜单
+const addMenu = (data) => axios.post('/admin/add-menu', data)
+// 获取菜单列表
+const getMenu = () => axios.get('/admin/get-menu')
+// 更新菜单列表
+const updateMenu = (data) => axios.post('/admin/update-menu', data)
+// 删除菜单
+const deleteMenu = (data) => axios.post('/admin/delete-menu', data)
+// export const menuDispatch = new Dispatch({
+//   add: ['/admin/addMenu', 'post'],
+//   get: ['/admin/getMenu', 'get'],
+//   update: ['/admin/updateMenu', 'post'],
+//   delete: ['/admin/deleteMenu', 'post']
+// })
+
 export {
   getUserList,
   updateUserById,
   updateUserBatchById,
   deleteUserById,
   checkUsername,
-  addUser
+  addUser,
+  addMenu,
+  getMenu,
+  updateMenu,
+  deleteMenu
 }

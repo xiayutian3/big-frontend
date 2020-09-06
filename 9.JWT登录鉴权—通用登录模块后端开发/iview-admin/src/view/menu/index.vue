@@ -1,170 +1,79 @@
 <template>
-  <div class="wrapper">
+  <div>
     <Row :gutter="10">
-      <Col :sm="24" :md="9" :lg="5">
-        <Card dis-hover shadow>
-          <Row type="flex" align="middle" justify="center">
-            <ButtonGroup class="imooc-btn-group">
-              <Button size="small">
-                <Dropdown @on-click="addMenu">
-                  <a href="javascript:void(0)">
-                    <Icon type="md-add"></Icon>
-                    <span class="imooc-dropdown">新增</span>
-                  </a>
-                  <DropdownMenu slot="list">
-                    <DropdownItem name="bro">兄弟节点</DropdownItem>
-                    <DropdownItem name="child">子节点</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </Button>
-              <Button size="small" type="primary" icon="ios-create" @click="editMenu">修改</Button>
-              <Button size="small" type="error" icon="md-trash">删除</Button>
-            </ButtonGroup>
-          </Row>
-          <Tree ref="tree" :data="data1" @on-select-change="handleTreeChange"></Tree>
+      <i-col span="6" :sm="24" :md="9" :lg="6">
+        <Card :dis-hover="true" :shadow="true">
+          <TreeMenu
+            :isEdit="isEdit"
+            :menu="menuData"
+            @addMenuEvent="addMenu"
+            @editMenuEvent="editMenu"
+            @deleteMenuEvent="deleteMenu"
+            @on-select="handleTreeChange"
+          ></TreeMenu>
         </Card>
-      </Col>
-      <Col :sm="24" :md="15" :lg="19">
-        <Card :title="$t('Menu Otionps')" dis-hover shadow style="margin-bottom:10px">
-          <Form
-            :disabled="!isEdit"
-            ref="form"
-            :model="formDate"
-            :rules="ruleValidate"
-            :label-width="80"
-          >
-            <FormItem label="菜单标题" prop="name">
-              <Input v-model="formDate.name" placeholder="请输入菜单标题"></Input>
-            </FormItem>
-            <FormItem label="路径" prop="path">
-              <Input v-model="formDate.path" placeholder="请输入菜单路由"></Input>
-            </FormItem>
-            <FormItem label="菜单类型">
-              <Select v-model="formDate.type" placeholder="请选择菜单类型">
-                <Option value="menu">目录</Option>
-                <Option value="resouce">资源</Option>
-              </Select>
-            </FormItem>
-            <FormItem label="组件" prop="component">
-              <Input v-model="formDate.component" placeholder="请输入组件名称"></Input>
-              <span slot="prepend">()=>import('@/view</span>
-              <span slot="append">.vue')</span>
-            </FormItem>
-            <FormItem label="排序">
-              <Input v-model="formDate.sort" placeholder="组件默认排序"></Input>
-            </FormItem>
-            <FormItem label="面包屑">
-              不显示
-              <Switch v-model="formDate.hideInBread" />显示
-            </FormItem>
-            <FormItem label="菜单显示">
-              不显示
-              <Switch v-model="formDate.hideInMenu" />显示
-            </FormItem>
-            <FormItem label="页面缓存">
-              是
-              <i-switch v-model="formDate.notCache" />否
-            </FormItem>
-            <FormItem label="图标">
-              <Input v-model="formDate.icon" placeholder="请输入图标"></Input>
-            </FormItem>
-            <FormItem label="重定向">
-              <Input v-model="formDate.redirect" placeholder="请输入重定向"></Input>
-            </FormItem>
-
-            <FormItem>
-              <Button type="primary" @click="handleSubmit('form')">Submit</Button>
-              <Button @click="handleReset('form')" style="margin-left: 8px">Reset</Button>
-            </FormItem>
-          </Form>
+      </i-col>
+      <i-col span="18" :sm="24" :md="15" :lg="18">
+        <Card
+          :title="$t('Menu Options')"
+          icon="ios-options"
+          :dis-hover="true"
+          :shadow="true"
+          style="margin-bottom: 10px;"
+        >
+          <MenuForm
+            :formData="formData"
+            :isEdit="isEdit"
+            :selectNode="selectNode"
+            @cancel="initForm"
+            @submit="submit"
+          ></MenuForm>
         </Card>
-        <Card :title="$t('Resources')" dis-hover shadow>
-          <Tables
-            ref="tables"
-            searchable
-            search-place="top"
-            border
+        <Card :title="$t('resources')" :dis-hover="true" :shadow="true">
+          <OperationsTable
             :columns="columns"
-            v-model="tableData"
-            @on-row-edit="handleRowEdit"
-            @on-row-remove="handleRowRemove"
-            @on-selection-change="handleSelect"
-            @searchEvent="searchEventHandle"
-          >
-            <template v-slot:table-header>
-              <Button @click="handleAdd" class="search-btn" type="primary">
-                <Icon type="md-person" />&nbsp;&nbsp;添加
-              </Button>
-            </template>
-          </Tables>
-          <Row type="flex" justify="space-between" align="middle">
-            <Col class="ctrls">
-              <Button @click="handleDeleteBatch">批量删除</Button>
-              <Button @click="handleSetBatch">批量设置</Button>
-            </Col>
-            <Col>
-              <Page
-                :total="total"
-                :current="page"
-                :page-size="limit"
-                :page-size-opts="pageSizeArr"
-                show-elevator
-                show-sizer
-                show-total
-                @on-change="onPageChange"
-                @on-page-size-change="onPageSizeChange"
-              />
-            </Col>
-          </Row>
+            :tableData="tableData"
+            :isEdit="isEdit"
+            @on-change="handleTableChange"
+          ></OperationsTable>
         </Card>
-      </Col>
+      </i-col>
     </Row>
   </div>
 </template>
 
 <script>
-import Tables from '_c/tables'
+import TreeMenu from './tree.vue'
+import MenuForm from './form.vue'
+import OperationsTable from './operations.vue'
+import {
+  sortObj,
+  updateNode,
+
+  deleteNode,
+  getNode
+
+} from '@/libs/util'
+// util里的两个方法（这个页面用到）
+// insertNode,
+// sortMenus
+
+// import { menuDispatch } from '@/api/admin'
 export default {
-  name: '',
-  props: {},
+  components: {
+    TreeMenu,
+    MenuForm,
+    OperationsTable
+  },
   data () {
     return {
       isEdit: false,
+      type: '',
       selectNode: [],
-      data1: [
-        {
-          title: 'parent 1',
-          expand: true,
-          children: [
-            {
-              title: 'parent 1-1',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-1-1'
-                },
-                {
-                  title: 'leaf 1-1-2'
-                }
-              ]
-            },
-            {
-              title: 'parent 1-2',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-2-1'
-                },
-                {
-                  title: 'leaf 1-2-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      formDate: {
-        name: '',
+      menuData: [],
+      formData: {
+        title: '',
+        name: '', // 组件名称
         path: '',
         component: '',
         hideInBread: false,
@@ -174,18 +83,8 @@ export default {
         sort: 0,
         redirect: '',
         type: 'menu',
+        link: '',
         operations: []
-      },
-      ruleValidate: {
-        name: [
-          { required: true, message: '菜单名称不得为空', trigger: 'blur' }
-        ],
-        path: [
-          { required: true, message: '路由路径不得为空', trigger: 'blur' }
-        ],
-        component: [
-          { required: true, message: '前端组件名称不得为空', trigger: 'blur' }
-        ]
       },
       columns: [
         {
@@ -199,20 +98,26 @@ export default {
           key: 'name',
           search: {
             type: 'input'
-          }
+          },
+          align: 'center'
         },
         {
           title: '资源路径',
           key: 'path',
           search: {
             type: 'input'
-          }
+          },
+          align: 'center'
         },
         {
           title: '请求类型',
           key: 'method',
           search: {
             type: 'input'
+          },
+          align: 'center',
+          render: (h, params) => {
+            return h('div', params.row.method.toUpperCase())
           }
         },
         {
@@ -234,7 +139,8 @@ export default {
                 value: 'btn'
               }
             ]
-          }
+          },
+          align: 'center'
         },
         {
           title: '资源描述',
@@ -253,121 +159,163 @@ export default {
           align: 'center'
         }
       ],
-      tableData: [],
-      selection: [],
-      page: 1,
-      limit: 10,
-      total: 40,
-      pageSizeArr: [10, 30, 50, 100]
+      tableData: []
     }
   },
-  created () {},
   mounted () {
-    // 调试方法
-    window.vue = this
+    this._getMenu()
   },
-  computed: {},
   methods: {
-    // 添加菜单
-    addMenu (type) {
-      console.log('addMenu -> type', type)
-
-      if (this.selectNode.length > 0) {
-        this.isEdit = true
-      } else {
-        this.$Message.error('请选择菜单节点后在添加！')
-      }
+    _getMenu () {
+      // menuDispatch.use('get').then((res) => {
+      //   if (res.code === 200) {
+      //     this.menuData = res.data
+      //   }
+      // })
     },
-    // 编辑菜单
-    editMenu () {
-      if (this.selectNode.length > 0) {
-        this.isEdit = true
-      } else {
-        this.$Message.error('请选择菜单节点后在添编辑！')
-      }
-    },
-    // 点击树形节点选中
     handleTreeChange (item) {
-      this.selectNode = item
-    },
-    // 编辑
-    handleRowEdit () {},
-    // 删除
-    handleRowRemove () {},
-    // 批量选择
-    handleSelect () {},
-    // 搜索，数量很多的时候，搜索某个范围，或某一条
-    searchEventHandle () {},
-    // 添加
-    handleAdd () {},
-    // 页码发生改变
-    onPageChange (page) {
-      this.page = page
-      this._getList()
-    },
-    // 分页数量大小发生改变
-    onPageSizeChange (size) {
-      this.limit = size
-      this._getList()
-    },
-    // 批量删除
-    handleDeleteBatch () {
-      if (this.selection.length === 0) {
-        this.$Message.info('请选择需要删除的数据')
+      if (item.length === 0) {
         return
       }
-      const msg = this.selection.map((o) => o.username).join(',')
-
-      this.$Modal.confirm({
-        title: '确定删除用户吗？',
-        content: `删除${msg}的用户？`,
-        onOk: () => {
-          // 删除的用户id的数组
-          const arr = this.selection.map((o) => o._id)
-          deleteUserById(arr).then((res) => {
-            this.$Message.success('删除成功！')
-            // 更新列表
-            this._getList()
-          })
-        },
-        onCancel: () => {
-          this.$Message.info('取消操作！')
+      // 非编辑状态
+      if (!this.isEdit) {
+        this.selectNode = item
+        this.formData = item[0]
+        // if (item[0].operations && item[0].operations.length > 0) {
+        this.tableData = [...item[0].operations]
+        // }
+      } else {
+        this.$Message.error('当前为编辑状态，请取消编辑后查看！')
+      }
+    },
+    addMenu (type) {
+      this.initForm()
+      this.type = type
+      this.isEdit = true
+    },
+    editMenu (select) {
+      this.isEdit = true
+      this.formData = select
+    },
+    deleteMenu (select) {
+      // 判断是删除一级菜单 还是删除子菜单
+      const parent = getNode(this.menuData, select)
+      if (parent.nodeKey !== select.nodeKey) {
+        // 删除子菜单
+        // menuDispatch.use('update', parent).then((res) => {
+        //   if (res.code === 200) {
+        //     this.$Message.success('删除子菜单成功！')
+        //   }
+        // })
+      } else {
+        // menuDispatch.use('delete', { _id: parent._id }).then((res) => {
+        //   if (res.code === 200) {
+        //     this.$Message.success('删除菜单成功！')
+        //   }
+        // })
+      }
+      this.menuData = deleteNode(this.menuData, select)
+    },
+    submit (data) {
+      let parent = getNode(this.menuData, this.selectNode[0])
+      if (this.tableData.length > 0) {
+        data.operations = this.tableData
+      }
+      // 1. 获取 formData中的数据 -> menuData中
+      //   a. type -> 数据插入的节点
+      //   b. 数据需要按照tree的数据格式进行格式化 -> title
+      if (this.type === 'bro') {
+        // 兄弟节点
+        if (this.menuData.length === 0) {
+          // menuDispatch.use('add', data).then((res) => {
+          //   if (res.code === 200) {
+          //     this.menuData.push(res.data)
+          //     this.$Message.success('添加菜单成功！')
+          //     this.menuData = sortMenus([...this.menuData])
+          //     this.initForm()
+          //   }
+          // })
+        } else {
+          const selectNode = this.selectNode[0]
+          // 1. 可能是一级节点的兄弟节点  -> addMenu -> menu
+          if (parent.nodeKey === selectNode.nodeKey) {
+            // menuDispatch.use('add', data).then((res) => {
+            //   if (res.code === 200) {
+            //     this.menuData = insertNode(this.menuData, selectNode, res.data)
+            //     this.menuData = sortMenus([...this.menuData])
+            //     this.$Message.success('添加菜单成功！')
+            //   }
+            // })
+          } else {
+            // 2. 可能是二级节点的兄弟节点 -> parent 一级节点 -> updateMenu
+            parent = getNode(this.menuData, selectNode)
+            // menuDispatch.use('update', parent).then((res) => {
+            //   if (res.code === 200) {
+            //     this.$Message.success('添加菜单成功！')
+            //     this.menuData = sortMenus([...this.menuData])
+            //   }
+            // })
+          }
+          // this.selectNode.length > 0
         }
-      })
-    },
-    // 批量设置 -> vip 禁言， 角色
-    handleSetBatch () {
-      if (this.selection.length === 0) {
-        this.$Message.info('请选择需要设置的数据')
-        return
+      } else if (this.type === 'child') {
+        // 子节点
+        if (typeof this.selectNode[0].children === 'undefined') {
+          this.$set(this.selectNode[0], 'children', [data])
+        } else {
+          let arr = [...this.selectNode[0].children, data]
+          arr = sortObj(arr, 'sort')
+          // 排序？
+          this.$set(this.selectNode[0], 'children', arr)
+        }
+        parent = getNode(this.menuData, this.selectNode[0])
+        // 更新操作
+        // menuDispatch.use('update', parent).then((res) => {
+        //   if (res.code === 200) {
+        //     this.menuData = sortMenus([...this.menuData])
+        //     this.$Message.success('添加子菜单成功！')
+        //   }
+        // })
+      } else {
+        // 更新菜单节点
+        this.menuData = updateNode(this.menuData, data)
+        this.$set(this.selectNode, 0, data)
+        parent = getNode(this.menuData, this.selectNode[0])
+        // 更新操作
+        // menuDispatch.use('update', parent).then((res) => {
+        //   if (res.code === 200) {
+        //     this.menuData = sortMenus([...this.menuData])
+        //     this.$Message.success('更新菜单成功！')
+        //   }
+        // })
       }
-      this.showSet = true
+    },
+    initForm () {
+      this.isEdit = false
+      this.type = ''
+      this.formData = {
+        title: '',
+        name: '', // 组件名称
+        path: '',
+        component: '',
+        hideInBread: false,
+        hideInMenu: false,
+        notCache: false,
+        icon: '',
+        sort: 0,
+        link: '',
+        redirect: '',
+        type: 'menu',
+        operations: []
+      }
+      this.tableData = []
+    },
+    handleTableChange (table) {
+      this.tableData = table
     }
-  },
-  components: {
-    Tables
-  },
-  watch: {}
+  }
 }
 </script>
+
 <style lang="less">
-@media screen and (max-width: 1395px) {
-  .imooc-btn-group {
-    .ivu-icon {
-      & + span {
-        display: none;
-      }
-    }
-    .imooc-dropdown {
-      display: none;
-    }
-  }
-}
-.imooc-btn-group {
-  .ivu-icon {
-    & + span {
-      margin-left: 0;
-    }
-  }
-}
 </style>

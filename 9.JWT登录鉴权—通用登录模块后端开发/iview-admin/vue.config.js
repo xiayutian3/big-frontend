@@ -41,7 +41,7 @@ module.exports = {
       .loader('iview-loader') // 使用iview-loader里的属性
       .tap(options => { // 要添加的一些配置项
         return {
-          prefix: false,
+          prefix: true,
           ...options
         }
       })
