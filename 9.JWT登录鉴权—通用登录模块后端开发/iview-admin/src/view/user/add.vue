@@ -180,7 +180,7 @@ export default {
       this.$refs.table.validate((valid) => {
         if (valid) {
           this.loading = false
-          this.$emit('editEvent', this.localItem)
+          this.$emit('editEvent', { ...this.localItem })
           this.$emit('changeEvent', false)
           this.$Message.info('添加成功')
           setTimeout(() => {
