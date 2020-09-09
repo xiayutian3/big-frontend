@@ -116,7 +116,7 @@ export default {
             ...this.formData,
             expand: true
           }
-          console.log(JSON.stringify(data))
+          // console.log(JSON.stringify(data))
           this.$emit('submit', data)
           // 恢复到默认状态
           this.initFields()

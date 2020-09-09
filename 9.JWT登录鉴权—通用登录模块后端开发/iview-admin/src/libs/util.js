@@ -481,6 +481,7 @@ export const getNode = (arr, node) => {
     const currentNode = arr[i]
     // 当前的循环中是否有该节点
     if (currentNode.nodeKey === node.nodeKey) {
+      // 判断该节点有没有父级属性（因为是要找出一级菜单，所以它一定没有父级属性）
       if (!currentNode.parent) {
         // 删除子节点上的parent属性
         deleteKey(currentNode, 'parent')

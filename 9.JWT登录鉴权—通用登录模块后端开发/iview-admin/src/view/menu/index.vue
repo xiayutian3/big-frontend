@@ -46,17 +46,8 @@
 import TreeMenu from './tree.vue'
 import MenuForm from './form.vue'
 import OperationsTable from './operations.vue'
-import {
-  sortObj,
-  updateNode,
-
-  deleteNode,
-  getNode
-
-} from '@/libs/util'
-// util里的两个方法（这个页面用到）
-// insertNode,
-// sortMenus
+import { addMenu, getMenu, updateMenu, deleteMenu } from '@/api/admin'
+import { sortObj, updateNode, deleteNode, getNode, insertNode, sortMenus } from '@/libs/util'
 
 // import { menuDispatch } from '@/api/admin'
 export default {
@@ -167,6 +158,11 @@ export default {
   },
   methods: {
     _getMenu () {
+      getMenu().then(res => {
+        if (res.code === 200) {
+          this.menuData = res.data
+        }
+      })
       // menuDispatch.use('get').then((res) => {
       //   if (res.code === 200) {
       //     this.menuData = res.data
@@ -200,24 +196,35 @@ export default {
     deleteMenu (select) {
       // 判断是删除一级菜单 还是删除子菜单
       const parent = getNode(this.menuData, select)
+      this.menuData = deleteNode(this.menuData, select)
       if (parent.nodeKey !== select.nodeKey) {
         // 删除子菜单
+        updateMenu(parent).then(res => {
+          if (res.code === 200) {
+            this.$Message.success('删除子菜单成功！')
+          }
+        })
         // menuDispatch.use('update', parent).then((res) => {
         //   if (res.code === 200) {
         //     this.$Message.success('删除子菜单成功！')
         //   }
         // })
       } else {
+        deleteMenu({ _id: parent._id }).then(res => {
+          if (res.code === 200) {
+            this.$Message.success('删除菜单成功！')
+          }
+        })
         // menuDispatch.use('delete', { _id: parent._id }).then((res) => {
         //   if (res.code === 200) {
         //     this.$Message.success('删除菜单成功！')
         //   }
         // })
       }
-      this.menuData = deleteNode(this.menuData, select)
     },
     submit (data) {
       let parent = getNode(this.menuData, this.selectNode[0])
+      // console.log('submit -> parent', parent)
       if (this.tableData.length > 0) {
         data.operations = this.tableData
       }
@@ -227,6 +234,14 @@ export default {
       if (this.type === 'bro') {
         // 兄弟节点
         if (this.menuData.length === 0) {
+          addMenu(data).then(res => {
+            if (res.code === 200) {
+              this.menuData.push(res.data)
+              this.$Message.success('添加菜单成功！')
+              this.menuData = sortMenus([...this.menuData])
+              this.initForm()
+            }
+          })
           // menuDispatch.use('add', data).then((res) => {
           //   if (res.code === 200) {
           //     this.menuData.push(res.data)
@@ -239,6 +254,13 @@ export default {
           const selectNode = this.selectNode[0]
           // 1. 可能是一级节点的兄弟节点  -> addMenu -> menu
           if (parent.nodeKey === selectNode.nodeKey) {
+            addMenu(data).then(res => {
+              if (res.code === 200) {
+                this.menuData = insertNode(this.menuData, selectNode, res.data)
+                this.menuData = sortMenus([...this.menuData])
+                this.$Message.success('添加菜单成功！')
+              }
+            })
             // menuDispatch.use('add', data).then((res) => {
             //   if (res.code === 200) {
             //     this.menuData = insertNode(this.menuData, selectNode, res.data)
@@ -248,7 +270,14 @@ export default {
             // })
           } else {
             // 2. 可能是二级节点的兄弟节点 -> parent 一级节点 -> updateMenu
+            this.menuData = insertNode(this.menuData, selectNode, data)
             parent = getNode(this.menuData, selectNode)
+            updateMenu(parent).then(res => {
+              if (res.code === 200) {
+                this.$Message.success('添加菜单成功！')
+                this.menuData = sortMenus([...this.menuData])
+              }
+            })
             // menuDispatch.use('update', parent).then((res) => {
             //   if (res.code === 200) {
             //     this.$Message.success('添加菜单成功！')
@@ -270,6 +299,12 @@ export default {
         }
         parent = getNode(this.menuData, this.selectNode[0])
         // 更新操作
+        updateMenu(parent).then(res => {
+          if (res.code === 200) {
+            this.menuData = sortMenus([...this.menuData])
+            this.$Message.success('添加子菜单成功！')
+          }
+        })
         // menuDispatch.use('update', parent).then((res) => {
         //   if (res.code === 200) {
         //     this.menuData = sortMenus([...this.menuData])
@@ -282,6 +317,12 @@ export default {
         this.$set(this.selectNode, 0, data)
         parent = getNode(this.menuData, this.selectNode[0])
         // 更新操作
+        updateMenu(parent).then(res => {
+          if (res.code === 200) {
+            this.menuData = sortMenus([...this.menuData])
+            this.$Message.success('更新菜单成功！')
+          }
+        })
         // menuDispatch.use('update', parent).then((res) => {
         //   if (res.code === 200) {
         //     this.menuData = sortMenus([...this.menuData])

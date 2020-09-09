@@ -24,13 +24,13 @@ const checkUsername = (username) => axios.get('/admin/checkname?username=' + use
 const addUser = (data) => axios.post('/admin/add-user', data)
 
 // 添加菜单
-const addMenu = (data) => axios.post('/admin/add-menu', data)
+const addMenu = (data) => axios.post('/admin/addMenu', data)
 // 获取菜单列表
-const getMenu = () => axios.get('/admin/get-menu')
+const getMenu = () => axios.get('/admin/getMenu')
 // 更新菜单列表
-const updateMenu = (data) => axios.post('/admin/update-menu', data)
+const updateMenu = (data) => axios.post('/admin/updateMenu', data)
 // 删除菜单
-const deleteMenu = (data) => axios.post('/admin/delete-menu', data)
+const deleteMenu = (data) => axios.post('/admin/deleteMenu', data)
 // export const menuDispatch = new Dispatch({
 //   add: ['/admin/addMenu', 'post'],
 //   get: ['/admin/getMenu', 'get'],
