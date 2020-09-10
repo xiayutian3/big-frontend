@@ -52,5 +52,5 @@ export default {
   roles_management: '角色管理',
   roles: '角色设置',
   'Menu Otionps': '菜单选项',
-  Resources: '资源选项'
+  resources: '资源选项'
 }

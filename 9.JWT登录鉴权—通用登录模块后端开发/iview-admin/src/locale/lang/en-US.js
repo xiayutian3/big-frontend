@@ -52,5 +52,5 @@ export default {
   roles_management: 'Roles Management',
   roles: 'Roles Setting',
   'Menu Otionps': 'Menu Otionps',
-  Resources: 'Resources'
+  resources: 'Resources'
 }
