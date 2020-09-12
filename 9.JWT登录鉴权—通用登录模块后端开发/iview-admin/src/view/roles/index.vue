@@ -18,10 +18,11 @@
               @click="selectRole(index)"
               :class="{selected:roleIndex===index}"
             >
-              <a class="name" target="_blank">{{ item.title }}</a>
+              <a class="name" target="_blank">{{ item.name }}</a>
               <span>
-                <Icon type="md-build" size="18" color="#2d8cf0" @click.stop="editRole(item,index)"></Icon>
-                <Icon type="md-trash" size="18" color="#ed4014"></Icon>
+                 <Icon type="ios-create" size="16" @click.stop="editLabel(item,index)"></Icon>
+                <Icon type="md-build" size="16" color="#2d8cf0" @click.stop="editRole(item,index)"></Icon>
+                <Icon type="md-trash" size="16" color="#ed4014" @click.stop="deleteRole(item,index)"></Icon>
               </span>
             </li>
           </ul>
@@ -38,7 +39,7 @@
           <p slot="title">
             <Icon type="md-menu"></Icon>菜单权限
           </p>
-          <Tree :data="menuData" show-checkbox></Tree>
+          <Tree :data="menuData" show-checkbox @on-select-change="handleTreeChange" @on-check-change="handlesTreeChecked"></Tree>
         </Card>
       </i-col>
       <i-col span="13">
@@ -52,8 +53,8 @@
         </Card>
       </i-col>
     </i-row>
-    <Modal v-model="showAdd" title="添加角色" @on-ok="modalOk" @on-cancel="modalCancel">
-      <Form :model="formItem" :label-width="80" :rules="formRules">
+    <Modal v-model="showAdd" title="添加角色" @on-ok="modalOk" @on-cancel="modalCancel" :loading="loading">
+      <Form ref="form" :model="formItem" :label-width="80" :rules="formRules">
         <FormItem label="角色名称" prop="name">
           <Input v-model="formItem.name" placeholder="请输入角色名称"></Input>
         </FormItem>
@@ -70,12 +71,17 @@
 
 <script>
 import OperationsTable from './operations'
+import { getMenu } from '@/api/admin'
+import { modifyNode } from '@/libs/util'
 export default {
   name: '',
   props: {},
   data () {
     return {
+      loading: true,
       isEdit: false,
+      modalEdit: false,
+      editIndex: '',
       showAdd: false,
       formItem: {
         name: '',
@@ -89,51 +95,13 @@ export default {
       selectNode: [],
       roles: [
         {
-          title: 'parent 1'
-        },
-        {
-          title: 'parent 1'
-        },
-        {
-          title: 'parent 1'
-        },
-        {
-          title: 'parent 1'
+          name: '超级管理员',
+          role: 'super_admin',
+          menu: ['5f58d2068bf76e4828878fc5', '5f5c8a3e7cae8c1e4cf0d706']
         }
       ],
       roleIndex: '',
-      menuData: [
-        {
-          title: 'parent 1',
-          expand: true,
-          children: [
-            {
-              title: 'parent 1-1',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-1-1'
-                },
-                {
-                  title: 'leaf 1-1-2'
-                }
-              ]
-            },
-            {
-              title: 'parent 1-2',
-              expand: true,
-              children: [
-                {
-                  title: 'leaf 1-2-1'
-                },
-                {
-                  title: 'leaf 1-2-1'
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      menuData: [],
       columns: [
         {
           type: 'selection',
@@ -202,13 +170,51 @@ export default {
     }
   },
   created () {},
-  mounted () {},
+  mounted () {
+    // window.vue = this
+    this._getMenu()
+  },
   computed: {},
   methods: {
+    // 获取菜单
+    _getMenu () {
+      getMenu().then(res => {
+        if (res.code === 200) {
+          this.menuData = res.data
+        }
+      })
+      // menuDispatch.use('get').then((res) => {
+      //   if (res.code === 200) {
+      //     this.menuData = res.data
+      //   }
+      // })
+    },
+    // 修改名称按钮
+    editLabel (item, index) {
+      this.modalEdit = true
+      this.showAdd = true
+      this.editIndex = index
+      this.formItem = { ...item }
+    },
     // 编辑按钮
     editRole (item, index) {
       this.isEdit = true
       this.roleIndex = index
+    },
+    // 删除按钮
+    deleteRole (item, index) {
+      this.$Modal.confirm({
+        title: '确定删除吗？',
+        content: `删除${item.name}的角色吗？`,
+        onOk: () => {
+          this.roles.splice(index, 1)
+          this.$Message.success('删除成功！')
+          //  this._getList()
+        },
+        onCancel: () => {
+          this.$Message.info('取消操作！')
+        }
+      })
     },
     // 新增按钮
     addRole () {
@@ -218,7 +224,16 @@ export default {
     selectRole (value) {
       if (this.roleIndex === '' || this.roleIndex !== value) {
         this.roleIndex = value
+        // 修改右侧菜单树+权限列表的选中状态
+        // 参数含义： 所有的菜单 用户的权限菜单数组 设置checked状态  true
+        const tmpData = modifyNode(this.menuData, this.roles[this.roleIndex].menu, 'checked', true)
+        localStorage.setItem('menuData', JSON.stringify(tmpData))
+        if (this.selectNode.length > 0 && this.selectNode[0].operations) {
+          this.tableData = this.selectNode[0].operations
+        }
       } else {
+        modifyNode(this.menuData, null, 'checked', false)
+        this.tableData = []
         this.roleIndex = ''
       }
     },
@@ -231,28 +246,61 @@ export default {
       this.isEdit = false
     },
     // 模态框的确定按钮
-    modalOk () {},
+    modalOk () {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          // 检验通过后的逻辑
+          // 1.获取表单的信息
+          if (this.modalEdit) {
+            this.roles.splice(this.editIndex, 1, { ...this.formItem })
+            this.$Message.info('编辑成功！')
+          } else {
+            this.roles.push({ ...this.formItem })
+            this.$Message.info('添加成功！')
+          }
+          // 2. 提交对应的数据到后台接口
+          // 3.清空表单数据
+          this.initForm()
+        } else {
+          this.loading = false
+          this.$nextTick(() => (this.loading = true))
+          this.$Message.error('请检验表单数据！')
+        }
+      })
+    },
+    // 初始化modal的form数据
+    initForm () {
+      this.loading = false
+      this.showAdd = false
+      this.modalEdit = false
+      setTimeout(() => {
+        this.$refs.form.resetFields()
+      }, 0)
+    },
     // 模态框的取消按钮
-    modalCancel () {},
-    addMenu () {},
-    editMenu () {},
-    deleteMenu () {},
+    modalCancel () {
+      this.initForm()
+    },
     handleTreeChange (item) {
       if (item.length === 0) {
         return
       }
-      // 非编辑状态
-      if (!this.isEdit) {
-        this.selectNode = item
-        // if (item[0].operations && item[0].operations.length > 0) {
-        this.tableData = [...item[0].operations]
-        // }
-      } else {
-        this.$Message.error('当前为编辑状态，请取消编辑后查看！')
-      }
+      this.selectNode = item
+      // if (item[0].operations && item[0].operations.length > 0) {
+      this.tableData = [...item[0].operations]
+      // }
     },
     handleTableChange (table) {
       this.tableData = table
+    },
+    handlesTreeChecked (item) {
+      if (!this.isEdit) {
+        const tmpData = localStorage.getItem('menuData')
+        if (typeof tmpData !== 'undefined') {
+          this.menuData = JSON.parse(tmpData)
+        }
+        this.$Message.warning('无法修改，请选择权限进行编辑')
+      }
     }
   },
   components: {
@@ -270,8 +318,8 @@ export default {
     span {
       display: none;
       float: right;
-      i:first-child {
-        margin-right: 7px;
+      i{
+        margin-right: 5px;
       }
     }
     .role {

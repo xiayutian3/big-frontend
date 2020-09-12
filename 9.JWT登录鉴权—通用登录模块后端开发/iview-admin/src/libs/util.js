@@ -506,12 +506,40 @@ export const getNode = (arr, node) => {
   }
 }
 
+// export const modifyNode = (tree, nodes, property, flag) => {
+//   for (let i = 0; i < tree.length; i++) {
+//     // 遍历整个树
+//     const currentNode = tree[i]
+//     if (nodes && nodes.length > 0) {
+//       // 传递了需要设置的节点（权限 ）
+//       if (nodes.includes(currentNode._id)) {
+//         const tmp = { ...currentNode }
+//         tmp[property] = flag
+//         tree.splice(i, 1, tmp)
+//       }
+//     } else {
+//       // 无节点，无需要特别设置的节点权限，统一去设置整个树形菜单
+//       const tmp = { ...currentNode }
+//       tmp[property] = flag
+//       tree.splice(i, 1, tmp)
+//     }
+//     if (currentNode.children && currentNode.children.length > 0) {
+//       modifyNode(currentNode.children, nodes, property, flag)
+//     }
+//     // _checked 或者 _selected 参考：https://www.iviewui.com/components/table 说明
+//     if (currentNode.operations && currentNode.operations.length > 0) {
+//       modifyNode(currentNode.operations, nodes, '_' + property, flag)
+//     }
+//   }
+//   return tree
+// }
+// 参数含义： 所有的菜单 用户的权限菜单数组 设置checked状态  true
 export const modifyNode = (tree, nodes, property, flag) => {
   for (let i = 0; i < tree.length; i++) {
     // 遍历整个树
     const currentNode = tree[i]
     if (nodes && nodes.length > 0) {
-      // 传递了需要设置的节点（权限 ）
+      // 传递了需要设置的节点（权限）
       if (nodes.includes(currentNode._id)) {
         const tmp = { ...currentNode }
         tmp[property] = flag
@@ -523,10 +551,11 @@ export const modifyNode = (tree, nodes, property, flag) => {
       tmp[property] = flag
       tree.splice(i, 1, tmp)
     }
+    // 设置子菜单的勾选（iview tree组件）
     if (currentNode.children && currentNode.children.length > 0) {
       modifyNode(currentNode.children, nodes, property, flag)
     }
-    // _checked 或者 _selected 参考：https://www.iviewui.com/components/table 说明
+    // 设置子操作权限的勾选 _checked（iview table组件）
     if (currentNode.operations && currentNode.operations.length > 0) {
       modifyNode(currentNode.operations, nodes, '_' + property, flag)
     }
