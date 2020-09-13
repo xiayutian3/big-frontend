@@ -506,6 +506,7 @@ export const getNode = (arr, node) => {
   }
 }
 
+// 老师的方法
 // export const modifyNode = (tree, nodes, property, flag) => {
 //   for (let i = 0; i < tree.length; i++) {
 //     // 遍历整个树
@@ -533,6 +534,8 @@ export const getNode = (arr, node) => {
 //   }
 //   return tree
 // }
+
+// 自己写的
 // 参数含义： 所有的菜单 用户的权限菜单数组 设置checked状态  true
 export const modifyNode = (tree, nodes, property, flag) => {
   for (let i = 0; i < tree.length; i++) {
@@ -569,16 +572,43 @@ export const flatten = (arr) => {
   }
   return arr
 }
+// export const flatten = (arr)=>{
+//   while(arr.some(item=>Array.isArray(item))){
+//     arr = [].concat(...arr)
+//   }
+//   return arr
+// }
 
+// 老师的方法
+// export const getPropertyIds = (menu, properties) => {
+//   const arr = []
+//   // 遍历整个树形菜单数据
+//   menu.forEach((item) => {
+//     if (item.checked || item._checked) {
+//       arr.push(item._id)
+//     }
+//     // 查询两个属性下面的节点信息，children -> children -> operations
+//     properties.forEach((property) => {
+//       if (item[property] && item[property].length > 0) {
+//         arr.push(getPropertyIds(item[property], properties))
+//       }
+//     })
+//   })
+//   // [1,2,3 [2,3,4,[44,4,4]]]
+//   return flatten(arr)
+// }
+
+// 自己写的
 export const getPropertyIds = (menu, properties) => {
   const arr = []
-  // 遍历整个树形菜单数据
-  menu.forEach((item) => {
+
+  // 遍历整棵树形菜单
+  menu.forEach(item => {
     if (item.checked || item._checked) {
       arr.push(item._id)
     }
-    // 查询两个属性下面的节点信息，children -> children -> operations
-    properties.forEach((property) => {
+    // 查询两个属性下的节点信息，children-> children -> operations
+    properties.forEach(property => {
       if (item[property] && item[property].length > 0) {
         arr.push(getPropertyIds(item[property], properties))
       }

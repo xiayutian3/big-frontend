@@ -38,6 +38,15 @@ const deleteMenu = (data) => axios.post('/admin/deleteMenu', data)
 //   delete: ['/admin/deleteMenu', 'post']
 // })
 
+// 添加角色
+const addRole = (data) => axios.post('/admin/addRole', data)
+// 获取角色列表
+const getRole = () => axios.get('/admin/getRole')
+// 更新角色列表
+const updateRole = (data) => axios.post('/admin/updateRole', data)
+// 删除角色
+const deleteRole = (data) => axios.post('/admin/deleteRole', data)
+
 export {
   getUserList,
   updateUserById,
@@ -48,5 +57,9 @@ export {
   addMenu,
   getMenu,
   updateMenu,
-  deleteMenu
+  deleteMenu,
+  addRole,
+  getRole,
+  updateRole,
+  deleteRole
 }

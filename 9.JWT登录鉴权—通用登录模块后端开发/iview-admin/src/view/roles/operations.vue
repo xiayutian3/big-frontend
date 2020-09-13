@@ -63,9 +63,6 @@ export default {
     }
   },
   watch: {
-    localData () {
-      this.$emit('on-change', this.localData)
-    },
     tableData (newval, oldval) {
       localStorage.setItem('localData', JSON.stringify(newval))
       this.localData = newval
@@ -74,6 +71,7 @@ export default {
   methods: {
     handleSelect (selection) {
       this.selection = selection
+      this.$emit('on-change', selection)
       if (!this.isEdit) {
         // table组件选择的触发时机与tree组件勾选的触发时机不一样，table是更新后才触发，所以给个setTimeout，才能阻止被勾选
         // 让整个视图的更新在 table 的handleSelect事件之后， 所以添加延迟执行

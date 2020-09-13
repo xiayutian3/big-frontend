@@ -52,17 +52,17 @@ router.post('/deleteMenu', adminController.deleteMenu)
 // 更新菜单
 router.post('/updateMenu', adminController.updateMenu)
 
-// // 添加角色
-// router.post('/addRole', adminController.addRole)
+// 添加角色
+router.post('/addRole', adminController.addRole)
 
-// // 获取角色
-// router.get('/getRoles', adminController.getRoles)
+// 获取角色
+router.get('/getRole', adminController.getRole)
 
-// // 删除角色
-// router.post('/deleteRole', adminController.deleteRole)
+// 删除角色
+router.post('/deleteRole', adminController.deleteRole)
 
-// // 更新角色
-// router.post('/updateRole', adminController.updateRole)
+// 更新角色
+router.post('/updateRole', adminController.updateRole)
 
 // // 获取评论
 // router.get('/getComments', adminController.getCommentsAll)
