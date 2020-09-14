@@ -24,6 +24,9 @@ import config from './config/index'
 import errorHandle from './common/ErrorHandle.js'
 // 引入websocket服务
 import WebSocketServer from './config/WebSocket'
+// 引入自定义的中间机件
+import auth from '@/common/Auth'
+
 // koa通信安全头
 const helmet = require('koa-helmet')
 // 设置静态资源目录
@@ -62,7 +65,8 @@ const middleware = compose([
   jsonutil({ pretty: false, param: 'pretty' }),
   helmet(),
   errorHandle,
-  jwt
+  jwt,
+  auth
 ])
 
 if (!isDevMode) {

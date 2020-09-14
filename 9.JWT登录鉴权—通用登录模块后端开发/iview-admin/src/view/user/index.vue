@@ -46,16 +46,19 @@
     <EditModel
       :isShow="showEdit"
       :item="currentItem"
+      :roles="roles"
       @editEvent="handleItemEdit"
       @changeEvent="handleChangeEvent"
     ></EditModel>
     <AddModel
       :isShow="showAdd"
+      :roles="roles"
       @editEvent="handleItemAdd"
       @changeEvent="handleAddChangeEvent"
     ></AddModel>
      <BatchSet
       :isShow="showSet"
+      :roles="roles"
       @editEvent="handleItemSet"
       @changeEvent="handleSetChangeEvent"
     ></BatchSet>'
@@ -66,7 +69,7 @@
 import EditModel from './edit'
 import AddModel from './add'
 import BatchSet from './batchSet'
-import { getUserList, updateUserById, deleteUserById, addUser, updateUserBatchById } from '@/api/admin'
+import { getUserList, updateUserById, deleteUserById, addUser, updateUserBatchById, getRoleNames } from '@/api/admin'
 import Tables from '_c/tables'
 import dayjs from 'dayjs'
 export default {
@@ -77,11 +80,21 @@ export default {
     AddModel,
     BatchSet
   },
+  computed: {
+    roleNames () {
+      const tmp = {}
+      this.roles.forEach(item => {
+        tmp[item.role] = item.name
+      })
+      return tmp
+    }
+  },
   data () {
     return {
       showEdit: false,
       showAdd: false,
       showSet: false,
+      roles: ['user'],
       // currentIndex: 0,
       currentItem: {},
       option: {},
@@ -119,7 +132,7 @@ export default {
           align: 'center',
           minWidth: 160,
           render: (h, params) => {
-            const roleNames = params.row.roles.join(',')
+            const roleNames = params.row.roles.map(o => this.roleNames[o]).join(',')
             return h('div', [h('span', roleNames)])
           },
           search: {
@@ -384,10 +397,18 @@ export default {
           }
         }
       )
+    },
+    _getRoleNames () {
+      getRoleNames().then(res => {
+        if (res.code === 200) {
+          this.roles = res.data
+        }
+      })
     }
   },
   mounted () {
     this._getList()
+    this._getRoleNames()
   }
 }
 </script>

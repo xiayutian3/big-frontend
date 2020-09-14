@@ -2,6 +2,8 @@
 import Menu from '@/model/Menus'
 // 引入角色模型
 import Roles from '@/model/Roles'
+import User from '@/model/User'
+import { set } from 'mongoose'
 
 class AdminController {
   // 添加菜单
@@ -85,6 +87,40 @@ class AdminController {
     ctx.body = {
       code: 200,
       data: result
+    }
+  }
+
+  /// / 获取角色
+  // 获取角色列表（use的index组件那里使用的接口）
+  async getRoleNames (ctx) {
+    // menu 不显示的字段 取0,desc也不需要
+    const result = await Roles.find({}, { menu: 0, desc: 0 })
+    ctx.body = {
+      code: 200,
+      data: result
+    }
+  }
+
+  // 获取用户 -》 角色 -》 动态菜单信息
+  async getRoutes (ctx) {
+    // onj -> _id -> roles
+    // roles设置为1，只显示roles这个字段，设置为0 为不显示
+    const user = await User.findOne({ _id: ctx._id }, { roles: 1 })
+    const { roles } = user
+    // 通过角色 -》 menus -》 可以访问的菜单数据
+    // 1.用户的角色可能有多个
+    // 2.角色 menus可能重复 -》 去重
+    let menus = []
+    for (let i = 0; i < roles.length; i++) {
+      const role = roles[i]
+      // 只需要menu字段信息，其他不要 ，1是获取，0是不要，{ menu: 1 }只返回menu字段信息
+      const rights = await Roles.findOne({ role }, { menu: 1 })
+      menus = menus.concat(rights.menu)
+    }
+    menus = Array.from(new Set(menus))
+    ctx.body = {
+      code: 200,
+      data: menus
     }
   }
 }

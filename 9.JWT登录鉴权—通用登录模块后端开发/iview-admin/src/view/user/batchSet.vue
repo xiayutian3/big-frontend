@@ -6,9 +6,9 @@
           <Select v-model="localItem.roles" multiple>
             <Option
               v-for="(item,index) in roles"
-              :value="item"
-              :key="'editTags-'+index"
-            >{{item}}</Option>
+              :key="'role'+index"
+              :value="item.role"
+            >{{item.name}}</Option>
           </Select>
         </FormItem>
         <FormItem label="是否禁用">
@@ -35,6 +35,10 @@ export default {
     isShow: {
       type: Boolean,
       default: false
+    },
+    roles: {
+      type: Array,
+      default: () => []
     }
   },
   watch: {
@@ -46,11 +50,10 @@ export default {
   data () {
     return {
       showStatus: false,
-      roles: ['super_admin', 'admin', 'user'],
       localItem: {
         status: '',
-        isVip: '',
-        roles: ['user']
+        roles: [],
+        isVip: ''
       }
     }
   },

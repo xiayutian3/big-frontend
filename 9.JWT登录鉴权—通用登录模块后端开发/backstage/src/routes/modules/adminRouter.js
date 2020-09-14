@@ -64,6 +64,12 @@ router.post('/deleteRole', adminController.deleteRole)
 // 更新角色
 router.post('/updateRole', adminController.updateRole)
 
+// 获取角色列表（use的index组件那里使用的接口）
+router.get('/getRoleNames', adminController.getRoleNames)
+
+// 获取用户 -》 角色 -》 动态菜单信息
+router.get('/get-routes', adminController.getRoutes)
+
 // // 获取评论
 // router.get('/getComments', adminController.getCommentsAll)
 

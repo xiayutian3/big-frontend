@@ -8,6 +8,15 @@
         <FormItem label="密码" prop="password">
           <Input prefix="md-lock" v-model="localItem.password" placeholder="请输入密码"></Input>
         </FormItem>
+        <FormItem label="角色" prop="roles">
+          <Select v-model="localItem.roles" multiple>
+            <Option
+              v-for="(item,index) in roles"
+              :key="'role'+index"
+              :value="item.role"
+            >{{item.name}}</Option>
+          </Select>
+        </FormItem>
         <FormItem label="用户名称" prop="name">
           <Input prefix="md-person" v-model="localItem.name" placeholder="请输入用户名称"></Input>
         </FormItem>
@@ -40,7 +49,7 @@
           </RadioGroup>
         </FormItem>
         <FormItem label="个性签名">
-          <Input  placeholder="请输入个性签名" type="textarea" v-model="localItem.regmark"></Input>
+          <Input placeholder="请输入个性签名" type="textarea" v-model="localItem.regmark"></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -97,6 +106,10 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    roles: {
+      type: Array,
+      default: () => []
     }
   },
   watch: {
@@ -116,6 +129,7 @@ export default {
         name: '',
         username: '',
         password: '',
+        roles: [],
         status: '0',
         favs: 0,
         isVip: '0',
@@ -149,6 +163,7 @@ export default {
           },
           { validator: userNamePassCheck, trigger: 'blur' }
         ],
+        roles: [{ required: true, type: 'array', min: 1, message: '请选择角色', trigger: 'change' }],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           {

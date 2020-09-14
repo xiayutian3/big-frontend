@@ -47,6 +47,9 @@ const updateRole = (data) => axios.post('/admin/updateRole', data)
 // 删除角色
 const deleteRole = (data) => axios.post('/admin/deleteRole', data)
 
+// 获取角色名称列表
+const getRoleNames = () => axios.get('/admin/getRoleNames')
+
 export {
   getUserList,
   updateUserById,
@@ -61,5 +64,6 @@ export {
   addRole,
   getRole,
   updateRole,
-  deleteRole
+  deleteRole,
+  getRoleNames
 }

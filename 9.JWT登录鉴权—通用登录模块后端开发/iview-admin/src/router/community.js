@@ -23,7 +23,8 @@ export default [
         name: 'content_management',
         meta: {
           icon: 'md-grid',
-          title: '内容管理'
+          title: '内容管理',
+          notCache: true
         },
         component: () => import('@/view/content/index.vue')
       },
@@ -32,7 +33,8 @@ export default [
         name: 'tags_management',
         meta: {
           icon: 'md-grid',
-          title: '标签管理'
+          title: '标签管理',
+          notCache: true
         },
         component: () => import('@/view/components/tables/tables.vue')
       }
@@ -43,7 +45,8 @@ export default [
     name: 'user',
     meta: {
       icon: 'logo-buffer',
-      title: '用户管理'
+      title: '用户管理',
+      notCache: true
     },
     component: Main,
     children: [
@@ -52,7 +55,8 @@ export default [
         name: 'user_management',
         meta: {
           icon: 'ios-people',
-          title: '用户管理'
+          title: '用户管理',
+          notCache: true
         },
         component: () => import('@/view/user/index.vue')
       }
@@ -63,7 +67,8 @@ export default [
     name: 'menu',
     meta: {
       icon: 'logo-buffer',
-      title: '菜单管理'
+      title: '菜单管理',
+      notCache: true
     },
     component: Main,
     children: [
@@ -72,7 +77,8 @@ export default [
         name: 'menu_management',
         meta: {
           icon: 'ios-menu',
-          title: '菜单管理'
+          title: '菜单管理',
+          notCache: true
         },
         component: () => import('@/view/menu/index.vue')
       }
@@ -83,7 +89,8 @@ export default [
     name: 'roles',
     meta: {
       icon: 'logo-buffer',
-      title: '权限管理'
+      title: '权限管理',
+      notCache: true
     },
     component: Main,
     children: [
@@ -92,7 +99,8 @@ export default [
         name: 'roles_management',
         meta: {
           icon: 'md-key',
-          title: '角色权限'
+          title: '角色权限',
+          notCache: true
         },
         component: () => import('@/view/roles/index.vue')
       }

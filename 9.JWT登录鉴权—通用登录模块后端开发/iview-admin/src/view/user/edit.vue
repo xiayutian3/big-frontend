@@ -1,7 +1,7 @@
 <template>
   <div>
     <Modal v-model="showStatus" title="编辑用户信息" @on-ok="ok" @on-cancel="cancel" :loading="loading">
-      <Form :model="localItem" :label-width="80" :rules="ruleValidate"  ref="table">
+      <Form :model="localItem" :label-width="80" :rules="ruleValidate" ref="table">
         <FormItem label="用户名称" prop="name">
           <Input v-model="localItem.name" placeholder="请输入用户名称"></Input>
         </FormItem>
@@ -11,22 +11,30 @@
         <FormItem label="密码">
           <Input v-model="localItem.password" placeholder="请输入密码"></Input>
         </FormItem>
-
-         <FormItem label="是否禁用">
+        <FormItem label="角色" prop="roles">
+          <Select v-model="localItem.roles" multiple>
+            <Option
+              v-for="(item,index) in roles"
+              :key="'role'+index"
+              :value="item.role"
+            >{{item.name}}</Option>
+          </Select>
+        </FormItem>
+        <FormItem label="是否禁用">
           <RadioGroup v-model="localItem.status">
             <Radio label="0">否</Radio>
             <Radio label="1">是</Radio>
           </RadioGroup>
         </FormItem>
-          <FormItem label="是否是VIP">
+        <FormItem label="是否是VIP">
           <RadioGroup v-model="localItem.isVip">
             <Radio label="0">否</Radio>
             <Radio label="1">是</Radio>
           </RadioGroup>
         </FormItem>
-         <FormItem label="用户积分" prop="favs">
-           <Input v-model="localItem.favs"  style="width: 120px;"></Input>
-            <!-- <Slider v-model="localItem.favs" show-input :step="10"></Slider> -->
+        <FormItem label="用户积分" prop="favs">
+          <Input v-model="localItem.favs" style="width: 120px;"></Input>
+          <!-- <Slider v-model="localItem.favs" show-input :step="10"></Slider> -->
         </FormItem>
       </Form>
     </Modal>
@@ -57,7 +65,7 @@ const userNamePassCheck = (rule, value, callback, vm) => {
     callback()
     return
   }
-  checkUsername(value).then(res => {
+  checkUsername(value).then((res) => {
     if (res.code === 200) {
       const data = res.data
       if (data === 1) {
@@ -79,6 +87,10 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    roles: {
+      type: Array,
+      default: () => []
     }
   },
   watch: {
@@ -97,6 +109,7 @@ export default {
       localItem: {
         _id: '',
         name: '',
+        roles: [],
         username: '',
         password: '',
         status: '0',
@@ -104,6 +117,7 @@ export default {
         isVip: '0'
       },
       ruleValidate: {
+        roles: [{ required: true, type: 'array', min: 1, message: '请选择角色', trigger: 'change' }],
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' },
           {
@@ -126,7 +140,11 @@ export default {
             message: '请检查邮箱的格式',
             trigger: 'blur'
           },
-          { validator: (rule, value, callback) => userNamePassCheck(rule, value, callback, this), trigger: 'blur' }
+          {
+            validator: (rule, value, callback) =>
+              userNamePassCheck(rule, value, callback, this),
+            trigger: 'blur'
+          }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
