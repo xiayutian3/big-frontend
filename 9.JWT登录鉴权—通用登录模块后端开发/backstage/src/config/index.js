@@ -17,10 +17,14 @@ const baseUrl = process.env.NODE_ENV === 'production' ? 'http://www.toimc.com' :
 // 上传图片的路径 path.join(path.resolve(__dirname),'../../public') 当前-》public目录，绝对路径
 const uploadPath = process.env.NODE_ENV === 'production' ? '/api/public' : path.join(path.resolve(__dirname), '../../public')
 
+// 超级管理员权限
+const adminEmail = ['1127071993@qq.com']
+
 export default {
   DB_URL,
   REDIS,
   JWT_SECRET,
   baseUrl,
-  uploadPath
+  uploadPath,
+  adminEmail
 }

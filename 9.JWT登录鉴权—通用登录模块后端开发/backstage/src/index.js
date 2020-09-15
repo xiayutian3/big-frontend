@@ -26,6 +26,8 @@ import errorHandle from './common/ErrorHandle.js'
 import WebSocketServer from './config/WebSocket'
 // 引入自定义的中间机件
 import auth from '@/common/Auth'
+// 初始化// 超级管理员权限
+import { run } from './common/Init'
 
 // koa通信安全头
 const helmet = require('koa-helmet')
@@ -77,4 +79,5 @@ app.use(router())
 
 app.listen(3000, () => {
   console.log('server is starting')
+  run()
 })

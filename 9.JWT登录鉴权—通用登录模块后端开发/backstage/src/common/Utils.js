@@ -83,9 +83,62 @@ const rename = (obj, key, newKey) => {
   return obj
 }
 
+/**
+ *
+ * @param {*} arr 要排序的数组
+ * @param {*} property 按什么属性来排序
+ */
+const sortObj = (arr, property) => {
+  return arr.sort((m, n) => m[property] - n[property])
+}
+
+// 获取菜单权限 对应的路由(动态路由) 或者是超级管理员
+const getMenuData = (tree, rights, flag) => {
+  const arr = []
+  for (let i = 0; i < tree.length; i++) {
+    const item = tree[i]
+
+    // 把mongoodb的-id转换成string
+    if (rights.includes(item._id + '') || flag) {
+      if (item.type === 'menu') {
+        // _id 包含在menus中
+        // 结构进行改造,删除opertaions，等无用的属性
+        arr.push({
+          _id: item._id,
+          path: item.path,
+          meta: {
+            title: item.title,
+            hideInBread: item.hideInBread,
+            hideInMenu: item.hideInMenu,
+            notCache: item.notCache,
+            icon: item.icon
+          },
+          component: item.component,
+          children: getMenuData(item.children, rights)
+        })
+      } else if (item.type === 'link') {
+        // 等于link的情况
+        arr.push({
+          _id: item._id,
+          path: item.path,
+          meta: {
+            title: item.title,
+            href: item.link,
+            icon: item.icon
+          }
+        })
+      }
+    }
+  }
+  // 排序 sortObj
+  return sortObj(arr, 'sort')
+}
+
 export {
   checkCode,
   getJWTPayload,
   dirExists,
-  rename
+  rename,
+  sortObj,
+  getMenuData
 }

@@ -3,7 +3,8 @@ import Menu from '@/model/Menus'
 // 引入角色模型
 import Roles from '@/model/Roles'
 import User from '@/model/User'
-import { set } from 'mongoose'
+// 结构进行改造 菜单数据 从而获得动态路由数据
+import { getMenuData, sortObj } from '@/common/Utils'
 
 class AdminController {
   // 添加菜单
@@ -22,7 +23,7 @@ class AdminController {
     const result = await Menu.find({})
     ctx.body = {
       code: 200,
-      data: result
+      data: sortObj(result, 'sort')
     }
   }
 
@@ -103,13 +104,13 @@ class AdminController {
 
   // 获取用户 -》 角色 -》 动态菜单信息
   async getRoutes (ctx) {
-    // onj -> _id -> roles
+    // 1. onj -> _id -> roles
     // roles设置为1，只显示roles这个字段，设置为0 为不显示
     const user = await User.findOne({ _id: ctx._id }, { roles: 1 })
     const { roles } = user
-    // 通过角色 -》 menus -》 可以访问的菜单数据
-    // 1.用户的角色可能有多个
-    // 2.角色 menus可能重复 -》 去重
+    // 2.通过角色 -》 menus -》 可以访问的菜单数据
+    // 2.1 用户的角色可能有多个
+    // 2.2 角色 menus可能重复 -》 去重
     let menus = []
     for (let i = 0; i < roles.length; i++) {
       const role = roles[i]
@@ -118,9 +119,16 @@ class AdminController {
       menus = menus.concat(rights.menu)
     }
     menus = Array.from(new Set(menus))
+
+    // 3.menus -> 可以访问的菜单数据
+    const treeData = await Menu.find({})
+    // 递归查询 type = “menu”  && _id 包含在menus中
+    // 结构进行改造  ctx.isAdmin是否是超级管理员用户
+    const routes = getMenuData(treeData, menus, ctx.isAdmin)
+
     ctx.body = {
       code: 200,
-      data: menus
+      data: routes
     }
   }
 }
