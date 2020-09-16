@@ -133,12 +133,38 @@ const getMenuData = (tree, rights, flag) => {
   // 排序 sortObj
   return sortObj(arr, 'sort')
 }
+// 多维数组扁平化
+const flatten = (arr) => {
+  while (arr.some((item) => Array.isArray(item))) {
+    arr = [].concat(...arr)
+  }
+  return arr
+}
 
+// 获取菜单权限 对应的操作权限
+const getRights = (tree, menus) => {
+  const arr = []
+  for (const item of tree) {
+    if (item.operations && item.operations.length > 0) {
+      for (const op of item.operations) {
+        // 转换成为字符串 + ''
+        if (menus.includes(op._id + '')) {
+          arr.push(op.path)
+        }
+      }
+    } else if (item.children && item.children.length > 0) {
+      arr.push(getRights(item.children, menus))
+    }
+  }
+  return flatten(arr)
+}
 export {
   checkCode,
   getJWTPayload,
   dirExists,
   rename,
   sortObj,
-  getMenuData
+  getMenuData,
+  getRights
+
 }

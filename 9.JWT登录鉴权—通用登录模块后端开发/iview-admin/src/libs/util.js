@@ -566,6 +566,7 @@ export const modifyNode = (tree, nodes, property, flag) => {
   return tree
 }
 
+// 多维数组扁平化
 export const flatten = (arr) => {
   while (arr.some((item) => Array.isArray(item))) {
     arr = [].concat(...arr)

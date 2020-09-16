@@ -20,11 +20,15 @@ const uploadPath = process.env.NODE_ENV === 'production' ? '/api/public' : path.
 // 超级管理员权限
 const adminEmail = ['1127071993@qq.com']
 
+// 公共路径
+const publicPath = [/^\/public/, /^\/login/]
+
 export default {
   DB_URL,
   REDIS,
   JWT_SECRET,
   baseUrl,
   uploadPath,
-  adminEmail
+  adminEmail,
+  publicPath
 }

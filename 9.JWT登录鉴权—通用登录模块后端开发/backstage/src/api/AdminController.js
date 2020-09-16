@@ -4,7 +4,7 @@ import Menu from '@/model/Menus'
 import Roles from '@/model/Roles'
 import User from '@/model/User'
 // 结构进行改造 菜单数据 从而获得动态路由数据
-import { getMenuData, sortObj } from '@/common/Utils'
+import { getMenuData, sortObj, getRights } from '@/common/Utils'
 
 class AdminController {
   // 添加菜单
@@ -130,6 +130,32 @@ class AdminController {
       code: 200,
       data: routes
     }
+  }
+
+  // 获取用户 -》 角色 -》 动态菜单信息-》的操作权限
+  async getOperations (ctx) {
+    // 1. onj -> _id -> roles
+    // roles设置为1，只显示roles这个字段，设置为0 为不显示
+    const user = await User.findOne({ _id: ctx._id }, { roles: 1 })
+    const { roles } = user
+    // 2.通过角色 -》 menus -》 可以访问的菜单数据
+    // 2.1 用户的角色可能有多个
+    // 2.2 角色 menus可能重复 -》 去重
+    let menus = []
+    for (let i = 0; i < roles.length; i++) {
+      const role = roles[i]
+      // 只需要menu字段信息，其他不要 ，1是获取，0是不要，{ menu: 1 }只返回menu字段信息
+      const rights = await Roles.findOne({ role }, { menu: 1 })
+      menus = menus.concat(rights.menu)
+    }
+    menus = Array.from(new Set(menus))
+
+    // 3.menus -> 可以执行的操作 -
+    const treeData = await Menu.find({})
+    // 递归查询 type = “menu”  && _id 包含在menus中
+    // 结构进行改造  ctx.isAdmin是否是超级管理员用户
+    const operations = getRights(treeData, menus)
+    return operations
   }
 }
 

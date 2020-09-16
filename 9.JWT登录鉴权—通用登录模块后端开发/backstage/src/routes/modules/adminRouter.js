@@ -70,6 +70,9 @@ router.get('/getRoleNames', adminController.getRoleNames)
 // 获取用户 -》 角色 -》 动态菜单信息
 router.get('/get-routes', adminController.getRoutes)
 
+// // 获取菜单的操作权限(测试用的)
+// router.get('/get-operations', adminController.getOperations)
+
 // // 获取评论
 // router.get('/getComments', adminController.getCommentsAll)
 
