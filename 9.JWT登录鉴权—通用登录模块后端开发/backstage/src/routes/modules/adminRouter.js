@@ -73,6 +73,9 @@ router.get('/get-routes', adminController.getRoutes)
 // // 获取菜单的操作权限(测试用的)
 // router.get('/get-operations', adminController.getOperations)
 
+// 首页统计数据相关的接口
+router.get('/getstat', adminController.getStats)
+
 // // 获取评论
 // router.get('/getComments', adminController.getCommentsAll)
 

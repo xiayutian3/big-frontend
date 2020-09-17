@@ -3,8 +3,17 @@ import Menu from '@/model/Menus'
 // 引入角色模型
 import Roles from '@/model/Roles'
 import User from '@/model/User'
+import Post from '../model/Post'
+import Comments from '../model/Comments'
+import SignRecord from '../model/SignRecord'
 // 结构进行改造 菜单数据 从而获得动态路由数据
 import { getMenuData, sortObj, getRights } from '@/common/Utils'
+// 时间库moment（大，功能多）  dayjs（小） 一样的用法
+// import moment from 'moment'
+import moment from 'dayjs'
+// 一个星期内的时间（dayjs）
+var weekday = require('dayjs/plugin/weekday')
+moment.extend(weekday)
 
 class AdminController {
   // 添加菜单
@@ -156,6 +165,44 @@ class AdminController {
     // 结构进行改造  ctx.isAdmin是否是超级管理员用户
     const operations = getRights(treeData, menus)
     return operations
+  }
+
+  // 首页统计相关的接口
+  async getStats (ctx) {
+    let result = {}
+    // 1.顶部的card
+    const inforCardData = []
+    // 每天新增用户数 $gte大于等于当前的0时 countDocuments mongodb提供的计数方法
+    // moment库 的当天时间  = moment().set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+    // dayjs库的当天时间 = moment().format('YYYY-MM-DD 00:00:00')
+    const time = moment().format('YYYY-MM-DD 00:00:00')
+    const userNewCount = await User.find({ created: { $gte: time } }).countDocuments()
+    const postCount = await Post.find().countDocuments()
+    const commentNewCount = await Comments.find({ created: { $gte: time } }).countDocuments()
+
+    // 一周的时间，周一到下周一，一共7天
+    const starttime = moment(new Date().setHours(0, 0, 0, 0)).weekday(1).format()
+    const endtime = moment(new Date().setHours(0, 0, 0, 0)).weekday(8).format()
+    // 一周采纳条数
+    const weekEndCount = await Comments.find({ created: { $gte: starttime, $lte: endtime }, isBest: '1' }).countDocuments()
+    const signWeekCount = await SignRecord.find({ created: { $gte: starttime, $lte: endtime } }).countDocuments()
+    const postWeekCount = await Post.find({ created: { $gte: starttime, $lte: endtime } }).countDocuments()
+    inforCardData.push(userNewCount)
+    inforCardData.push(postCount)
+    inforCardData.push(commentNewCount)
+    inforCardData.push(weekEndCount)
+    inforCardData.push(signWeekCount)
+    inforCardData.push(postWeekCount)
+    // 2.左侧的饼图数据
+    // 3.本周的右侧统计数据
+    // 4.底部的数据
+    result = {
+      inforCardData
+    }
+    ctx.body = {
+      code: 200,
+      data: result
+    }
   }
 }
 

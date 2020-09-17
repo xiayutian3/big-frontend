@@ -9,8 +9,8 @@ const UserSchema = new Schema({
   username: { type: String, index: { unique: true }, sparse: true },
   password: { type: String },
   name: { type: String },
-  create: { type: Date },
-  update: { type: Date },
+  created: { type: Date },
+  updated: { type: Date },
   favs: { type: Number, default: 100 },
   gender: { type: String, default: '' },
   roles: { type: Array, default: ['user'] }, // default,默认值

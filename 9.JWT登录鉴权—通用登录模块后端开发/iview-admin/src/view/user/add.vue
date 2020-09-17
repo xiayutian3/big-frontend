@@ -180,12 +180,13 @@ export default {
           }
         ],
         favs: [
-          // { required: true, message: '请输入积分', trigger: 'blur' },
+          { required: true, message: '请输入积分', trigger: 'blur' },
           { validator: validatePass, trigger: 'blur' }
+
         ],
         mobile: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
           { validator: mobileCheck, trigger: 'blur' }
-          // { required: true, message: '请输入手机号', trigger: 'blur' }
         ]
       }
     }

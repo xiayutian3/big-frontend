@@ -21,7 +21,7 @@ const uploadPath = process.env.NODE_ENV === 'production' ? '/api/public' : path.
 const adminEmail = ['1127071993@qq.com']
 
 // 公共路径
-const publicPath = [/^\/public/, /^\/login/]
+const publicPath = [/^\/public/, /^\/login/, /^\/comments/, /^\/user/]
 
 export default {
   DB_URL,
