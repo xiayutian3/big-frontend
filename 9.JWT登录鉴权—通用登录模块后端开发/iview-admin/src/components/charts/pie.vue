@@ -12,7 +12,8 @@ export default {
   props: {
     value: Array,
     text: String,
-    subtext: String
+    subtext: String,
+    tipName: String
   },
   data () {
     return {
@@ -47,6 +48,8 @@ export default {
             type: 'pie',
             radius: '55%',
             center: ['50%', '60%'],
+            // 数据名，类目名
+            name: this.tipName,
             data: this.value,
             itemStyle: {
               emphasis: {

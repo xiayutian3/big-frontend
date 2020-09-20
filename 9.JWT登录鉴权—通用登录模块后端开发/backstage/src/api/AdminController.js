@@ -193,11 +193,34 @@ class AdminController {
     inforCardData.push(weekEndCount)
     inforCardData.push(signWeekCount)
     inforCardData.push(postWeekCount)
-    // 2.左侧的饼图数据
+    // 2.左侧的饼图数据（使用聚合查询 aggregate 方法 mongodb）组合查询
+    // https://docs.mongodb.com/manual/core/aggregation-pipeline/
+    // 返回的结果：例如
+    // [
+    //  { _id: 'discuss', count: 2 },
+    //  { _id: 'advice', count: 3 },
+    //  ...
+    // ]
+    const postsCatalogCount = await Post.aggregate([
+      {
+        $group: {
+          // $group 聚合查询的字段：catalog ，计数（各个分类） count ：$sum累加
+          _id: '$catalog',
+          count: { $sum: 1 }
+        }
+      }
+    ])
+    // 结构化数据
+    const pieData = {}
+    postsCatalogCount.forEach(item => {
+      pieData[item._id] = item.count
+    })
+
     // 3.本周的右侧统计数据
     // 4.底部的数据
     result = {
-      inforCardData
+      inforCardData,
+      pieData
     }
     ctx.body = {
       code: 200,
