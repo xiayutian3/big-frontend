@@ -170,6 +170,8 @@ class AdminController {
   // 首页统计相关的接口
   async getStats (ctx) {
     let result = {}
+    // 时间常量 0小时0分0秒0毫秒（当天的0点）
+    const nowZero = new Date().setHours(0, 0, 0, 0)
     // 1.顶部的card
     const inforCardData = []
     // 每天新增用户数 $gte大于等于当前的0时 countDocuments mongodb提供的计数方法
@@ -217,10 +219,39 @@ class AdminController {
     })
 
     // 3.本周的右侧统计数据
+    // 3.1计算6个月前的时间：1号 00：00：00
+    // 3.2查询数据库中对应时间内的数据 $gte >=
+    // 3.3group组合 ->sum -> sort排序
+    // 这是一种获取时间的方式，比较粗糙
+    // const startMonth = moment('2019-10-31').subtract(6, 'M').format()
+    // 获取前面5个月的时间，从1号开始
+    const startMonth = moment(nowZero).subtract(5, 'M').date(1).format()
+    // 获取该月的最后一天(只能获取到31号 00：00：00) 月份最大时31号,会自动处理
+    // const endMonth = moment('2019-10-31').date(31).format()
+    // const endMonth = moment('2019-10-31').date(31).format('YYYY-MM-DD 23:59:59')
+    const endMonth = moment(nowZero).add(1, 'M').date(1).format()
+    let monthData = await Post.aggregate([
+      { $match: { created: { $gte: new Date(startMonth), $lte: new Date(endMonth) } } },
+      // 格式化，初始化month字段， 以年月，=以月为时间段， date 查询的字段 ‘created’
+      // $project 相当于初始了一个 $month 的变量
+      { $project: { month: { $dateToString: { format: '%Y-%m', date: '$created' } } } },
+      // $group 聚合查询的字段：$month （如果没有$month,就以month字段），计数（各个月） count ：$sum累加
+      { $group: { _id: '$month', count: { $sum: 1 } } },
+      // 以id数据正序排列
+      { $sort: { _id: 1 } }
+    ])
+    monthData = monthData.reduce((obj, item) => {
+      return {
+        ...obj,
+        [item._id]: item.count
+      }
+    }, {})
+
     // 4.底部的数据
     result = {
       inforCardData,
-      pieData
+      pieData,
+      monthData
     }
     ctx.body = {
       code: 200,

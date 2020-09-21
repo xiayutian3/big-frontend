@@ -16,7 +16,7 @@
       </i-col>
       <i-col :md="24" :lg="16" style="margin-bottom: 20px;">
         <Card shadow>
-          <chart-bar style="height: 300px;" :value="barData" text="每周用户活跃量"/>
+          <chart-bar style="height: 300px;" :value="barData" text="近6月累计发帖" :key="timer3"/>
         </Card>
       </i-col>
     </Row>
@@ -34,6 +34,7 @@ import CountTo from '_c/count-to'
 import { ChartPie, ChartBar } from '_c/charts'
 import Example from './example.vue'
 import { getStatData } from '@/api/admin'
+import moment from 'dayjs'
 export default {
   name: 'home',
   components: {
@@ -47,6 +48,7 @@ export default {
     return {
       timer1: '0',
       timer2: '0',
+      timer3: '0',
       inforCardData: [
         {
           title: '新增用户',
@@ -76,15 +78,7 @@ export default {
         { value: 0, name: '讨论' },
         { value: 0, name: '建议' }
       ],
-      barData: {
-        Mon: 13253,
-        Tue: 34235,
-        Wed: 26321,
-        Thu: 12340,
-        Fri: 24643,
-        Sat: 1322,
-        Sun: 1324
-      }
+      barData: {}
     }
   },
   mounted () {
@@ -129,10 +123,20 @@ export default {
             arr.push({ name: '分享', value: pieData.share || 0 })
             arr.push({ name: '讨论', value: pieData.discuss || 0 })
             arr.push({ name: '建议', value: pieData.advice || 0 })
-            console.log('getData -> arr', arr)
-
             this.pieData = arr
             this.timer2 = new Date().getTime()
+          }
+          // 柱状图
+          if (res.data.monthData) {
+            const result = {}
+            // 补足未有月份的数据，没有就给0
+            for (let i = 0; i < 6; i++) {
+              // 当前时9月份 ，4，5，6，7，8，9 ，i最大值为5，
+              const key = moment().subtract(5 - i, 'M').format('YYYY-MM')
+              result[key] = res.data.monthData[key] || 0 // key-value
+            }
+            this.barData = result
+            this.timer3 = new Date().getTime()
           }
         }
       })
