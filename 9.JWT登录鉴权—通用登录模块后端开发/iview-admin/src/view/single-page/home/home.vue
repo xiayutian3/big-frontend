@@ -22,7 +22,8 @@
     </Row>
     <Row>
       <Card shadow>
-        <example style="height: 310px;"/>
+        <!-- <example style="height: 310px;"/> -->
+        <weekstat :weekData="weekData" style="height: 310px;" :key="timer4"/>
       </Card>
     </Row>
   </div>
@@ -32,7 +33,8 @@
 import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
 import { ChartPie, ChartBar } from '_c/charts'
-import Example from './example.vue'
+// import Example from './example.vue'
+import Weekstat from './weekstat'
 import { getStatData } from '@/api/admin'
 import moment from 'dayjs'
 export default {
@@ -42,13 +44,14 @@ export default {
     CountTo,
     ChartPie,
     ChartBar,
-    Example
+    Weekstat
   },
   data () {
     return {
       timer1: '0',
       timer2: '0',
       timer3: '0',
+      timer4: '0',
       inforCardData: [
         {
           title: '新增用户',
@@ -78,7 +81,8 @@ export default {
         { value: 0, name: '讨论' },
         { value: 0, name: '建议' }
       ],
-      barData: {}
+      barData: {},
+      weekData: {}
     }
   },
   mounted () {
@@ -137,6 +141,11 @@ export default {
             }
             this.barData = result
             this.timer3 = new Date().getTime()
+          }
+          // 最后一个图形
+          if (res.data.weekData) {
+            this.weekData = res.data.weekData
+            this.timer4 = new Date().getTime()
           }
         }
       })

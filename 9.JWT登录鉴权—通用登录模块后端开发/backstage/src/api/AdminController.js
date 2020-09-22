@@ -231,7 +231,7 @@ class AdminController {
     // const endMonth = moment('2019-10-31').date(31).format('YYYY-MM-DD 23:59:59')
     const endMonth = moment(nowZero).add(1, 'M').date(1).format()
     let monthData = await Post.aggregate([
-      { $match: { created: { $gte: new Date(startMonth), $lte: new Date(endMonth) } } },
+      { $match: { created: { $gte: new Date(startMonth), $lte: new Date(endMonth) } } }, // mongodb 需要new Date（）转换时间
       // 格式化，初始化month字段， 以年月，=以月为时间段， date 查询的字段 ‘created’
       // $project 相当于初始了一个 $month 的变量
       { $project: { month: { $dateToString: { format: '%Y-%m', date: '$created' } } } },
@@ -240,18 +240,92 @@ class AdminController {
       // 以id数据正序排列
       { $sort: { _id: 1 } }
     ])
+    // 得到如下结果，在转换成对象
+    // monthData [
+    //   {
+    //     _id:'2020-06',count:5
+    //   },
+    //   {
+    //     _id:'2020-06',count:5
+    //   },
+    //   ...
+    // ]
     monthData = monthData.reduce((obj, item) => {
       return {
         ...obj,
         [item._id]: item.count
       }
     }, {})
+    // 得到对象如下
+    // {
+    //   2020-09-22: 1,
+    //   2020-09-23: 1,
+    //   ...
+    // }
 
-    // 4.底部的数据
+    // 4.底部的数据（7天内的数据）
+    // 第前7天
+    const startDay = moment().subtract(7, 'day').format()
+    // 查询前7天的数据（模型）
+    const _aggregate = async (model) => {
+      let result = await model.aggregate([
+        { $match: { created: { $gte: new Date(startDay) } } }, // mongodb 需要new Date（）转换时间
+        // 格式化，初始化month字段， 以年月，=以月为时间段， date 查询的字段 ‘created’
+        // $project 相当于初始了一个 $month 的变量
+        { $project: { month: { $dateToString: { format: '%Y-%m-%d', date: '$created' } } } },
+        // $group 聚合查询的字段：$month （如果没有$month,就以month字段），计数（各个月） count ：$sum累加
+        { $group: { _id: '$month', count: { $sum: 1 } } },
+        // 以id数据正序排列
+        { $sort: { _id: 1 } }
+      ])
+      result = result.reduce((obj, item) => {
+        return {
+          ...obj,
+          [item._id]: item.count
+        }
+      }, {})
+      return result
+    // 得到的result
+    // {
+    //   2020-09-22: 1,
+    //   2020-09-23: 1,
+    //    ...
+    // }
+    }
+    const userWeekData = await _aggregate(User) // -> {2020-09-22: 1,2020-09-22: 1,...}
+    const signWeekData = await _aggregate(SignRecord)
+    const postWeekData = await _aggregate(Post)
+    const commentsWeekData = await _aggregate(Comments)
+
+    // 想得到最终的结果 {user:[1,2,3,0,5,0,1]}
+    const dataArr = []
+    // 拿到时间
+    for (let i = 0; i <= 6; i++) {
+      dataArr.push(moment().subtract(6 - i, 'day').format('YYYY-MM-DD'))
+    }
+    const addData = (obj) => {
+      const arr = []
+      dataArr.forEach(item => {
+        if (obj[item]) {
+          arr.push(obj[item])
+        } else {
+          arr.push(0)
+        }
+      })
+      return arr
+    }
+    const weekData = {
+      user: addData(userWeekData),
+      sign: addData(signWeekData),
+      post: addData(postWeekData),
+      comments: addData(commentsWeekData)
+    }
+
     result = {
       inforCardData,
       pieData,
-      monthData
+      monthData,
+      weekData
     }
     ctx.body = {
       code: 200,
