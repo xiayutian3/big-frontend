@@ -1,0 +1,128 @@
+[2020-09-23T23:19:32.463] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:20:25.916] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:41:06.838] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:41:21.465] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:41:29.356] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:00.952] [ERROR] error - /user/basic POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:26.209] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:51.727] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:53.620] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:54.438] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:55.108] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:55.653] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:57.363] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:42:57.925] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:43:17.246] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:44:25.614] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:44:47.847] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:44:52.261] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:46:10.658] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:46:45.079] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:47:47.150] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:49:52.371] [ERROR] error - /public/info GET 404 TokenExpiredError: jwt expired
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:152:21
+    at getSecret (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:90:14)
+    at Object.module.exports [as verify] (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:94:10)
+    at getJWTPayload (webpack-internal:///./src/common/Utils.js:26:62)
+    at __webpack_exports__.default (webpack-internal:///./src/common/Auth.js:19:90)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-unless\index.js:26:14
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at __webpack_exports__.default (webpack-internal:///./src/common/ErrorHandle.js:8:10)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at async cors (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\@koa\cors\index.js:54:32)
+    at async serve (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-static\index.js:53:9)
+    at async __webpack_exports__.default (webpack-internal:///./src/common/Logger.js:11:3)
+[2020-09-23T23:50:11.694] [ERROR] error - /public/info GET 404 TokenExpiredError: jwt expired
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:152:21
+    at getSecret (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:90:14)
+    at Object.module.exports [as verify] (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:94:10)
+    at getJWTPayload (webpack-internal:///./src/common/Utils.js:26:62)
+    at __webpack_exports__.default (webpack-internal:///./src/common/Auth.js:19:90)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-unless\index.js:26:14
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at __webpack_exports__.default (webpack-internal:///./src/common/ErrorHandle.js:8:10)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at async cors (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\@koa\cors\index.js:54:32)
+    at async serve (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-static\index.js:53:9)
+    at async __webpack_exports__.default (webpack-internal:///./src/common/Logger.js:11:3)
+[2020-09-23T23:51:14.832] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:51:51.003] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:52:19.850] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-23T23:52:36.799] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)

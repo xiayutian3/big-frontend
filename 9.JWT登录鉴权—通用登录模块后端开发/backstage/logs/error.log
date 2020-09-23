@@ -1,0 +1,57 @@
+[2020-09-24T00:00:32.213] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-24T00:00:33.029] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-24T00:00:34.490] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-24T00:00:46.823] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-24T00:00:56.319] [ERROR] error - /admin/addMenu POST 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-24T00:02:44.269] [ERROR] error - /admin/get-operations12345 GET 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+[2020-09-24T00:02:54.146] [ERROR] error - /get-operations12345 GET 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+[2020-09-24T00:02:55.459] [ERROR] error - /get-operations12345 GET 404 UnauthorizedError: Authentication Error
+    at Object.throw (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa\lib\context.js:97:11)
+    at jwt (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-jwt\lib\index.js:68:26)
+[2020-09-24T00:03:26.535] [ERROR] error - /public/routes GET 404 TokenExpiredError: jwt expired
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:152:21
+    at getSecret (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:90:14)
+    at Object.module.exports [as verify] (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:94:10)
+    at getJWTPayload (webpack-internal:///./src/common/Utils.js:26:62)
+    at __webpack_exports__.default (webpack-internal:///./src/common/Auth.js:19:90)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-unless\index.js:26:14
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at __webpack_exports__.default (webpack-internal:///./src/common/ErrorHandle.js:8:10)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at async cors (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\@koa\cors\index.js:54:32)
+    at async serve (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-static\index.js:53:9)
+    at async __webpack_exports__.default (webpack-internal:///./src/common/Logger.js:11:3)
+[2020-09-24T00:03:27.692] [ERROR] error - /public/routes GET 404 TokenExpiredError: jwt expired
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:152:21
+    at getSecret (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:90:14)
+    at Object.module.exports [as verify] (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\jsonwebtoken\verify.js:94:10)
+    at getJWTPayload (webpack-internal:///./src/common/Utils.js:26:62)
+    at __webpack_exports__.default (webpack-internal:///./src/common/Auth.js:19:90)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-unless\index.js:26:14
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at __webpack_exports__.default (webpack-internal:///./src/common/ErrorHandle.js:8:10)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at async cors (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\@koa\cors\index.js:54:32)
+    at async serve (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-static\index.js:53:9)
+    at async __webpack_exports__.default (webpack-internal:///./src/common/Logger.js:11:3)

@@ -28,6 +28,12 @@ import WebSocketServer from './config/WebSocket'
 import auth from '@/common/Auth'
 // 初始化// 超级管理员权限
 import { run } from './common/Init'
+// http请求日志中间件（不能输出错误，比较简单）
+// import logger from 'koa-logger'
+// koa-log4日志(也有输出http日志)
+import log4js from '@/config/Log4'
+//  koa-log4日志 - console类型
+import logger1 from '@/common/Logger'
 
 // koa通信安全头
 const helmet = require('koa-helmet')
@@ -51,7 +57,9 @@ global.ws = ws
 const jwt = JWT({ secret: config.JWT_SECRET }).unless({ path: [/^\/public/, /\/login/] })
 
 // koa-compose对插件进行整合
+// app.use(koaBody());
 const middleware = compose([
+  logger1,
   koaBody({
     multipart: true, // 支持文件上传
     formidable: {
@@ -68,7 +76,11 @@ const middleware = compose([
   helmet(),
   errorHandle,
   jwt,
-  auth
+  auth,
+  // logger(),
+  // 区分模式 （// 不能与下面的模式共用，开发环境('http') 控制台输出日志)，//生产环境(文件 中输出日志)）
+  isDevMode ? log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' })
+    : log4js.koaLogger(log4js.getLogger('access'), { level: 'auto' })
 ])
 
 if (!isDevMode) {

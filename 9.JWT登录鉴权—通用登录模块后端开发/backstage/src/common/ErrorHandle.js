@@ -1,6 +1,12 @@
+// 添加收集错误日志服务 koa-log4
+import log4js from '@/config/Log4'
+const logger = log4js.getLogger('error')
+
 // 对 koa-jwt鉴权做错误处理(jwt校验处理中间件,例如：数据库查找不到这个用户，mongoose程序报错，错误状态401)（统一的错误处理，针对鉴权，或者其它的错误处理）
 export default (ctx, next) => {
   return next().catch((err) => {
+    // 收集错误日志  url  方法 状态码 错误栈( 可以区分生产和开发环境捕获错误)
+    logger.error(`${ctx.url} ${ctx.method} ${ctx.status} ${err.stack}`)
     if (err.status == 401) {
       ctx.status = 401
       ctx.body = {
