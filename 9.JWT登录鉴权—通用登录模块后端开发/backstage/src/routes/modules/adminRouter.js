@@ -2,7 +2,7 @@ import Router from 'koa-router'
 import contentController from '@/api/ContentController'
 import userController from '@/api/UserController'
 import adminController from '@/api/AdminController'
-// import errorController from '@/api/ErrorController'
+import errorController from '@/api/ErrorController'
 
 const router = new Router()
 
@@ -75,6 +75,12 @@ router.get('/get-routes', adminController.getRoutes)
 
 // 首页统计数据相关的接口
 router.get('/getstat', adminController.getStats)
+
+// 获取错误日志(管理员才有的权限)
+router.get('/getError', errorController.getErrorList)
+
+// 删除错误日志(管理员才有的权限)
+router.post('/deleteError', errorController.deleteError)
 
 // // 获取评论
 // router.get('/getComments', adminController.getCommentsAll)

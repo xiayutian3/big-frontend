@@ -23,6 +23,9 @@ const adminEmail = ['1127071993@qq.com']
 // 公共路径
 const publicPath = [/^\/public/, /^\/login/, /^\/comments/, /^\/user/]
 
+// 判断当前的环境
+const isDevMode = process.env.NODE_ENV !== 'production'
+
 export default {
   DB_URL,
   REDIS,
@@ -30,5 +33,6 @@ export default {
   baseUrl,
   uploadPath,
   adminEmail,
-  publicPath
+  publicPath,
+  isDevMode
 }

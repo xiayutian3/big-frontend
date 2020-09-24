@@ -74,11 +74,12 @@ const middleware = compose([
   cors(),
   jsonutil({ pretty: false, param: 'pretty' }),
   helmet(),
-  errorHandle,
+
   jwt,
-  auth,
+  auth, // 在上下文ctx 绑定_id信息
+  errorHandle, // 放在auth中间件后才能拿到用户信息_id
   // logger(),
-  // 区分模式 （// 不能与下面的模式共用，开发环境('http') 控制台输出日志)，//生产环境(文件 中输出日志)）
+  // 区分模式 （// 不能与下面的模式共用，开发环境('http') http请求 控制台输出日志)，//生产环境(文件 中输出日志)）
   isDevMode ? log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' })
     : log4js.koaLogger(log4js.getLogger('access'), { level: 'auto' })
 ])
