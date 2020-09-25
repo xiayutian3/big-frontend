@@ -52,5 +52,10 @@ export default {
   roles_management: '角色管理',
   roles: '角色设置',
   'Menu Otionps': '菜单选项',
-  resources: '资源选项'
+  resources: '资源选项',
+  'iview-admin': 'iview-admin文档',
+  'api-doc': '接口文档',
+  logs_check: '错误日志',
+  system: '系统管理',
+  comments_list: '评论管理'
 }

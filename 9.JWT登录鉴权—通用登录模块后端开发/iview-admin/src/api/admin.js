@@ -1,4 +1,5 @@
 import axios from '@/libs/request'
+import qs from 'qs'
 // import Dispatch from '@/libs/dispatch'
 
 // 用户管理列表接口
@@ -53,6 +54,12 @@ const getRoleNames = () => axios.get('/admin/getRoleNames')
 // 首页相关的接口，图表统计
 const getStatData = () => axios.get('/admin/getstat')
 
+// 获取错误日志
+const getErrorList = (params) => axios.get('/admin/get-error?' + qs.stringify(params))
+
+// 删除错误日志
+const deleteErrors = (data) => axios.post('/admin/delete-error', data)
+
 export {
   getUserList,
   updateUserById,
@@ -69,5 +76,7 @@ export {
   updateRole,
   deleteRole,
   getRoleNames,
-  getStatData
+  getStatData,
+  getErrorList,
+  deleteErrors
 }
