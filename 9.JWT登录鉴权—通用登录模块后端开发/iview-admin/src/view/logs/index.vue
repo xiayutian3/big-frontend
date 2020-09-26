@@ -10,8 +10,7 @@
       ></Table>
       <Row type="flex" justify="space-between" align="middle">
         <i-col class="ctrls">
-          <Button @click="deleteErrors()">批量删除</Button>
-          <Button @click="handleSetBatch()">批量设置</Button>
+          <Button @click="_deleteErrors">批量删除</Button>
         </i-col>
         <i-col>
           <Page
@@ -34,11 +33,13 @@
 <script>
 import { deleteErrors, getErrorList } from '@/api/admin'
 import Expand from './expand'
+import More from './more'
 import dayjs from 'dayjs'
 export default {
   components: {
   },
   data () {
+    const that = this
     return {
       columns: [
         {
@@ -70,13 +71,75 @@ export default {
           title: '错误码',
           key: 'code',
           align: 'center',
-          minWidth: 80
+          minWidth: 120,
+          filters: [
+            {
+              label: '400',
+              value: 400
+            },
+            {
+              label: '404',
+              value: 404
+            },
+            {
+              label: '500',
+              value: 500
+            }
+          ],
+          filterMultiple: false,
+          // filterMethod (value, row) {
+          //   if (value === 1) {
+          //     return row.age > 25
+          //   } else if (value === 2) {
+          //     return row.age < 25
+          //   }
+          // },
+          filterRemote (value, row) {
+            const obj = { ...that.filters }
+            if (value[0]) {
+              obj[row] = value[0]
+            } else {
+              delete obj[row]
+            }
+            that.filters = obj
+          }
         },
         {
           title: '请求类型',
           key: 'method',
           align: 'center',
-          minWidth: 100
+          minWidth: 140,
+          filters: [
+            {
+              label: 'GET',
+              value: 'get'
+            },
+            {
+              label: 'POST',
+              value: 'post'
+            },
+            {
+              label: 'DELETE',
+              value: 'delete'
+            }
+          ],
+          filterMultiple: false,
+          // filterMethod (value, row) {
+          //   if (value === 1) {
+          //     return row.age > 25
+          //   } else if (value === 2) {
+          //     return row.age < 25
+          //   }
+          // }
+          filterRemote (value, row) {
+            const obj = { ...that.filters }
+            if (value[0]) {
+              obj[row] = value[0]
+            } else {
+              delete obj[row]
+            }
+            that.filters = obj
+          }
         },
         {
           title: '请求路径',
@@ -87,7 +150,15 @@ export default {
         {
           title: '请求参数',
           key: 'param',
-          minWidth: 200
+          minWidth: 240,
+          render: (h, params) => {
+            return h(More, {
+              // 组件 prop
+              props: {
+                row: params.row
+              }
+            })
+          }
         },
         {
           title: '日期',
@@ -124,7 +195,14 @@ export default {
       total: 0,
       pageArr: [10, 20, 30, 50, 100],
       loading: true,
-      selection: []
+      selection: [],
+      filters: {}
+    }
+  },
+  watch: {
+    filters (newVal, oldVal) {
+      // 重新请求数据
+      this._getErrorList()
     }
   },
   mounted () {
@@ -139,13 +217,14 @@ export default {
           content: '确定要删除已选中的错误消息吗？',
           onOk: () => {
             const arr = selection.reduce((obj, item) => {
-              obj.ids = []
-              return obj.ids.push(item._id)
-            }, {})
+              return [...obj, item._id]
+            }, [])
             console.log('deleteError -> arr', arr)
-            deleteErrors(arr).then((res) => {
-              if (res.data.code === 200) {
+            deleteErrors({ ids: arr }).then((res) => {
+              if (res.code === 200) {
                 this.$Message.success('删除成功！')
+                // 重新请求
+                this._getErrorList()
               } else {
                 this.$Message.error('删除失败，请联系管理员！')
               }
@@ -163,11 +242,20 @@ export default {
       getErrorList({
         page: this.page,
         limit: this.limit,
-        fitler: this.globalFilters || {}
+        filter: this.filters || {}
       }).then((res) => {
         this.data = res.data
         this.total = res.total
         this.loading = false
+        // 赋值表格的筛选项(所有的筛选项都是从后端数据库中查询出来的 筛选项)
+        const keys = Object.keys(res.filters)
+        this.columns.map(item => {
+          if (keys.includes(item.key)) {
+            if (item.filters.length === 0) {
+              item.filters = res.filters[item.key]
+            }
+          }
+        })
       })
     },
     onPageChange (num) {

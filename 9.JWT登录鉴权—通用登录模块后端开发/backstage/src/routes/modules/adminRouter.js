@@ -77,10 +77,10 @@ router.get('/get-routes', adminController.getRoutes)
 router.get('/getstat', adminController.getStats)
 
 // 获取错误日志(管理员才有的权限)
-router.get('/getError', errorController.getErrorList)
+router.get('/get-error', errorController.getErrorList)
 
 // 删除错误日志(管理员才有的权限)
-router.post('/deleteError', errorController.deleteError)
+router.post('/delete-error', errorController.deleteError)
 
 // // 获取评论
 // router.get('/getComments', adminController.getCommentsAll)
