@@ -300,8 +300,8 @@ class UserController {
   async getBasicInfo (ctx) {
     const params = ctx.query
     // 取用户的id
-    const obj = await getJWTPayload(ctx.header.authorization)
-    const uid = params.uid || obj._id
+    // const obj = await getJWTPayload(ctx.header.authorization)
+    const uid = params.uid || ctx._id
     let user = await User.findByID(uid)
     // 获取用户的签到记录 有没有 》 today 00：00:00
     // toJSON()后才能操作user

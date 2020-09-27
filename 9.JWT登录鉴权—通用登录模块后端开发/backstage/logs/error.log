@@ -1,4 +1,68 @@
-[2020-09-26T14:25:29.934] [ERROR] error - /admin/delete-error POST 404 CastError: Cast to ObjectId failed for value "1" at path "_id" for model "error_record"
-    at model.Query.exec (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\mongoose\lib\query.js:4371:21)
-    at model.Query.Query.then (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\mongoose\lib\query.js:4463:15)
-    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+[2020-09-27T20:41:07.977] [ERROR] error - /public/info?uid=5ec8e9091a6d163c189d351a GET 404 TypeError: Cannot read property 'split' of undefined
+    at getJWTPayload (webpack-internal:///./src/common/Utils.js:26:75)
+    at getBasicInfo (webpack-internal:///./src/api/UserController.js:386:90)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:368:16
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:34:12
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:373:31)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at allowedMethods (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:429:12)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:354:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at allowedMethods (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:429:12)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:354:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+[2020-09-27T20:41:16.708] [ERROR] error - /public/info?uid=5ec8e9091a6d163c189d351a GET 404 TypeError: Cannot read property 'split' of undefined
+    at getJWTPayload (webpack-internal:///./src/common/Utils.js:26:75)
+    at getBasicInfo (webpack-internal:///./src/api/UserController.js:386:90)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:368:16
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:34:12
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:373:31)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at allowedMethods (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:429:12)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:354:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at allowedMethods (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:429:12)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:354:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+[2020-09-27T20:41:22.036] [ERROR] error - /public/info?uid=5ec8e9091a6d163c189d351a GET 404 TypeError: Cannot read property 'split' of undefined
+    at getJWTPayload (webpack-internal:///./src/common/Utils.js:26:75)
+    at getBasicInfo (webpack-internal:///./src/api/UserController.js:386:90)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:368:16
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:34:12
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:373:31)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at allowedMethods (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:429:12)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:354:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at allowedMethods (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:429:12)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:354:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+[2020-09-27T20:41:23.153] [ERROR] error - /public/info?uid=5ec8e9091a6d163c189d351a GET 404 TypeError: Cannot read property 'split' of undefined
+    at getJWTPayload (webpack-internal:///./src/common/Utils.js:26:75)
+    at getBasicInfo (webpack-internal:///./src/api/UserController.js:386:90)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:368:16
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:34:12
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:373:31)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at allowedMethods (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:429:12)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:354:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at allowedMethods (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:429:12)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-router\lib\router.js:354:32)
+    at dispatch (F:\study\big-frontend\9.JWT登录鉴权—通用登录模块后端开发\backstage\node_modules\koa-compose\index.js:42:32)
