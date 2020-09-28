@@ -1,9 +1,9 @@
 # build stage
 # 环境node：10
 # FROM node:10 
-# 环境node：12,12-apline,apline(apline:最新版的意思，目前12 是最新的大版本)
+# 环境node：12,12-alpine,alpine(alpine:最新版的意思，目前12 是最新的大版本)
 # 指定的12版本要与本地的node版本一致（12.16.0），最起码大版本12要一致
-FROM node:12-apline 
+FROM node:12-alpine 
 # 谁来维护这个项目
 LABEL maintainer=1127071993@qq.com
 # 创建一个工作目录（在docker镜像内创建）
