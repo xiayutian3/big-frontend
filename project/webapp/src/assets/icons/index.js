@@ -9,7 +9,8 @@ const req = require.context('./svg', false, /\.svg$/)
 // console.log('req', typeof req) // 函数
 // console.log('req.keys()', req.keys()) // ["./xx.svg", "./xx.svg",...]
 
-// 类似于递归遍历所有的svg ["./xx.svg",...]
+// 类似于遍历所有的svg ["./xx.svg",...],把他们变成一个个模块导出
 const requireAll = requireContext => requireContext.keys().map(requireContext)
 
 requireAll(req)
+// console.log('reqAll', requireAll(req))

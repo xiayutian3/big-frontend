@@ -11,7 +11,7 @@ module.exports = {
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader') // 名字也叫svg-sprite-loader
       .options({ // 传递 symbolId  用于新增
-        symbolId: 'icon-[name]'
+        symbolId: 'icon-[name]' // 去掉svg这个图片加载不出来
       })
       // .tap(options => { // 只能修改它的选项...不能用于新增
       //   // console.log('options', options)
