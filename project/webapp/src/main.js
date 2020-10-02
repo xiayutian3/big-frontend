@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+// 引用svg icon
+import '@/assets/icons/index'
 import { Button, Cell } from 'mint-ui'
 
 Vue.config.productionTip = false
