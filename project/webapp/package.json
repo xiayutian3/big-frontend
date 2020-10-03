@@ -12,6 +12,7 @@
     "core-js": "^3.6.5",
     "dayjs": "^1.9.1",
     "mint-ui": "^2.2.13",
+    "normalize.css": "^8.0.1",
     "qs": "^6.9.4",
     "uuid": "^8.3.0",
     "vee-validate": "^3.4.0",

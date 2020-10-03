@@ -2,14 +2,18 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-// 引用svg icon
-import '@/assets/icons/index'
-import { Button, Cell } from 'mint-ui'
+// // 引用svg icon（已经在plugins中common全局注册components下面的组件了，这里不需要了）
+// import '@/assets/icons/index'
+
+// 基础样式重置-normalize.css
+import 'normalize.css/normalize.css'
+// 引用mint ui
+import '@/plugins/mint-ui'
+// 引入自动注册的组件
+import '@/plugins/common'
 
 Vue.config.productionTip = false
 
-Vue.component(Button.name, Button)
-Vue.component(Cell.name, Cell)
 new Vue({
   router,
   store,

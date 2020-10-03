@@ -1,7 +1,7 @@
 import { extend, configure } from 'vee-validate'
 // eslint-disable-next-line camelcase
 import { required, email, min, length, confirmed, max, is_not } from 'vee-validate/dist/rules'
-import { i18n } from './i18n'
+import { i18n } from '../utils/i18n'
 
 configure({
   defaultMessage: (field, values) => {
