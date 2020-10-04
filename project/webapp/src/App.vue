@@ -1,8 +1,9 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <my-header title="imooc"></my-header>
-    </div>
+    <search></search>
+      <!-- <my-header title="imooc">
+        <template v-slot:h-right>test right</template>
+      </my-header> -->
     <router-view />
   </div>
 </template>

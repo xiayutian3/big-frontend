@@ -44,7 +44,8 @@ export default {
       }
     }
   },
-  methods: {},
+  methods: {
+  },
   components: {},
   watch: {}
 }
@@ -54,7 +55,7 @@ export default {
   width: 1em;
   height: 1em;
   vertical-align: -0.15em;
-  fill: currentColor;
+  fill: currentColor;  //让颜色与当前class样式的颜色一致
   overflow: hidden;
 }
 </style>

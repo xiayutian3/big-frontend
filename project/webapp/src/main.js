@@ -7,6 +7,9 @@ import store from './store'
 
 // 基础样式重置-normalize.css
 import 'normalize.css/normalize.css'
+// 引入自定义主题色
+import '@/assets/styles/theme.scss'
+
 // 引用mint ui
 import '@/plugins/mint-ui'
 // 引入自动注册的组件

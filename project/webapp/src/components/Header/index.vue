@@ -1,6 +1,6 @@
 <template>
   <div class="header" :style="{ zIndex: zIndex, 'background-color': bkColor }">
-    <div class="head-left" @click="goback">
+    <div class="head-left" @click="goback" v-if="hasBack">
       <slot name="h-left">
         <svg-icon icon="arrow-left"></svg-icon>
         <span class="left-text" v-if="backText">{{ backText }}</span>
@@ -65,5 +65,34 @@ export default {
 </script>
 <style lang="scss">
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: $header-height;
+  z-index: 100;
+  font-size: 16px;
+  line-height: $header-height;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  .head-content {
+    max-width: 80%;
+    margin: 0 auto;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .head-left,
+  .head-right {
+    position: absolute;
+    top: 0;
+    padding: 0 10px;
+  }
+  .head-left {
+    left: 0;
+  }
+  .head-right {
+    right: 0;
+  }
 }
 </style>
