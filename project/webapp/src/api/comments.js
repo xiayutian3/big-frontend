@@ -6,7 +6,7 @@ const getComments = params => axios.get('/public/comments',
   {
     params,
     headers: {
-      Authorization: 'Bearer ' + store.state.token
+      Authorization: 'Bearer ' + store.state.user.token
     }
   }
 )

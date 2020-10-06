@@ -16,6 +16,15 @@ files.keys().forEach(key => {
   modules[key.replace(/(\.\/|\.js)/g, '')] = files(key).default
 })
 // console.log('modules', modules)
+// {
+//   common: {state: {…}, mutations: {…}}
+//   user:{
+//     state: {…}
+//     mutations: {SET_SID: ƒ, SET_TOKEN: ƒ, SET_USER: ƒ, SET_ISLOGIN: ƒ, SET_HIDE: ƒ, …}
+//     getters: {user: ƒ, isLogin: ƒ, token: ƒ, sid: ƒ, isHide: ƒ}
+//     actions: {message: ƒ, getCode: ƒ, login: ƒ}
+//   }
+// }
 
 export default new Vuex.Store({
   modules

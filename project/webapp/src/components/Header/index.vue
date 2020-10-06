@@ -71,9 +71,9 @@ export default {
   width: 100%;
   height: $header-height;
   z-index: 100;
-  font-size: 16px;
+  font-size: 32px;
   line-height: $header-height;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   .head-content {
     max-width: 80%;
     margin: 0 auto;
@@ -86,7 +86,7 @@ export default {
   .head-right {
     position: absolute;
     top: 0;
-    padding: 0 10px;
+    padding: 0 20px;
   }
   .head-left {
     left: 0;

@@ -10,6 +10,7 @@ import {
   SET_HIDE
 } from '@/store/mutation-types'
 export default {
+  namespaced: true,
   state: {
     sid: '',
     isLogin: false,
@@ -72,10 +73,11 @@ export default {
       // 更新vuex的sid
       commit([SET_SID], sid)
       const result = await getCode(sid)
-      if (result.code === 200) {
-        // 返回到前端svg图片数据
-        return result.data
-      }
+      // if (result.code === 200) {
+      //   // 返回到前端svg图片数据
+      //   return result.data
+      // }
+      return result
     },
     // 登录
     async login ({ commit, state }, payload) {
