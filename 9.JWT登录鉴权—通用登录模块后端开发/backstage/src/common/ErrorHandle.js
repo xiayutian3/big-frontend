@@ -3,7 +3,7 @@ import log4js from '@/config/Log4'
 // 持久化错误日志，保存到数据库
 import ErrorRecord from '@/model/ErrorRecord'
 import User from '@/model/User'
-import { isDevMode } from '@/config/index'
+import config from '@/config/index'
 
 const logger = log4js.getLogger('error')
 
@@ -16,8 +16,8 @@ export default async (ctx, next) => {
     // 1.收集用户错误的请求路径的日志-》会造成大量的垃圾数据
     // 2.主动判断，并收集特定的接口请求-》regex -》path，status，params
 
-    // 在开发环境收集 isDevMode 才会记录***到数据库***，提供给开发人员分析
-    if (ctx.status !== 200 && isDevMode) {
+    // 在开发环境收集 config.isDevModeEnv 才会记录***到数据库***，提供给开发人员分析
+    if (ctx.status !== 200 && config.isDevModeEnv) {
       // 收集状态码不等于200的，才会进入下边日志收集
       const codeMessage = {
         // 200: '服务器成功返回请求的数据。',
