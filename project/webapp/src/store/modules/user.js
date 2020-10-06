@@ -71,7 +71,8 @@ export default {
         localStorage.setItem('sid', sid)
       }
       // 更新vuex的sid
-      commit([SET_SID], sid)
+      // commit([SET_SID], sid)  //报错，只能使用字符串，不能使用[变量]
+      commit('SET_SID', sid)
       const result = await getCode(sid)
       // if (result.code === 200) {
       //   // 返回到前端svg图片数据
@@ -88,9 +89,13 @@ export default {
       if (result.code === 200 && result.token) {
         const userInfo = result.data
         userInfo.username = payload.username
-        commit([SET_TOKEN], result.token)
-        commit([SET_USER], userInfo)
-        commit([SET_ISLOGIN], true)
+        commit('SET_TOKEN', result.token)
+        commit('SET_USER', userInfo)
+        commit('SET_ISLOGIN', true)
+        // 注意  报错，只能使用字符串，不能使用[变量]
+        // commit([SET_TOKEN], result.token)
+        // commit([SET_USER], userInfo)
+        // commit([SET_ISLOGIN], true)
       }
       return result
     }

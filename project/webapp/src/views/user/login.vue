@@ -66,7 +66,6 @@ export default {
   },
   mounted () {
     this._getCode()
-    console.log(this.getCode)
   },
   methods: {
     ...mapActions({
@@ -76,7 +75,7 @@ export default {
     async _getCode () {
       // const result = await this.$store.dispatch('user/getCode')
       const result = await this.getCode()
-      console.log(result)
+      // console.log(result)
       if (result.code === 200) {
         // 返回到前端svg图片数据
         this.svg = result.data
