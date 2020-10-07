@@ -1,5 +1,5 @@
 <template>
-  <div class="search-wrap">
+  <div class="search-wrap" ref="search">
     <slot name="h-left"></slot>
     <div class="search-block" :class="{ searching: searchText }">
       <i class="mintui mintui-search"></i>
@@ -37,7 +37,11 @@ export default {
     }
   },
   created () {},
-  mounted () {},
+  mounted () {
+    // 禁止向下滑动search组件，造成body的向下滑动（特别是微信浏览器）
+    const elem = this.$refs.search
+    window.forbidScroll(elem)
+  },
   computed: {},
   methods: {
     onClear () {

@@ -12,6 +12,9 @@ import 'normalize.css/normalize.css'
 // 引入自定义主题色
 import '@/assets/styles/theme.scss'
 
+// 引入veevalidate@3.x的校验规则
+import '@/plugins/veevalidate'
+
 // 引用mint ui
 import '@/plugins/mint-ui'
 // 引入自动注册的组件

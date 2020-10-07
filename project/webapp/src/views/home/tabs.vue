@@ -29,8 +29,14 @@ export default {
     }
   },
   mounted () {
-    // const elem = this.$refs.tabs
-    // window.forbidScroll(elem)
+    // 禁止向下滑动tebs组件，造成body的向下滑动（特别是微信浏览器）
+    const elem = this.$refs.tabs
+    // console.log('mounted -> elem', elem)
+    // elem.addEventListener('touchstart', (evt) => {
+    //   console.log(evt.target)
+    //   console.log(elem.contains(evt.target))
+    // })
+    window.forbidScroll(elem)
   }
 }
 </script>

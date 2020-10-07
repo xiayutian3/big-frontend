@@ -30,7 +30,11 @@ export default {
     }
   },
   created () {},
-  mounted () {},
+  mounted () {
+    // 禁止向下向上滑动footer组件，造成body的向下滑动（特别是微信浏览器）
+    const elem = this.$refs.footer
+    window.forbidScroll(elem)
+  },
   computed: {},
   methods: {},
   components: {},

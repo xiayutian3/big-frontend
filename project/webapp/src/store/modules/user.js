@@ -84,7 +84,7 @@ export default {
     async login ({ commit, state }, payload) {
       const result = await login({
         ...payload,
-        sid: state.user.sid
+        sid: state.sid
       })
       if (result.code === 200 && result.token) {
         const userInfo = result.data
