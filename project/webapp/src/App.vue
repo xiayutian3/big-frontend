@@ -18,15 +18,75 @@ export default {
   // }
 
   mounted () {
+    // const _this = this
     // 挂载到window上
     window.forbidScroll = forbidScroll
+
+    // 判断横屏竖屏（方法一，也可以使用css来判断方法二）
+    // window.addEventListener(
+    //   'onorientationchange' in window ? 'orientationchange' : 'resize',
+    //   function () {
+    //     // if (window.orientation === 180 || window.orientation === 0) {
+    //     //   alert('竖屏状态！')
+    //     // }
+    //     if (window.orientation === 90 || window.orientation === -90) {
+    //       // alert('横屏状态！')
+    //       _this.$Toast('请使用竖屏进行浏览！')
+    //     }
+    //   },
+    //   false
+    // )
   }
 }
 </script>
 <style lang="scss">
+@import "./assets/styles/_variables.scss";
+//当手机屏幕宽度超过 $break-super:480px,横屏浏览时的样式 landscape
+@media (min-width: $break-super) and (orientation: landscape) {
+  html::before {
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    content: "";
+    background: #333;
+  }
+  body:before {
+    background-image: url("./assets/images/orientation.png");
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-position: 50%;
+    content: "";
+    height: 200px;
+    width: 100px;
+    z-index: 99999;
+    margin: -140px 0 0 -50px;
+    position: absolute;
+    color: #fff;
+    top: 50%;
+    left: 50%;
+  }
+  body:after {
+    // 中文转Unicode编码
+    // \u4e3a,原本是有u字母的，但是css中转换用\就行，不需要u
+    content: "\4e3a\4e86\66f4\597d\7684\4f53\9a8c\ff0c\8bf7\5c06\624b\673a\7ad6\8fc7\6765";
+    position: absolute;
+    top: 50%;
+    text-align: center;
+    height: 30px;
+    left: 0;
+    font-size: 18px;
+    z-index: 99999;
+    width: 100%;
+    color: #fff;
+    margin-top: 35px;
+  }
+}
 html,
 body {
-  touch-action: none;
+  // touch-action: none;
 }
 .inline-block {
   display: inline-block;

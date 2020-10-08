@@ -1,11 +1,15 @@
 import Vue from 'vue'
 // 引入mint-ui样式
 import 'mint-ui/lib/style.min.css'
-import { Button, Cell, Header, Loadmore, Spinner, Toast, InfiniteScroll, Field, Actionsheet } from 'mint-ui'
+import { Button, Cell, Header, Spinner, Toast, InfiniteScroll, Field, Actionsheet } from 'mint-ui'
 
 Vue.use(InfiniteScroll)
 Vue.component(Spinner.name, Spinner)
-Vue.component(Loadmore.name, Loadmore)
+// 自己考了源码，重新写了loadmore，  源码的event.preventDefault()出了一些问题，改为了
+// if (event.cancelable) {
+//   event.preventDefault()
+// }
+// Vue.component(Loadmore.name, Loadmore)
 Vue.component(Button.name, Button)
 Vue.component(Cell.name, Cell)
 Vue.component(Header.name, Header)

@@ -54,7 +54,7 @@
     <div class="detail-bottom" :class="{'fixed': isFocus ||faceStatus, 'on': faceStatus}">
       <span class="bottom-input-wrap">
         <svg-icon icon="advice"></svg-icon>
-        <input class="input" type="text" placeholder="写评论..." @focus="focus()" @blur="blur()" />
+        <input class="input" type="text" placeholder="写评论..." @focus="focus" @blur="blur" />
         <span @click.stop="showFace()">
           <svg-icon icon="smile" class="face"></svg-icon>
         </span>
