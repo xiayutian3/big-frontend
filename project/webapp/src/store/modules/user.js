@@ -84,7 +84,7 @@ export default {
     async login ({ commit, state }, payload) {
       const result = await login({
         ...payload,
-        sid: state.sid
+        sid: state.sid // 直接拿本模块的变量
       })
       if (result.code === 200 && result.token) {
         const userInfo = result.data

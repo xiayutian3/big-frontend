@@ -28,7 +28,7 @@
             <svg-icon icon="images"></svg-icon>
             <input type="text" placeholder="请输入验证码" v-model="code" />
           </div>
-          <div v-html="svg" class="code" @click="_getCode()"></div>
+          <div v-html="svg" class="codeimg" @click="_getCode()"></div>
         </div>
         <div class="form-controls">
           <router-link :to="{name: 'reg'}">注册</router-link>

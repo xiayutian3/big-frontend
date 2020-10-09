@@ -119,9 +119,13 @@ pre {
   .code {
     height: 80px;
   }
-  svg {
-    width: 240px;
-    height: 70px;
+  .codeimg {
+    width: 250px;
+    height: 60px;
+    svg{
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 .error {
