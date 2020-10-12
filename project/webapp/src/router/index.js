@@ -19,6 +19,8 @@ const Login = () => import(/* webpackChunkName: 'login' */ '@/views/user/login')
 const Reg = () => import(/* webpackChunkName: 'reg' */ '@/views/user/reg')
 const Forget = () => import(/* webpackChunkName: 'forget' */ '@/views/user/forget')
 
+const User = () => import(/* webpackChunkName: 'forget' */ '@/views/user/user')
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -65,6 +67,11 @@ const routes = [
     name: 'forget',
     component: Forget,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: User
   }
 ]
 
