@@ -19,25 +19,27 @@ const Login = () => import(/* webpackChunkName: 'login' */ '@/views/user/login')
 const Reg = () => import(/* webpackChunkName: 'reg' */ '@/views/user/reg')
 const Forget = () => import(/* webpackChunkName: 'forget' */ '@/views/user/forget')
 
-const User = () => import(/* webpackChunkName: 'forget' */ '@/views/user/user')
+const User = () => import(/* webpackChunkName: 'user' */ '@/views/user/user')
+const Hot = () => import(/* webpackChunkName: 'hot' */ '@/views/hot')
+const Msg = () => import(/* webpackChunkName: 'msg' */ '@/views/msg')
 
 Vue.use(VueRouter)
 
 const routes = [
   // 首页
   {
-    path: '',
+    path: '/index',
     name: 'home',
     component: Home,
     redirect: '/index',
     children: [
       {
-        path: '/index',
+        path: '',
         name: 'index',
         component: Catalog
       },
       {
-        path: '/index/:catalog',
+        path: ':catalog',
         name: 'catalog',
         component: Catalog,
         props: true //  让catalog 变成props 传递，在组件内就可以用props接受,这样的话，在访问index路径必须输入 :catalog,如果只是输入 /index，的话，无法访问，必须/index/123456
@@ -72,12 +74,24 @@ const routes = [
     path: '/user',
     name: 'user',
     component: User
+  },
+  {
+    path: '/hot/:type',
+    name: 'hot',
+    component: Hot,
+    props: true
+  },
+  {
+    path: '/msg/:type',
+    name: 'msg',
+    component: Msg,
+    props: true
   }
 ]
 
 const router = new VueRouter({
   routes,
-  linkExactActiveClass: 'active'
+  linkExactActiveClass: 'active' // 精准匹配。激活class name
 })
 
 // 1. 基于角色的路由守卫

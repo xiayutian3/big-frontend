@@ -6,7 +6,7 @@
         :key="'tabs-' + index"
         :to="tab.path"
         class="item"
-        exact-active-class="active"
+        active-class="active"
       >
         <svg-icon :icon="tab.icon" :class="['svg-icon-'+ tab.icon]"></svg-icon>
         <p>{{tab.name}}</p>
@@ -23,8 +23,8 @@ export default {
     return {
       tabs: [
         { name: '首页', icon: 'home', path: '/index' },
-        { name: '消息', icon: 'msg', path: '/msg' },
-        { name: '热门', icon: 'type', path: '/category' },
+        { name: '消息', icon: 'msg', path: '/msg/reply' },
+        { name: '热门', icon: 'type', path: '/hot/post' },
         { name: '我的', icon: 'person', path: '/user' }
       ]
     }
