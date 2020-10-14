@@ -99,6 +99,27 @@ PostSchema.statics = {
   // 计算返回列表的数量
   countByUid: function (id) {
     return this.find({ uid: id }).countDocuments()
+  },
+  // 根据时间段查询
+  getHotPost: function (page, limit, startTime, endTime) {
+    // console.log('startTime', startTime)
+    // console.log('endTime', endTime)
+    // 注意，传过来的时间已经进行过format('YYYY-MM-DD 00:00:00')了,聚合查询不支持format过后的时间，但是find（）支持
+    let query = {}
+    if (startTime !== '' && endTime !== '') {
+      query = { created: { $gte: startTime, $lt: endTime } }
+    }
+    return this.find(query)
+      .skip(limit * page)
+      .limit(limit)
+      .sort({ answer: -1 }) // 根据热门，回答，倒叙排列
+  },
+  getHotPostCount: function (page, limit, startTime, endTime) {
+    let query = {}
+    if (startTime !== '' && endTime !== '') {
+      query = { created: { $gte: startTime, $lt: endTime } }
+    }
+    return this.find(query).countDocuments() // 计算查出的数量
   }
 
 }

@@ -28,10 +28,13 @@ Vue.use(VueRouter)
 const routes = [
   // 首页
   {
+    path: '/',
+    redirect: '/index'
+  },
+  {
     path: '/index',
     name: 'home',
     component: Home,
-    redirect: '/index',
     children: [
       {
         path: '',

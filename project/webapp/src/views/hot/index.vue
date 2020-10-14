@@ -67,6 +67,11 @@
 </template>
 
 <script>
+import {
+  getHotPost,
+  getHotComments,
+  getHotSignRecord
+} from '@/api/hot'
 export default {
   name: 'hot',
   props: ['type'],
@@ -75,15 +80,75 @@ export default {
       localType: 'post',
       current: 0,
       page: 0,
-      limit: 10
+      limit: 10,
+      hotList: [],
+      hotComments: [],
+      hotSigns: []
     }
   },
   created () {},
-  mounted () {},
+  mounted () {
+    // 刷新的时候
+    this.localType = this.type
+    this._getHotPost()
+  },
   computed: {},
   methods: {
+    // 策略模式
+    dispatch () {
+      const strategies = {
+        post: () => {
+          this._getHotPost()
+        },
+        comments: () => {
+          this._getHotComments()
+        },
+        sign: () => {
+          this._getHotSignRecord()
+        }
+      }
+      return strategies[this.localType]()
+    },
     setIndex (num) {
       this.current = num
+      // 策略模式 - 发请求
+      this.dispatch()
+    },
+    _getHotPost () {
+      getHotPost({
+        type: this.localType,
+        index: this.current,
+        page: this.page,
+        limit: this.limit
+      }).then(res => {
+        if (res.code === 200) {
+          this.hotList = res.data
+        }
+      })
+    },
+    _getHotComments () {
+      getHotComments({
+        type: this.localType,
+        index: this.current,
+        page: this.page,
+        limit: this.limit
+      }).then(res => {
+        if (res.code === 200) {
+          this.hotComments = res.data
+        }
+      })
+    },
+    _getHotSignRecord () {
+      getHotSignRecord({
+        type: this.localType,
+        index: this.current,
+        page: this.page,
+        limit: this.limit
+      }).then(res => {
+        if (res.code === 200) {
+          this.hotSigns = res.data
+        }
+      })
     }
   },
   components: {},
@@ -93,6 +158,21 @@ export default {
       if (newval !== this.localType) {
         this.current = 0
         this.localType = newval
+        // 策略模式 - 发请求
+        this.dispatch()
+
+        // 发起不同的请求
+        // switch (this.localType) {
+        //   case 'post':
+        //     this._getHotPost()
+        //     break
+        //   case 'comments':
+        //     this._getHotComments()
+        //     break
+        //   case 'sign':
+        //     this._getHotSignRecord()
+        //     break
+        // }
       }
     }
   }
