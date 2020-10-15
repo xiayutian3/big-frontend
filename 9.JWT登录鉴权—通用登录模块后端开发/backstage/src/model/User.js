@@ -97,7 +97,19 @@ UserSchema.statics = {
   // 获取查到的总数
   countList: function (options) {
     return this.find(options).countDocuments() // mongoose自带的方法，计算查询回来的list总数
+  },
+  // 签到总榜
+  getTotalSign: function (page, limit) {
+    return this.find({})
+      .skip(page * limit)
+      .limit(limit)
+      .sort({ count: -1 })
+  },
+  // 签到总榜-数量
+  getTotalSignCount: function () {
+    return this.find({}).countDocuments()
   }
+
 }
 
 const UserModel = mongoose.model('users', UserSchema)

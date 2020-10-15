@@ -292,17 +292,19 @@ CommentsSchema.statics = {
   //     .limit(limit)
   //     .sort({ created: -1 })
   // }
+
+  // 热门评论
   getHotComments: function (page, limit, index) {
     if (index === '0') {
       // 总评论记数 -> aggregate聚合查询
       return this.aggregate([
-        // 匹配30天内的评论数据
-        { $match: { created: { $gte: new Date(moment().subtract(30, 'day')) } } },
-        { $group: { _id: '$cuid', count: { $sum: 1 } } },
-        { $addFields: { userId: { $toObjectId: '$_id' } } },
-        { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'cuid' } },
-        { $unwind: '$cuid' },
-        { $project: { cuid: { name: 1, _id: 1, pic: 1 }, count: 1 } },
+        // 匹配30天内的评论数据 (x需要new Date（）转化为iso的时间格式)
+        { $match: { created: { $gte: new Date(moment().subtract(30, 'day')) } } }, // 匹配
+        { $group: { _id: '$cuid', count: { $sum: 1 } } }, // // $group 聚合查询的字段：cuid ，计数（各个分类） count ：$sum累加
+        { $addFields: { userId: { $toObjectId: '$_id' } } }, // 添加一个字段userId  将聚合$_id转化为 ObjectId，mongodb需要通过objId查询
+        { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'cuid' } }, // 查找用户表 ，结果作为 cuid
+        { $unwind: '$cuid' }, // 将查询出来的数组转换为对象
+        { $project: { cuid: { name: 1, _id: 1, pic: 1 }, count: 1 } }, // $project 过滤掉 cuid不必要的字段 只要name，_id,pic. 以及计数 count
         { $skip: page * limit },
         { $limit: limit },
         { $sort: { count: -1 } }
@@ -324,11 +326,12 @@ CommentsSchema.statics = {
     if (index === '0') {
       // 总评论记数 -> aggregate聚合查询
       const result = await this.aggregate([
-        // 匹配30天内的评论数据
+        // 匹配30天内的评论数据 (x需要new Date（）转化为iso的时间格式)
         { $match: { created: { $gte: new Date(moment().subtract(30, 'day')) } } },
         { $group: { _id: '$cuid', count: { $sum: 1 } } },
-        { $group: { _id: 'null', total: { $sum: 1 } } }
+        { $group: { _id: 'null', total: { $sum: 1 } } } // _id为空，统计整个返回来的结果
       ])
+      // console.log('result', result)
       return result[0].total
     } else if (index === '1') {
       // 最新评论

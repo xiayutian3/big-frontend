@@ -57,12 +57,12 @@ export default {
       }
       this.isEnd = false
       this.isRepeat = false
-      this.lists = []
       this._getList()
     },
     loadTop (end) {
       this.page = 0
       this.handle = end
+      this.lists = []
       this.init()
     },
     loadBottom (end) {

@@ -5,6 +5,9 @@ import { setValue } from '../config/RedisConfig'
 // import {setValue,getValue} from '@/config/RedisConfig'
 import moment from 'dayjs'
 import PostModel from '@/model/Post'
+import Comments from '@/model/Comments'
+import User from '@/model/User'
+import SignRecord from '@/model/SignRecord'
 
 class PublicController {
   // constructor () {}
@@ -39,7 +42,7 @@ class PublicController {
 
   // 获取热门帖子
   async getHotPost (ctx) {
-    // page、limit、type、index
+    // page、limit、index
     // index 0-3日内 ，1-7日内，2-30日内，3-全部
 
     const params = ctx.query
@@ -74,15 +77,44 @@ class PublicController {
 
   // 获取热门评论
   async getHotComments (ctx) {
+    // 0-热门评论，1-最新评论
+    const params = ctx.query
+    // mongodb查询用 int类型
+    const page = params.page ? parseInt(params.page) : 0
+    const limit = params.limit ? parseInt(params.limit) : 0
+    const index = params.index ? params.index : '0'
+    const result = await Comments.getHotComments(page, limit, index)
+    const total = await Comments.getHotCommentsCount(index)
     ctx.body = {
-      msg: '获取热门文章成功'
+      code: 200,
+      data: result,
+      total,
+      msg: '获取热门评论成功'
     }
   }
 
-  // 获取热门排行
+  // 获取签到排行
   async getHotSignRecord (ctx) {
+    // 0-总签到榜 ，通过user查询比较快 ，1-最新签到 - 通过sign modal
+    const params = ctx.query
+    // mongodb查询用 int类型
+    const page = params.page ? parseInt(params.page) : 0
+    const limit = params.limit ? parseInt(params.limit) : 0
+    const index = params.index ? params.index : '0'
+    let result
+    let total = 0
+    if (index === '0') {
+      result = await User.getTotalSign(page, limit)
+      total = await User.getTotalSignCount()
+    } else if (index === '1') {
+      result = await SignRecord.getLatestSign(page, limit)
+      total = await SignRecord.getSignCount()
+    }
     ctx.body = {
-      msg: '获取热门文章成功'
+      code: 200,
+      data: result,
+      total,
+      msg: '获取热门排行成功'
     }
   }
 }

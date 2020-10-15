@@ -22,6 +22,36 @@ SignRecordSchema.statics = {
   findByUid: function (uid) {
     // （一个用户签到记录是列表，有很多条签到记录）倒序以后，查找到用户最新签到的记录（只有一条）findOne方法
     return this.findOne({ uid: uid }).sort({ created: -1 }) // 以created字段，-1倒序排列
+  },
+  // 最新签到列表
+  getLatestSign (page, limit) {
+    return this.find({})
+      .skip(page * limit)
+      .limit(limit)
+      .sort({ created: -1 })
+  },
+  // 今日签到最快
+  getTopSign (page, limit) {
+    return this.find({
+      created: {
+        $gte: moment().format('YYYY-MM-DD 00:00:00')
+      }
+    })
+      .skip(page * limit)
+      .limit(limit)
+      .sort({ created: 1 }) // 正序排列 》 每天的00：00：00
+  },
+  // 今日签到最快数量
+  getTopSignCount () {
+    return this.find({
+      created: {
+        $gte: moment().format('YYYY-MM-DD 00:00:00')
+      }
+    }).countDocuments()
+  },
+  // 最新签到列表总数
+  getSignCount () {
+    return this.find({}).countDocuments()
   }
 }
 

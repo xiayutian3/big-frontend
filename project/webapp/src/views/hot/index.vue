@@ -31,18 +31,45 @@
       </ul>
     </div>
     <div class="content">
-      <ul class="content-box" v-if="localType === 'post'">
-        <li class="content-item">
-          <div class="num first">01</div>
-          <div class="column">
-            <div class="title">如何哦基础自学web前端开发 接着</div>
-            <div class="read">3.2k 评论</div>
-          </div>
-          <div class="img">
-            <img src="/img/bear-200-200.jpg" alt="" />
-          </div>
-        </li>
-      </ul>
+      <scroll
+        :distance="footerHeight"
+        :isEnd="isEnd"
+        @on-loadTop="loadTop"
+        @on-loadBottom="loadBottom"
+      >
+        <ul class="content-box" v-if="localType === 'post'">
+          <li
+            class="content-item"
+            v-for="(item, index) in lists"
+            :key="'post-' + index"
+          >
+            <div class="num first" v-if="index === 0">01</div>
+            <div class="num second" v-if="index === 1">02</div>
+            <div class="num third" v-if="index === 2">03</div>
+            <div class="num common" v-if="index < 9 && index > 2">
+              {{ "0" + (index + 1) }}
+            </div>
+            <div class="num common" v-if="index < 50 && index >= 9">
+              {{ index + 1 }}
+            </div>
+            <div class="num" v-else></div>
+            <div class="column">
+              <div class="title">{{ item.title }}</div>
+              <div class="read">
+                {{
+                  parseInt(item.answer) > 1000
+                    ? parseInt(item.answer / 1000).toFixed(1) + "k"
+                    : item.answer
+                }}
+                评论
+              </div>
+            </div>
+            <div class="img" v-if="item.shotpic">
+              <img :src="item.shotpic" alt="" />
+            </div>
+          </li>
+        </ul>
+      </scroll>
       <ul
         class="content-box"
         v-if="localType === 'comments' || localType === 'sign'"
@@ -67,11 +94,7 @@
 </template>
 
 <script>
-import {
-  getHotPost,
-  getHotComments,
-  getHotSignRecord
-} from '@/api/hot'
+import { getHotPost, getHotComments, getHotSignRecord } from '@/api/hot'
 export default {
   name: 'hot',
   props: ['type'],
@@ -81,9 +104,11 @@ export default {
       current: 0,
       page: 0,
       limit: 10,
-      hotList: [],
-      hotComments: [],
-      hotSigns: []
+      lists: [],
+      isEnd: false,
+      footerHeight: 100,
+      handle: {},
+      isRepeat: false
     }
   },
   created () {},
@@ -91,9 +116,36 @@ export default {
     // 刷新的时候
     this.localType = this.type
     this._getHotPost()
+    // 赋值底部的高度
+    this.footerHeight = document.getElementsByClassName(
+      'layout-footer'
+    )[0].offsetHeight
   },
   computed: {},
   methods: {
+    init () {
+      // 停止加载状态
+      if (typeof this.handle === 'function') {
+        this.handle()
+      }
+      this.isEnd = false
+      this.isRepeat = false
+      // 策略模式 - 发请求
+      this.dispatch()
+    },
+    loadTop (end) {
+      this.page = 0
+      // 重置scroll位置
+      this.handle = end
+      this.lists = []
+      this.init()
+    },
+    loadBottom (end) {
+      this.page++
+      // 重置scroll位置
+      this.handle = end
+      this.init()
+    },
     // 策略模式
     dispatch () {
       const strategies = {
@@ -111,20 +163,50 @@ export default {
     },
     setIndex (num) {
       this.current = num
-      // 策略模式 - 发请求
-      this.dispatch()
+      this.lists = []
+      // // 策略模式 - 发请求
+      // this.dispatch()
+      this.page = 0
+      this.lists = []
+      this.init()
     },
     _getHotPost () {
+      if (this.isRepeat) return
+      if (this.isEnd) return
+      this.isRepeat = true
       getHotPost({
         type: this.localType,
         index: this.current,
         page: this.page,
         limit: this.limit
-      }).then(res => {
+      }).then((res) => {
+        // 加入一个请求锁，防止用户多次点击，等待数据返回后，再打开
+        this.isRepeat = false
+        // 对于异常的判断，res.code 非200，我们给用户一个提示
+        // 判断是否lists长度为0，如果为零即可以直接赋值
+        // 当Lists长度不为0，后面请求的数据，加入到Lists里面来
         if (res.code === 200) {
-          this.hotList = res.data
+          // 判断res.data的长度，如果小于20条，则是最后页
+          if (res.data.length < this.limit) {
+            this.isEnd = true
+          }
+          if (this.lists.length === 0) {
+            this.lists = res.data
+          } else {
+            this.lists = this.lists.concat(res.data)
+          }
+        }
+        // 停止加载状态
+        if (typeof this.handle === 'function') {
+          this.handle()
         }
       })
+        .catch((err) => {
+          this.isRepeat = false
+          if (err) {
+            this.$Toast(err.message)
+          }
+        })
     },
     _getHotComments () {
       getHotComments({
@@ -132,9 +214,9 @@ export default {
         index: this.current,
         page: this.page,
         limit: this.limit
-      }).then(res => {
+      }).then((res) => {
         if (res.code === 200) {
-          this.hotComments = res.data
+          this.lists = res.data
         }
       })
     },
@@ -144,9 +226,9 @@ export default {
         index: this.current,
         page: this.page,
         limit: this.limit
-      }).then(res => {
+      }).then((res) => {
         if (res.code === 200) {
-          this.hotSigns = res.data
+          this.lists = res.data
         }
       })
     }
