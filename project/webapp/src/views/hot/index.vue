@@ -69,25 +69,82 @@
             </div>
           </li>
         </ul>
+        <ul class="content-box" v-if="localType === 'comments'">
+          <li
+            class="content-item"
+            v-for="(item, index) in lists"
+            :key="'sigin-' + index"
+          >
+            <div class="num first" v-if="index === 0">01</div>
+            <div class="num second" v-if="index === 1">02</div>
+            <div class="num third" v-if="index === 2">03</div>
+            <div class="num common" v-if="index < 9 && index > 2">
+              {{ "0" + (index + 1) }}
+            </div>
+            <div class="num common" v-if="index < 50 && index >= 9">
+              {{ index + 1 }}
+            </div>
+            <div class="num" v-else></div>
+            <img
+              class="user"
+              :src="item.cuid ? item.cuid.pic : '/img/bear-200-200.jpg'"
+              alt=""
+            />
+            <div class="column no-between">
+              <div class="title">{{ item.cuid&&item.cuid.name? item.cuid.name :'imooc'}}</div>
+              <div class="read" v-if="current === 0">
+                <span>{{ item.count }}</span> 条评论
+              </div>
+              <div class="read" v-else>
+                {{ item.created | moment }} 发表了评论
+              </div>
+            </div>
+          </li>
+        </ul>
+        <ul class="content-box" v-if="localType === 'sign'">
+          <li
+            class="content-item"
+            v-for="(item, index) in lists"
+            :key="'sigin-' + index"
+          >
+            <div class="num first" v-if="index === 0">01</div>
+            <div class="num second" v-if="index === 1">02</div>
+            <div class="num third" v-if="index === 2">03</div>
+            <div class="num common" v-if="index < 9 && index > 2">
+              {{ "0" + (index + 1) }}
+            </div>
+            <div class="num common" v-if="index < 50 && index >= 9">
+              {{ index + 1 }}
+            </div>
+            <div class="num" v-else></div>
+            <img
+              v-if="current === 0"
+              class="user"
+              :src="item && item.pic ? item.pic : '/img/bear-200-200.jpg'"
+              alt=""
+            />
+            <img
+              v-else
+              class="user"
+              :src="
+                item && item.uid && item.uid.pic
+                  ? item.uid.pic
+                  : '/img/bear-200-200.jpg'
+              "
+              alt=""
+            />
+            <div class="column no-between">
+              <div class="title">{{ item.name }}</div>
+              <div class="read" v-if="current === 0">
+                已经连续签到<span>{{ item.count }}</span> 天
+              </div>
+              <div class="read" v-else>
+                {{ item.created | hours }}
+              </div>
+            </div>
+          </li>
+        </ul>
       </scroll>
-      <ul
-        class="content-box"
-        v-if="localType === 'comments' || localType === 'sign'"
-      >
-        <li class="content-item">
-          <div class="num first">01</div>
-          <img class="user" src="/img/bear-200-200.jpg" alt="" />
-          <div class="column no-between">
-            <div class="title">如何哦基础自学web前端开发 接着</div>
-            <div class="read" v-if="localType === 'comments'">
-              <span>228</span> 条评论
-            </div>
-            <div class="read" v-if="localType === 'sign'">
-              2020-10-13 00:00:00
-            </div>
-          </div>
-        </li>
-      </ul>
     </div>
     <my-footer></my-footer>
   </div>
@@ -115,7 +172,8 @@ export default {
   mounted () {
     // 刷新的时候
     this.localType = this.type
-    this._getHotPost()
+    // 请求数据
+    this.dispatch()
     // 赋值底部的高度
     this.footerHeight = document.getElementsByClassName(
       'layout-footer'
@@ -147,39 +205,8 @@ export default {
       this.init()
     },
     // 策略模式
-    dispatch () {
-      const strategies = {
-        post: () => {
-          this._getHotPost()
-        },
-        comments: () => {
-          this._getHotComments()
-        },
-        sign: () => {
-          this._getHotSignRecord()
-        }
-      }
-      return strategies[this.localType]()
-    },
-    setIndex (num) {
-      this.current = num
-      this.lists = []
-      // // 策略模式 - 发请求
-      // this.dispatch()
-      this.page = 0
-      this.lists = []
-      this.init()
-    },
-    _getHotPost () {
-      if (this.isRepeat) return
-      if (this.isEnd) return
-      this.isRepeat = true
-      getHotPost({
-        type: this.localType,
-        index: this.current,
-        page: this.page,
-        limit: this.limit
-      }).then((res) => {
+    async dispatch () {
+      const handler = (res) => {
         // 加入一个请求锁，防止用户多次点击，等待数据返回后，再打开
         this.isRepeat = false
         // 对于异常的判断，res.code 非200，我们给用户一个提示
@@ -200,48 +227,83 @@ export default {
         if (typeof this.handle === 'function') {
           this.handle()
         }
-      })
-        .catch((err) => {
-          this.isRepeat = false
-          if (err) {
-            this.$Toast(err.message)
-          }
-        })
+      }
+      const strategies = {
+        post: () => {
+          return this._getHotPost()
+        },
+        comments: () => {
+          return this._getHotComments()
+        },
+        sign: () => {
+          return this._getHotSignRecord()
+        }
+      }
+
+      try {
+        const result = await strategies[this.localType]()
+        handler(result)
+      } catch (err) {
+        this.isRepeat = false
+        if (err) {
+          this.$Toast(err.message)
+        }
+      }
     },
-    _getHotComments () {
-      getHotComments({
+    setIndex (num) {
+      this.current = num
+      this.lists = []
+      // // 策略模式 - 发请求
+      // this.dispatch()
+      this.page = 0
+      this.lists = []
+      this.init()
+    },
+    async _getHotPost () {
+      if (this.isRepeat) return
+      if (this.isEnd) return
+      this.isRepeat = true
+      const result = await getHotPost({
         type: this.localType,
         index: this.current,
         page: this.page,
         limit: this.limit
-      }).then((res) => {
-        if (res.code === 200) {
-          this.lists = res.data
-        }
       })
+      return result
     },
-    _getHotSignRecord () {
-      getHotSignRecord({
+    async _getHotComments () {
+      const result = await getHotComments({
         type: this.localType,
         index: this.current,
         page: this.page,
         limit: this.limit
-      }).then((res) => {
-        if (res.code === 200) {
-          this.lists = res.data
-        }
       })
+      return result
+    },
+    async _getHotSignRecord () {
+      const result = await getHotSignRecord({
+        type: this.localType,
+        index: this.current,
+        page: this.page,
+        limit: this.limit
+      })
+      return result
     }
   },
   components: {},
   watch: {
     type (newval, oldval) {
+      // 切换大的分类
       console.log('type -> newval', newval)
       if (newval !== this.localType) {
         this.current = 0
         this.localType = newval
-        // 策略模式 - 发请求
-        this.dispatch()
+        this.lists = []
+        this.page = 0
+        // 发请求
+        this.init()
+        // // 策略模式 - 发请求
+        // this.dispatch()
 
         // 发起不同的请求
         // switch (this.localType) {

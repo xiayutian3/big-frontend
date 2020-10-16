@@ -4,9 +4,13 @@
     <div class="wrapper">
       <div class="profile">
         <div class="info">
-          <img class="pic" src="/img/bear-200-200.jpg" alt="" />
+          <img
+            class="pic"
+            :src="isLogin ? user.pic : '/img/bear-200-200.jpg'"
+            alt=""
+          />
           <div class="user">
-            <p class="name">用户昵称</p>
+            <p class="name">{{ isLogin ? user.name : "请登录" }}</p>
             <p class="fav">
               <svg-icon icon="fav2" class="icon-fav"></svg-icon>
               积分：8000
@@ -55,6 +59,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'user',
   props: {},
@@ -118,7 +123,12 @@ export default {
   },
   created () {},
   mounted () {},
-  computed: {},
+  computed: {
+    ...mapGetters({
+      user: 'user/user', // 'user模块下，user方法 。user模块开启了namespace ，user方法'，给他一个别名 user
+      isLogin: 'user/isLogin'
+    })
+  },
   methods: {
     goTo (name) {}
   },

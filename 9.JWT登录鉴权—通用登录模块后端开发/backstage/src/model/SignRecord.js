@@ -26,6 +26,10 @@ SignRecordSchema.statics = {
   // 最新签到列表
   getLatestSign (page, limit) {
     return this.find({})
+      .populate({
+        path: 'uid',
+        select: '_id name pic'
+      })
       .skip(page * limit)
       .limit(limit)
       .sort({ created: -1 })
@@ -37,6 +41,10 @@ SignRecordSchema.statics = {
         $gte: moment().format('YYYY-MM-DD 00:00:00')
       }
     })
+      .populate({
+        path: 'uid',
+        select: '_id name pic'
+      })
       .skip(page * limit)
       .limit(limit)
       .sort({ created: 1 }) // 正序排列 》 每天的00：00：00

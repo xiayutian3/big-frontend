@@ -25,6 +25,12 @@ const formatDate = (date) => {
     return moment(date).from(moment())
   }
 }
+
+// 只展示时分秒
+const hours = (date) => {
+  return moment(date).format('HH:mm:ss')
+}
 export default {
-  moment: formatDate
+  moment: formatDate,
+  hours
 }

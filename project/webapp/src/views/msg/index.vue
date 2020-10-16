@@ -5,21 +5,23 @@
       <li><router-link to="/msg/hands">点赞</router-link></li>
     </ul>
     <ul class="content-box" v-if="localType === 'reply'">
-      <li class="item">
+      <li class="item" v-for="(item, index) in lists" :key="'msg-' + index">
         <div class="content-item">
           <div class="flex">
             <img class="user" src="/img/bear-200-200.jpg" alt="" />
             <div class="column">
-              <div class="title">用户名称</div>
-              <div class="read">1分钟前 回复了你</div>
+              <div class="title">
+                {{ item.cuid ? item.cuid.name : "imooc" }}
+              </div>
+              <div class="read">{{ item.created | moment }} 回复了你</div>
             </div>
           </div>
           <div class="reply"><svg-icon icon="editor"></svg-icon>回复</div>
         </div>
-        <div class="reply-content">老铁，睡觉了吗</div>
-        <div class="page">
-          <div class="title">这里时帖子的标题</div>
-          <div class="desc">帖子的内容简介</div>
+        <div class="reply-content">{{ item.content }}</div>
+        <div class="page" @click="goDetail(item)">
+          <div class="title">{{ item.tid ? item.tid.title : "" }}</div>
+          <div class="desc">{{ item.tid ? item.tid.content : "" }}</div>
         </div>
       </li>
     </ul>
@@ -45,18 +47,54 @@
 </template>
 
 <script>
+import { getMsg, setMsg } from '@/api/user'
 export default {
   name: 'msg',
   props: ['type'],
   data () {
     return {
-      localType: 'reply'
+      localType: 'reply',
+      lists: [],
+      page: 0,
+      limit: 10,
+      total: 0
     }
   },
   created () {},
-  mounted () {},
+  mounted () {
+    this.getMsgAll()
+  },
   computed: {},
-  methods: {},
+  methods: {
+    getMsgAll () {
+      getMsg({
+        page: this.page,
+        limit: this.limit
+      }).then((res) => {
+        if (res.code === 200) {
+          this.lists = res.data
+          this.total = res.total
+        }
+      })
+    },
+    goDetail (item) {
+      setTimeout(() => {
+        this.clear(item)
+      })
+      this.$router.push({ name: 'detail', params: { tid: item.tid._id } })
+    },
+    clear (item) {
+      setMsg({ id: item._id }).then((res) => {
+        if (res.code === 200) {
+          this.$Toast('消息已阅！已跳转！')
+          // 设置特定消息已读
+          // this.lists = []
+          // this.getMsgAll()
+          // this.$store.commit('setMessage', { message: this.num - 1 })
+        }
+      })
+    }
+  },
   components: {},
   watch: {
     type (newVal, oldVal) {

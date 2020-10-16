@@ -96,7 +96,7 @@ class HttpRequest {
         isPublic = isPublic || path.test(config.url)
       })
       // 添加token
-      const token = store.state.token
+      const token = store.state.user.token
       if (!isPublic && token) {
         config.headers.Authorization = 'Bearer ' + token
       }

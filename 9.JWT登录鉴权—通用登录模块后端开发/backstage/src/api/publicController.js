@@ -107,8 +107,8 @@ class PublicController {
       result = await User.getTotalSign(page, limit)
       total = await User.getTotalSignCount()
     } else if (index === '1') {
-      result = await SignRecord.getLatestSign(page, limit)
-      total = await SignRecord.getSignCount()
+      result = await SignRecord.getTopSign(page, limit)
+      total = await SignRecord.getTopSignCount()
     }
     ctx.body = {
       code: 200,

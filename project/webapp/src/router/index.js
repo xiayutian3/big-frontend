@@ -23,6 +23,30 @@ const User = () => import(/* webpackChunkName: 'user' */ '@/views/user/user')
 const Hot = () => import(/* webpackChunkName: 'hot' */ '@/views/hot')
 const Msg = () => import(/* webpackChunkName: 'msg' */ '@/views/msg')
 
+// 修改密码
+const Passwd = () =>
+  import(/* webpackChunkName: 'passwd' */ '@/views/user/passwd')
+// 修改个人设置
+const Settings = () =>
+  import(/* webpackChunkName: 'settings' */ '@/views/user/settings')
+// 我的帖子
+const MyPost = () =>
+  import(/* webpackChunkName: 'mypost' */ '@/views/user/mypost')
+// 我的收藏
+const MyFav = () => import(/* webpackChunkName: 'myfav' */ '@/views/user/myfav')
+// 我的签到
+const Sign = () => import(/* webpackChunkName: 'sign' */ '@/views/user/sign')
+// 我的主页
+const Center = () =>
+  import(/* webpackChunkName: 'center' */ '@/views/user/center')
+// 热门相关
+// const HotPost = () =>
+//   import(/* webpackChunkName: 'hotpost' */ '@/views/hot/post')
+// const HotComments = () =>
+//   import(/* webpackChunkName: 'hotcomments' */ '@/views/hot/comments')
+// const HotSign = () =>
+//   import(/* webpackChunkName: 'hotsign' */ '@/views/hot/sign')
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -78,6 +102,48 @@ const routes = [
     name: 'user',
     component: User
   },
+  // 修改设置
+  {
+    path: '/passwd',
+    name: 'passwd',
+    component: Passwd,
+    meta: { requiresAuth: true }
+  },
+  // 修改设置
+  {
+    path: '/settings',
+    name: 'settings',
+    component: Settings,
+    meta: { requiresAuth: true }
+  },
+  // 我的帖子
+  {
+    path: '/mypost',
+    name: 'mypost',
+    component: MyPost,
+    meta: { requiresAuth: true }
+  },
+  // 我的收藏
+  {
+    path: '/myfav',
+    name: 'myfav',
+    component: MyFav,
+    meta: { requiresAuth: true }
+  },
+  // 签到中心
+  {
+    path: '/sign',
+    name: 'sign',
+    component: Sign,
+    meta: { requiresAuth: true }
+  },
+  // 个人主页
+  {
+    path: '/center',
+    name: 'center',
+    component: Center,
+    meta: { requiresAuth: true }
+  },
   {
     path: '/hot/:type',
     name: 'hot',
@@ -88,7 +154,8 @@ const routes = [
     path: '/msg/:type',
     name: 'msg',
     component: Msg,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   }
 ]
 
