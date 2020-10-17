@@ -22,6 +22,7 @@ const Forget = () => import(/* webpackChunkName: 'forget' */ '@/views/user/forge
 const User = () => import(/* webpackChunkName: 'user' */ '@/views/user/user')
 const Hot = () => import(/* webpackChunkName: 'hot' */ '@/views/hot')
 const Msg = () => import(/* webpackChunkName: 'msg' */ '@/views/msg')
+const NotFound = () => import(/* webpackChunkName: '404' */ '@/views/404')
 
 // 修改密码
 const Passwd = () =>
@@ -63,13 +64,19 @@ const routes = [
       {
         path: '',
         name: 'index',
-        component: Catalog
+        component: Catalog,
+        meta: {
+          index: 0
+        }
       },
       {
         path: ':catalog',
         name: 'catalog',
         component: Catalog,
-        props: true //  让catalog 变成props 传递，在组件内就可以用props接受,这样的话，在访问index路径必须输入 :catalog,如果只是输入 /index，的话，无法访问，必须/index/123456
+        props: true, //  让catalog 变成props 传递，在组件内就可以用props接受,这样的话，在访问index路径必须输入 :catalog,如果只是输入 /index，的话，无法访问，必须/index/123456
+        meta: {
+          index: 0
+        }
       }
     ]
   },
@@ -78,7 +85,10 @@ const routes = [
     path: '/detail/:tid',
     name: 'detail',
     props: true, // 让参数tid变成peops
-    component: Detail
+    component: Detail,
+    meta: {
+      index: 1
+    }
   },
   // 注册登录
   {
@@ -100,49 +110,52 @@ const routes = [
   {
     path: '/user',
     name: 'user',
-    component: User
+    component: User,
+    meta: {
+      index: 0
+    }
   },
   // 修改设置
   {
     path: '/passwd',
     name: 'passwd',
     component: Passwd,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, index: 1 }
   },
   // 修改设置
   {
     path: '/settings',
     name: 'settings',
     component: Settings,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, index: 1 }
   },
   // 我的帖子
   {
     path: '/mypost',
     name: 'mypost',
     component: MyPost,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, index: 1 }
   },
   // 我的收藏
   {
     path: '/myfav',
     name: 'myfav',
     component: MyFav,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, index: 1 }
   },
   // 签到中心
   {
     path: '/sign',
     name: 'sign',
     component: Sign,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, index: 1 }
   },
   // 个人主页
   {
     path: '/center',
     name: 'center',
     component: Center,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, index: 1 }
   },
   {
     path: '/hot/:type',
@@ -156,6 +169,15 @@ const routes = [
     component: Msg,
     props: true,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: NotFound
+  },
+  {
+    path: '*',
+    redirect: '/404'
   }
 ]
 

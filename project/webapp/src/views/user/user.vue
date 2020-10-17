@@ -133,7 +133,8 @@ export default {
     goTo (name) {}
   },
   components: {},
-  watch: {}
+  watch: {
+  }
 }
 </script>
 <style lang="scss" scoped>

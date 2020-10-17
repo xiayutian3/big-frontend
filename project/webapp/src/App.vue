@@ -1,6 +1,10 @@
 <template>
   <div id="app">
-    <router-view />
+    <!-- <transition :name="direction"> -->
+      <keep-alive>
+        <router-view />
+      </keep-alive>
+    <!-- </transition> -->
   </div>
 </template>
 <script>
@@ -16,7 +20,11 @@ export default {
   //     { passive: false }
   //   )
   // }
-
+  data () {
+    return {
+      direction: ''
+    }
+  },
   mounted () {
     // const _this = this
     // 挂载到window上
@@ -36,6 +44,31 @@ export default {
     //   },
     //   false
     // )
+  },
+  watch: {
+    $route (to, from) {
+      console.log('$route -> from', from)
+      console.log('$route -> to', to)
+      // 层级大的 右 -》 左 进入（进入子页面）
+      // 层级小的 左 -》 右 进入（返回）
+
+      // 刷新的时候,不需要过度
+      if (!from.name) {
+        return
+      }
+
+      if (to.meta.index < from.meta.index) {
+        this.direction = 'slide2-right'
+      } else {
+        // 没有meta.index，就是跳转，不需要添加过度
+        if (!to.meta.index) {
+          this.direction = ''
+          return
+        }
+        this.direction = 'slide2-left'
+      }
+      console.log('this.direction', this.direction)
+    }
   }
 }
 </script>
@@ -122,7 +155,7 @@ pre {
   .codeimg {
     width: 250px;
     height: 60px;
-    svg{
+    svg {
       width: 100%;
       height: 100%;
     }
@@ -157,12 +190,13 @@ a {
   padding: 0 !important;
 }
 
+//老师的过度
 .slide-right-enter-active,
 .slide-left-enter-active,
 .slide-right-leave-active,
 .slide-left-leave-active {
   transition: all 0.5s;
-  will-change: transform;
+  will-change: transform; //告诉浏览器，我要进行动画，你要给我加速
   position: absolute;
   width: 100%;
   height: 100%;
@@ -189,5 +223,30 @@ a {
 .slide-left-enter-to,
 .slide-left-leave {
   transform: translateX(0);
+}
+
+//我自己写的过度
+.slide2-right-enter-active,
+.slide2-right-leave-active,
+.slide2-left-enter-active,
+.slide2-left-leave-active {
+  transition: all 0.5s;
+  will-change: transform; //告诉浏览器，我要进行动画，你要给我加速
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+}
+.slide2-right-enter {
+  transform: translateX(-100%);
+}
+.slide2-right-leave-to {
+  transition: translateX(0);
+}
+.slide2-left-enter {
+  transform: translateX(100%);
+}
+.slide2-left-leave-to {
+  transition: translateX(0);
 }
 </style>
