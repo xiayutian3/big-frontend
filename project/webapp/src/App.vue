@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <!-- <transition :name="direction"> -->
+    <transition :name="direction">
       <keep-alive>
         <router-view />
       </keep-alive>
-    <!-- </transition> -->
+    </transition>
   </div>
 </template>
 <script>
@@ -238,15 +238,19 @@ a {
   left: 0;
 }
 .slide2-right-enter {
+  opacity: 1;
   transform: translateX(-100%);
 }
 .slide2-right-leave-to {
+  opacity: 0;
   transition: translateX(0);
 }
 .slide2-left-enter {
+  opacity: 1;
   transform: translateX(100%);
 }
 .slide2-left-leave-to {
+  opacity: 0;
   transition: translateX(0);
 }
 </style>

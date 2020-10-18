@@ -1,60 +1,62 @@
 <template>
   <div>
-    <div class="bg"></div>
-    <div class="wrapper">
-      <div class="profile">
-        <div class="info">
-          <img
-            class="pic"
-            :src="isLogin ? user.pic : '/img/bear-200-200.jpg'"
-            alt=""
-          />
-          <div class="user">
-            <p class="name">{{ isLogin ? user.name : "请登录" }}</p>
-            <p class="fav">
-              <svg-icon icon="fav2" class="icon-fav"></svg-icon>
-              积分：8000
-            </p>
+    <div class="grey">
+      <div class="bg"></div>
+      <div class="wrapper">
+        <div class="profile">
+          <div class="info">
+            <img
+              class="pic"
+              :src="isLogin ? user.pic : '/img/bear-200-200.jpg'"
+              alt=""
+            />
+            <div class="user">
+              <p class="name">{{ isLogin ? user.name : "请登录" }}</p>
+              <p class="fav">
+                <svg-icon icon="fav2" class="icon-fav"></svg-icon>
+                积分：8000
+              </p>
+            </div>
+            <div class="link">个人主页</div>
           </div>
-          <div class="link">个人主页</div>
+          <ul class="stats">
+            <li class="item">
+              <p>8</p>
+              <p class="title">我的帖子</p>
+            </li>
+            <li class="item">
+              <p>8</p>
+              <p class="title">收藏夹</p>
+            </li>
+            <li class="item">
+              <p>8</p>
+              <p class="title">最近浏览</p>
+            </li>
+          </ul>
         </div>
-        <ul class="stats">
-          <li class="item">
-            <p>8</p>
-            <p class="title">我的帖子</p>
+      </div>
+      <div class="center-wraper">
+        <ul class="center-list first">
+          <li
+            v-for="(item, index) in lists"
+            :key="'center-' + index"
+            @click="goTo(item.routeName)"
+          >
+            <i :class="item.icon"></i>
+            <span>{{ item.name }}</span>
           </li>
-          <li class="item">
-            <p>8</p>
-            <p class="title">收藏夹</p>
-          </li>
-          <li class="item">
-            <p>8</p>
-            <p class="title">最近浏览</p>
+        </ul>
+        <ul class="center-list">
+          <li v-for="(item, index) in routes" :key="'routes-' + index">
+            <router-link :to="item.path">
+              <i :class="item.icon"></i>
+              <span>{{ item.name }}</span>
+            </router-link>
           </li>
         </ul>
       </div>
+      <my-footer></my-footer>
     </div>
-    <div class="center-wraper">
-      <ul class="center-list first">
-        <li
-          v-for="(item, index) in lists"
-          :key="'center-' + index"
-          @click="goTo(item.routeName)"
-        >
-          <i :class="item.icon"></i>
-          <span>{{ item.name }}</span>
-        </li>
-      </ul>
-      <ul class="center-list">
-        <li v-for="(item, index) in routes" :key="'routes-' + index">
-          <router-link :to="item.path">
-            <i :class="item.icon"></i>
-            <span>{{ item.name }}</span>
-          </router-link>
-        </li>
-      </ul>
-    </div>
-    <my-footer></my-footer>
   </div>
 </template>
 
@@ -133,8 +135,7 @@ export default {
     goTo (name) {}
   },
   components: {},
-  watch: {
-  }
+  watch: {}
 }
 </script>
 <style lang="scss" scoped>
