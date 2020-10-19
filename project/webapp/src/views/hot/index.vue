@@ -91,7 +91,9 @@
               alt=""
             />
             <div class="column no-between">
-              <div class="title">{{ item.cuid&&item.cuid.name? item.cuid.name :'imooc'}}</div>
+              <div class="title">
+                {{ item.cuid && item.cuid.name ? item.cuid.name : "imooc" }}
+              </div>
               <div class="read" v-if="current === 0">
                 <span>{{ item.count }}</span> 条评论
               </div>
@@ -165,7 +167,8 @@ export default {
       isEnd: false,
       footerHeight: 100,
       handle: {},
-      isRepeat: false
+      isRepeat: false,
+      currentIndex: 0
     }
   },
   created () {},
@@ -174,13 +177,15 @@ export default {
     this.localType = this.type
     // 请求数据
     this.dispatch()
-    // 赋值底部的高度
-    this.footerHeight = document.getElementsByClassName(
-      'layout-footer'
-    )[0].offsetHeight
   },
   computed: {},
   methods: {
+    initHeight () {
+      // 赋值底部的高度
+      this.footerHeight = document.getElementsByClassName(
+        'layout-footer'
+      )[0].offsetHeight
+    },
     init () {
       // 停止加载状态
       if (typeof this.handle === 'function') {
@@ -227,6 +232,8 @@ export default {
         if (typeof this.handle === 'function') {
           this.handle()
         }
+        // 初始化高度
+        this.initHeight()
       }
       const strategies = {
         post: () => {
@@ -294,7 +301,7 @@ export default {
   watch: {
     type (newval, oldval) {
       // 切换大的分类
-      console.log('type -> newval', newval)
+      // console.log('type -> newval', newval)
       if (newval !== this.localType) {
         this.current = 0
         this.localType = newval

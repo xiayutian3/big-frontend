@@ -1,7 +1,10 @@
 const path = require('path')
 const resolve = dir => path.join(__dirname, dir)
 module.exports = {
+  productionSourceMap: false,
   chainWebpack: config => {
+    // 压缩插件
+    const terser = config.optimization.minimizer('terser')
     const svgRule = config.module.rule('svg')
     svgRule.uses.clear()
     svgRule
@@ -22,6 +25,11 @@ module.exports = {
       .rule('images')
       .test(/\.(png|jpe?g|gif|webp|svg)(\?.*)?$/) // 添加svg
       .exclude.add(resolve('./src/assets/icons')) // 不包含的路径
+
+    terser.tap((args) => { // 删除console cli-v4版本
+      args[0].terserOptions.compress.drop_console = true
+      return args
+    })
   },
   css: { // 全局引入sass 的变量
     loaderOptions: {

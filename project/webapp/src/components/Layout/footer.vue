@@ -8,8 +8,8 @@
         class="item"
         active-class="active"
       >
-        <svg-icon :icon="tab.icon" :class="['svg-icon-'+ tab.icon]"></svg-icon>
-        <p>{{tab.name}}</p>
+        <svg-icon :icon="tab.icon" :class="['svg-icon-' + tab.icon]"></svg-icon>
+        <p>{{ tab.name }}</p>
       </router-link>
     </ul>
   </div>
@@ -38,9 +38,24 @@ export default {
   computed: {},
   methods: {},
   components: {},
-  watch: {}
+  watch: {
+    // 切换 底部 热门的选中状态
+    $route (newVal, oldVal) {
+      this.$nextTick(() => {
+        if (newVal.name === 'hot') {
+        // console.log('$route -> newVal', newVal.name)
+          var ele = document.getElementsByClassName('item')[2]
+          ele.className += ' active'
+        } else {
+          console.log('$route -> newVal', newVal.name)
+          var ele2 = document.getElementsByClassName('item')[2]
+          ele2.className = 'item'
+        }
+      })
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
-@import './footer.scss';
+@import "./footer.scss";
 </style>

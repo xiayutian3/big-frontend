@@ -45,11 +45,13 @@ export default {
   },
   mounted () {
     this._getList()
-    this.footerHeight = document.getElementsByClassName(
-      'layout-footer'
-    )[0].offsetHeight
   },
   methods: {
+    initHeight () {
+      this.footerHeight = document.getElementsByClassName(
+        'layout-footer'
+      )[0].offsetHeight
+    },
     init () {
       // 停止加载状态
       if (typeof this.handle === 'function') {
@@ -101,6 +103,8 @@ export default {
           if (typeof this.handle === 'function') {
             this.handle()
           }
+          // 初始化高度
+          this.initHeight()
         })
         .catch((err) => {
           this.isRepeat = false

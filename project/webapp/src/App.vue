@@ -47,8 +47,8 @@ export default {
   },
   watch: {
     $route (to, from) {
-      console.log('$route -> from', from)
-      console.log('$route -> to', to)
+      // console.log('$route -> from', from)
+      // console.log('$route -> to', to)
       // 层级大的 右 -》 左 进入（进入子页面）
       // 层级小的 左 -》 右 进入（返回）
 
