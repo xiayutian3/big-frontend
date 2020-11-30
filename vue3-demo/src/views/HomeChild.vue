@@ -17,7 +17,7 @@ export default defineComponent({
   props: ['propeName'],
   emits: ['minusevent'],
   setup (props, { emit, attrs }) {
-    console.log('setup ~ this', this)
+    console.log('setup ~ this', this) // setup中不存在this
     console.log('attrs', attrs)
     // console.log('props', props)
     // console.log('ctx', ctx)

@@ -24,7 +24,9 @@
       "dom",
       "dom.iterable",
       "scripthost"
-    ]
+    ],
+    // 解决ts中this的指向
+    "noImplicitThis": false
   },
   "include": [
     "src/**/*.ts",
