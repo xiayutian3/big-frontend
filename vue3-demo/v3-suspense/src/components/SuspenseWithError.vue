@@ -19,7 +19,7 @@ export default defineComponent({
   //捕获异常
   onErrorCaptured((err)=>{
     error.value = err as string
-    return true
+    return false
   })
     return {
       error
