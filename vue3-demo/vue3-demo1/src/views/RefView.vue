@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs } from 'vue'
+import { defineComponent, onRenderTracked, onRenderTriggered, onBeforeMount, onMounted, onUpdated, reactive, ref, toRefs } from 'vue'
 // import { defineComponent, reactive, ref, watchEffect } from 'vue'
 
 const utils = () => {
@@ -18,7 +18,29 @@ const utils = () => {
   return toRefs(stateAll)
 }
 export default defineComponent({
+  beforeCreate () {
+    console.log('beforeCreate')
+  },
+  created () {
+    console.log('created')
+  },
+  beforeMount () {
+    console.log('beforeMount')
+  },
   setup () {
+    onBeforeMount(() => {
+      console.log('onBeforeMount')
+    })
+    // 调试生命周期
+    // 追踪响应式
+    onRenderTracked((debug) => {
+      console.log('onRenderTracked', debug)
+    })
+    // 虚拟 DOM 重新渲染
+    onRenderTriggered((debug) => {
+      console.log('onRenderTriggered', debug)
+    })
+    console.log('setup')
     // let title = 'hello vue3'
     const title = ref('hello vue3')
     // console.log(' title', title)
@@ -39,6 +61,16 @@ export default defineComponent({
     // })
 
     const { x, y } = utils()
+
+    // 生命周期
+
+    onMounted(() => {
+      console.log('Component is mounted!')
+    })
+    onUpdated(() => {
+      console.log('setup x', x.value)
+      console.log('setup y', y.value)
+    })
 
     setTimeout(() => {
       title.value = 'vue3'
