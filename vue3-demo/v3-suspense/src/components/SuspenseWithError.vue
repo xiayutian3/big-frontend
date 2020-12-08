@@ -19,6 +19,7 @@ export default defineComponent({
   //捕获异常
   onErrorCaptured((err)=>{
     error.value = err as string
+    // false 为 已解决不需要在向上传递错误信息，true向上传递错误信息，控制就会有提示（warn）
     return false
   })
     return {
