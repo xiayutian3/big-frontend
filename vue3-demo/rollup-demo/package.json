@@ -1,0 +1,19 @@
+{
+  "name": "rollup-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -i src/main.js -f cjs -o dist/bundle.js",
+    "build:es": "rollup -i src/main.js -f es -o dist/bundle-es.js",
+    "build:all": "rollup -c"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^2.34.2",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}
