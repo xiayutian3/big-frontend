@@ -26,7 +26,7 @@
                         as="input"
                         rules="required|email"
                         name="username"
-                        v-model="username"
+                        v-model="state.username"
                         placeholder="请输入用户名"
                         autocomplete="off"
                         class="layui-input"
@@ -46,7 +46,7 @@
                         as="input"
                         rules="required|min:6"
                         name="password"
-                        v-model="password"
+                        v-model="state.password"
                         placeholder="请输入密码"
                         autocomplete="off"
                         class="layui-input"
@@ -69,7 +69,7 @@
                           as="input"
                           rules="required|length:4"
                           name="code"
-                          v-model="code"
+                          v-model="state.code"
                           placeholder="请输入验证码"
                           autocomplete="off"
                           class="layui-input"
@@ -80,7 +80,7 @@
                           class="svg"
                           style="color: #c00"
                           @click="_getCode()"
-                          v-html="svg"
+                          v-html="state.svg"
                         ></span>
                       </div>
                     </div>
@@ -126,25 +126,58 @@
 
 <script lang="ts">
 import { Field, Form } from 'vee-validate'
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, onMounted } from 'vue'
+// import { defineComponent, onMounted, reactive } from 'vue'
+// import { v4 as uuidv4 } from 'uuid'
+// import store from '@/store'
+// import { getCode } from '@/api/login'
+// import { HttpResponse } from '@/common/interface'
+
+// 功能函数抽离了出来后，封装后，函数有自己的作用域
+import { loginUtils } from '@/utils/login'
 
 export default defineComponent({
   name: 'login',
   setup () {
-    const state = reactive({
-      username: '',
-      password: '',
-      code: '',
-      svg: ''
-    })
-    const _getCode = () => {
-      console.log('_getCode')
-    }
+    // const state = reactive({
+    //   username: '',
+    //   password: '',
+    //   code: '',
+    //   svg: ''
+    // })
+    // const _getCode = async () => {
+    //   // 产生唯一标识，用来跟检查对应用户验证码时效性
+
+    //   let sid = ''
+    //   if (localStorage.getItem('sid')) {
+    //     sid = localStorage.getItem('sid') || ''
+    //   } else {
+    //     sid = uuidv4()
+    //     // console.log('sid:', sid)
+    //     localStorage.setItem('sid', sid)
+    //     // 更新vuex的sid
+    //     store.commit('setSid', sid)
+    //   }
+
+    //   // 指定类型  自定义 api接口返回的 Promise<HttpResponse>  HttpResponse
+    //   const { data, code } = await getCode(sid) as HttpResponse
+    //   if (code === 200) {
+    //     state.svg = data
+    //   }
+    // }
+
+    // 封装后的函数
+    const { _getCode, state } = loginUtils()
+
     const submit = () => {
       console.log('submit')
     }
+    onMounted(async () => {
+      _getCode()
+    })
     return {
-      ...state,
+      // ...state, // 会让state中的响应式，失去响应式的属性（不能使用...state）
+      state,
       submit,
       _getCode
     }

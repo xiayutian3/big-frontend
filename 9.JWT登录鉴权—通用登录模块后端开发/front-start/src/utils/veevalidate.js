@@ -1,6 +1,7 @@
 // 检验的第三方插件（vee-validate3.x的使用）
 // extend扩展规则的方法，localize设置语言的方法
 import { extend, localize } from 'vee-validate'
+// eslint-disable-next-line camelcase
 import { required, email, min, length, confirmed, is_not } from 'vee-validate/dist/rules'
 
 // 引入veevalidate自带的中文语言包
