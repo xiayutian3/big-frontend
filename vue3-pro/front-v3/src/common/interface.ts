@@ -39,7 +39,7 @@ export interface ForgetInfo{
 export interface HttpResponse {
   code: number;
   data?: any;
-  msg?: string;
+  msg?: string | Record<string, any>; // 定义 字符串，对象类型
   total?: number;
   count?: number;
   favs?: number;

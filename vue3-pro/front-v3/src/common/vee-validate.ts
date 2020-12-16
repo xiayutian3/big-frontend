@@ -16,7 +16,8 @@ const config: any = {
   messages: {
     ...zh.messages,
     required: '请输入{field}',
-    min: '请在{field}输入最少0:{length}个字符'
+    min: '请在{field}输入最少0:{length}个字符',
+    confirmed: '两次输入的内容不一致'
   },
   names: {
     email: '邮箱',

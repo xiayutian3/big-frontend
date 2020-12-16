@@ -1,8 +1,9 @@
 import { reactive } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import store from '@/store'
-import { getCode } from '@/api/login'
+import { getCode, login, reg } from '@/api/login'
 import { HttpResponse } from '@/common/interface'
+import router from '@/router'
 
 export const loginUtils = () => {
   let sid = ''
@@ -10,9 +11,12 @@ export const loginUtils = () => {
   const state = reactive({
     username: '',
     password: '',
+    name: '',
+    repassword: '',
     code: '',
     svg: ''
   })
+  // 获取验证码
   const _getCode = async () => {
     // 产生唯一标识，用来跟检查对应用户验证码时效性
 
@@ -32,8 +36,58 @@ export const loginUtils = () => {
       state.svg = data
     }
   }
+
+  // 登录
+  const loginHandle = async () => {
+    const res = await login({
+      username: state.username,
+      password: state.password,
+      code: state.code,
+      sid: sid
+    })
+    const { code, data, token } = res as HttpResponse
+    if (code === 200) {
+      data.username = state.username
+      // 同步vuex的用户信息
+      store.commit('setUserInfo', data)
+      store.commit('setIsLogin', true)
+      store.commit('setToken', token)
+      // 登录成功 后重置数据
+      state.username = ''
+      state.password = ''
+      state.code = ''
+      router.push({ name: 'Home' })
+    }
+    return res
+  }
+
+  // 注册
+  const regHandle = async () => {
+    const res = await reg({
+      name: state.name,
+      username: state.username,
+      password: state.password,
+      code: state.code,
+      sid: sid
+    })
+    const { code } = res as HttpResponse
+    if (code === 200) {
+      // 注册成功 后重置数据
+      state.name = ''
+      state.username = ''
+      state.password = ''
+      state.repassword = ''
+      state.code = ''
+      setTimeout(() => {
+        router.push('/login')
+      })
+    }
+    return res
+  }
   return {
     _getCode,
-    state
+    state,
+    loginHandle,
+    regHandle
   }
 }

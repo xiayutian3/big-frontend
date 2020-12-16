@@ -5,7 +5,7 @@
         <ul class="layui-tab-title">
           <li class="layui-this">登入</li>
           <li>
-            <a :to="{ name: 'reg' }">注册</a>
+            <router-link :to="{ name: 'reg' }">注册</router-link>
           </li>
         </ul>
         <div
@@ -15,8 +15,8 @@
         >
           <div class="layui-tab-item layui-show">
             <div class="layui-form layui-form-pane">
-              <Form ref="observer" v-slot="{errors}">
-                <form method="post">
+              <!-- <Form @submit="submit" v-slot="{validate,errors}"> -->
+                 <Form @submit="submit" v-slot="{errors}">
                   <div class="layui-form-item">
                     <label for="L_email" class="layui-form-label">用户名</label>
                     <!-- <validation-provider name="email" rules="required|email" v-slot="{errors}"> -->
@@ -90,7 +90,8 @@
                     <!-- </validation-provider> -->
                   </div>
                   <div class="layui-form-item">
-                    <button class="layui-btn" type="button" @click="submit">
+                    <!-- <button class="layui-btn" type="button" @click="validate().then(submit)"> -->
+                       <button class="layui-btn" type="submit">
                       立即登录
                     </button>
                     <span style="padding-left: 20px">
@@ -114,7 +115,6 @@
                       title="微博登入"
                     ></a>
                   </div>
-                </form>
               </Form>
             </div>
           </div>
@@ -135,6 +135,7 @@ import { defineComponent, onMounted } from 'vue'
 
 // 功能函数抽离了出来后，封装后，函数有自己的作用域
 import { loginUtils } from '@/utils/login'
+import { HttpResponse } from '@/common/interface'
 
 export default defineComponent({
   name: 'login',
@@ -167,13 +168,36 @@ export default defineComponent({
     // }
 
     // 封装后的函数
-    const { _getCode, state } = loginUtils()
+    const { _getCode, state, loginHandle } = loginUtils()
 
-    const submit = () => {
-      console.log('submit')
+    // 点击登录
+    const submit = async (values: any, actions: any) => {
+      // console.log('submit ~ actions', actions)
+      // console.log('submit ~ values', values)
+      // 自定义错误消息设置
+      const { setErrors, resetForm } = actions
+      // 登录请求
+
+      const res = await loginHandle()
+      const { code, msg } = res as HttpResponse
+      if (code === 200) {
+        // 延迟设置 重置表单
+        requestAnimationFrame(() => {
+          resetForm()
+        })
+      } else if (typeof msg === 'string') {
+        setErrors({
+          code: msg
+        })
+      }
+      // // 自定义错误消息设置
+      // const { setErrors } = actions
+      // setErrors({
+      //   code: '图形验证码错误'
+      // })
     }
     onMounted(async () => {
-      _getCode()
+      await _getCode()
     })
     return {
       // ...state, // 会让state中的响应式，失去响应式的属性（不能使用...state）

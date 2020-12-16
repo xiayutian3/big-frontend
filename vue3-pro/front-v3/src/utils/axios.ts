@@ -168,7 +168,8 @@ class HttpRequest {
     return this.request(options)
   }
 
-  post (url: string, data?: any): Promise<AxiosResponse> {
+  // 自定义接口返回的类型 | | Promise<any>  或者定义interface  ： Promise<HttpResponse>
+  post (url: string, data?: any): Promise<AxiosResponse>| Promise<HttpResponse> {
     return this.request({
       method: 'post',
       url: url,

@@ -1,6 +1,8 @@
-import { createStore } from 'vuex'
+import { createStore, createLogger } from 'vuex'
 // 类型约束
 import { UserInfo } from '@/common/interface'
+
+const debug = process.env.NODE_ENV !== 'production'
 
 export default createStore({
   state: {
@@ -51,5 +53,6 @@ export default createStore({
     message ({ commit }, msg) {
       commit('setMessage', msg)
     }
-  }
+  },
+  plugins: debug ? [createLogger()] : [] // 调试vuex
 })
