@@ -192,6 +192,7 @@ import { Field, Form } from 'vee-validate'
 import { defineComponent, onMounted } from 'vue'
 import { loginUtils } from '@/utils/login'
 import { HttpResponse } from '@/common/interface'
+import { alert } from '@/components/modules/alert/index.tsx'
 
 export default defineComponent({
   name: 'reg',
@@ -204,12 +205,11 @@ export default defineComponent({
     //   code: '', // 要输入的图片验证码
     //   svg: '' // 验证码图片
     // })
-
     const { state, _getCode, regHandle } = loginUtils()
 
     const submit = async (values: any, actions: any) => {
-      console.log('submit ~ actions', actions)
-      console.log('submit ~ values', values)
+      // console.log('submit ~ actions', actions)
+      // console.log('submit ~ values', values)
       // 自定义错误消息设置
       const { setErrors, resetForm } = actions
       // 登录请求
@@ -217,6 +217,8 @@ export default defineComponent({
       const res = await regHandle()
       const { code, msg } = res as HttpResponse
       if (code === 200) {
+        // 成功提示
+        alert('注册成功')
         // 延迟设置 重置表单
         requestAnimationFrame(() => {
           console.log('重置表单')
