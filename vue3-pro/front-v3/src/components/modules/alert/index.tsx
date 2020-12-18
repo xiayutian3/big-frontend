@@ -4,7 +4,9 @@ import AlertComponent from './Alert.vue'
 export const alert = (msg: string) => {
   // 1. 添加alert 根点
   const root = document.createElement('div')
+
   document.body.appendChild(root)
+
   // 2.添加Alert组件 -》 props
   const options = {
     type: 'alert',
@@ -26,11 +28,7 @@ export const alert = (msg: string) => {
   alertCom.mount(root)
 }
 
-export const confirm = (
-  msg: string,
-  sucess: any,
-  cancel: any
-) => {
+export const confirm = (msg: string, sucess: any, cancel: any) => {
   // 1. 添加confirm 根点
   const root = document.createElement('div')
   document.body.appendChild(root)
@@ -48,7 +46,6 @@ export const confirm = (
         // alertCom.unmount(root)
         document.body.removeChild(root)
       }
-
       // jsx,tsx 语法可以直接返回 AlertComponent组件，（ts,js不行）
       return () => <AlertComponent {...{ ...options, unmount }} />
     }

@@ -5,12 +5,27 @@ import Login from '@/views/Login.vue'
 
 // 路由懒加载的形式
 const Reg = () => import('@/views/Reg.vue')
+const Index = () =>
+  import(/* webpackChunkName: 'index' */ '@/views/channels/Index.vue')
+const Template1 = () =>
+  import(/* webpackChunkName: 'template1' */ '@/views/channels/Template1.vue')
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    component: Home,
+    children: [
+      {
+        path: '',
+        name: 'index',
+        component: Index
+      },
+      {
+        path: '/index/:catalog',
+        name: 'catalog',
+        component: Template1
+      }
+    ]
   },
   {
     path: '/login',

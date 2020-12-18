@@ -20,9 +20,10 @@
 
 <script lang="ts">
 import toggleUtils from '@/utils/toggle'
-import { computed, reactive } from 'vue'
+import { computed, defineComponent, reactive } from 'vue'
 
-export default {
+export default defineComponent({
+
   name: 'a-alert',
   props: {
     type: {
@@ -52,7 +53,7 @@ export default {
       }
     }
   },
-  setup (props) {
+  setup (props: any) {
     const { on, toggle } = toggleUtils(true, 0)
     const state = reactive({
       toggle,
@@ -107,7 +108,7 @@ export default {
   },
   components: {},
   watch: {}
-}
+})
 </script>
 <style lang="scss">
 $btn-main: #009688;
