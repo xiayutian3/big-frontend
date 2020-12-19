@@ -18,7 +18,7 @@ import qs from 'qs' // 对get接口请求参数做的简化操作 query string�
  * 读取文章列表的接口
  * @param {obj} options
  */
-const getList = options => {
+const getList = (options: any) => {
   return axios.get('/public/list?' + qs.stringify(options))
 }
 /**
@@ -42,13 +42,13 @@ const getLinks = () => {
 }
 
 // 图片上传接口
-const uploadImg = formData => axios.post('/content/upload', formData)
+const uploadImg = (formData: any) => axios.post('/content/upload', formData)
 
 // 发贴接口
-const addPost = data => axios.post('/content/add', data)
+const addPost = (data: any) => axios.post('/content/add', data)
 
 // 获取文章详情
-const getDetail = tid => {
+const getDetail = (tid: any) => {
   const token = store.state.token
   let headers = {}
   if (token !== '') {
@@ -62,7 +62,7 @@ const getDetail = tid => {
 }
 
 // 更新文章，编辑帖子
-const updatePost = data => axios.post('/content/update', data)
+const updatePost = (data: any) => axios.post('/content/update', data)
 
 export {
   getList,

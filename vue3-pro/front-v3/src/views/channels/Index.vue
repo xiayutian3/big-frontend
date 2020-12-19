@@ -2,8 +2,8 @@
     <div class="layui-container">
       <div class="layui-row layui-col-space15">
         <div class="layui-col-md8">
-          <!-- <Top/>
-          <List/> -->
+          <!-- <Top/> -->
+          <List/>
         </div>
         <div class="layui-col-md4">
           <Tips />
@@ -24,7 +24,7 @@ import Links from '@/components/sidebar/Links.vue'
 import HotList from '@/components/sidebar/HotList.vue'
 import Ads from '@/components/sidebar/Ads.vue'
 import { defineComponent } from 'vue'
-// import List from '@/components/contents/List'
+import List from '@/components/contents/List.vue'
 // import Top from '@/components/contents/Top'
 export default defineComponent({
   name: 'index',
@@ -40,8 +40,8 @@ export default defineComponent({
     // Sign,
     Links,
     HotList,
-    Ads
-    // List,
+    Ads,
+    List
     // Top
   },
   watch: {}

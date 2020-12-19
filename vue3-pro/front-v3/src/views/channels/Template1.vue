@@ -2,7 +2,7 @@
     <div class="layui-container">
       <div class="layui-row layui-col-space15">
         <div class="layui-col-md8">
-          <!-- <List/> -->
+          <List/>
         </div>
         <div class="layui-col-md4">
           <HotList />
@@ -19,7 +19,7 @@ import Links from '@/components/sidebar/Links.vue'
 import HotList from '@/components/sidebar/HotList.vue'
 import Ads from '@/components/sidebar/Ads.vue'
 import { defineComponent } from 'vue'
-// import List from '@/components/contents/List.vue'
+import List from '@/components/contents/List.vue'
 export default defineComponent({
   name: 'template1',
   props: {},
@@ -32,8 +32,8 @@ export default defineComponent({
   components: {
     Links,
     HotList,
-    Ads
-    // List
+    Ads,
+    List
   },
   watch: {}
 })
