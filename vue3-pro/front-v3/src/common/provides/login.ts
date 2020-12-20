@@ -5,7 +5,7 @@ import { getCode, login, reg } from '@/api/login'
 import { HttpResponse } from '@/common/interface'
 import router from '@/router'
 
-export const loginUtils = () => {
+export const loginService = () => {
   let sid = ''
 
   const state = reactive({
@@ -56,7 +56,7 @@ export const loginUtils = () => {
       state.username = ''
       state.password = ''
       state.code = ''
-      router.push({ name: 'Home' })
+      router.push({ name: 'index' })
     }
     return res
   }

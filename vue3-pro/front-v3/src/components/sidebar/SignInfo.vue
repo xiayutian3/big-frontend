@@ -53,8 +53,10 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, reactive } from 'vue'
+
+export default defineComponent({
   name: 'sign-info',
   props: {
     isShow: {
@@ -62,24 +64,43 @@ export default {
       default: false
     }
   },
-  data () {
-    return {
+  setup (props, { emit }) {
+    const state = reactive({
       current: 0,
       lists: []
+    })
+    const close = () => {
+      emit('close-modal')
     }
-  },
-  computed: {},
-  methods: {
-    close () {
-      this.$emit('closeModal')
-    },
-    choose (num) {
-      this.current = num
+    const choose = (num: number) => {
+      state.current = num
     }
-  },
-  components: {},
-  watch: {}
-}
+    return {
+      state,
+      close,
+      choose
+    }
+  }
+
+  // vue2  改造前
+  // data () {
+  //   return {
+  //     current: 0,
+  //     lists: []
+  //   }
+  // },
+  // computed: {},
+  // methods: {
+  //   close () {
+  //     this.$emit('close-modal')
+  //   },
+  //   choose (num) {
+  //     this.current = num
+  //   }
+  // },
+  // components: {},
+  // watch: {}
+})
 </script>
 <style lang="scss">
 </style>

@@ -2,12 +2,12 @@
     <div class="layui-container">
       <div class="layui-row layui-col-space15">
         <div class="layui-col-md8">
-          <!-- <Top/> -->
+          <Top/>
           <List/>
         </div>
         <div class="layui-col-md4">
           <Tips />
-          <!-- <Sign /> -->
+          <Sign />
           <HotList />
           <Ads />
           <Links />
@@ -19,13 +19,13 @@
 <script lang="ts">
 
 import Tips from '@/components/sidebar/Tips.vue'
-// import Sign from '@/components/sidebar/Sign'
+import Sign from '@/components/sidebar/Sign.vue'
 import Links from '@/components/sidebar/Links.vue'
 import HotList from '@/components/sidebar/HotList.vue'
 import Ads from '@/components/sidebar/Ads.vue'
 import { defineComponent } from 'vue'
 import List from '@/components/contents/List.vue'
-// import Top from '@/components/contents/Top'
+import Top from '@/components/contents/Top.vue'
 export default defineComponent({
   name: 'index',
   props: {},
@@ -37,16 +37,15 @@ export default defineComponent({
   methods: {},
   components: {
     Tips,
-    // Sign,
+    Sign,
     Links,
     HotList,
     Ads,
-    List
-    // Top
+    List,
+    Top
   },
   watch: {}
 })
 </script>
 <style lang="scss">
-.wrapper{}
 </style>

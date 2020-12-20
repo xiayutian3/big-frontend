@@ -190,7 +190,7 @@
 <script lang="ts">
 import { Field, Form } from 'vee-validate'
 import { defineComponent, onMounted } from 'vue'
-import { loginUtils } from '@/utils/login'
+import { loginService } from '@/common/provides/login'
 import { HttpResponse } from '@/common/interface'
 import { alert } from '@/components/modules/alert/index.tsx'
 
@@ -205,7 +205,7 @@ export default defineComponent({
     //   code: '', // 要输入的图片验证码
     //   svg: '' // 验证码图片
     // })
-    const { state, _getCode, regHandle } = loginUtils()
+    const { state, _getCode, regHandle } = loginService()
 
     const submit = async (values: any, actions: any) => {
       // console.log('submit ~ actions', actions)

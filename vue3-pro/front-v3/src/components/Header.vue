@@ -1,9 +1,9 @@
 <template>
   <div class="fly-header layui-bg-black">
     <div class="layui-container">
-      <router-link class="fly-logo" to="/">
+      <a class="fly-logo" to="/">
         <img src="../assets/logo-2.png" alt="layui" />
-      </router-link>
+      </a>
       <ul class="layui-nav fly-nav layui-hide-xs">
         <li class="layui-nav-item layui-this">
           <a href="/">
@@ -54,7 +54,7 @@
         <template v-else>
           <!-- 登入后的状态 -->
           <li class="layui-nav-item" @mouseenter="show" @mouseleave="hide">
-            <router-link :to="{name:'center'}" class="fly-nav-avatar" href="javascript:;">
+            <a :to="{name:'center'}" class="fly-nav-avatar" href="javascript:;">
               <cite class="layui-hide-xs">{{userInfo.name}}</cite>
               <!-- <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i> -->
               <i
@@ -62,22 +62,22 @@
                 v-show="userInfo.isVip != 0"
               >VIP{{userInfo.isVip}}</i>
               <img :src="userInfo.pic" />
-            </router-link>
+            </a>
             <dl class="layui-nav-child layui-anim layui-anim-upbit" :class="{'layui-show':isHover}">
               <dd>
-                <router-link :to="{name:'info'}">
+                <a :to="{name:'info'}">
                   <i class="layui-icon">&#xe620;</i>基本设置
-                </router-link>
+                </a>
               </dd>
               <dd>
-                <router-link :to="{name:'msg'}">
+                <a :to="{name:'msg'}">
                   <i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息
-                </router-link>
+                </a>
               </dd>
               <dd>
-                <router-link :to="{name:'home',params:{uid:userInfo._id}}">
+                <a :to="{name:'home',params:{uid:userInfo._id}}">
                   <i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页
-                </router-link>
+                </a>
               </dd>
               <hr style="margin: 5px 0;" />
               <dd>
@@ -104,7 +104,7 @@
 
 <script lang="ts">
 import store from '@/store'
-import { computed, defineComponent, reactive } from 'vue'
+import { computed, defineComponent, onMounted, reactive } from 'vue'
 
 export default defineComponent({
   setup () {
@@ -112,6 +112,9 @@ export default defineComponent({
       isHover: false,
       hoverCtrl: {},
       hasMsg: false
+    })
+    onMounted(() => {
+      // console.log('login', computed(() => store.state.userInfo))
     })
     return {
       ...state,

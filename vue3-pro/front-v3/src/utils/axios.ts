@@ -111,12 +111,12 @@ class HttpRequest {
       // 取消请求的配置
       const key = config.url + '&' + config.method
       this.removePending(key, true)
-      config.cancelToken = new CancelToken((c) => {
+      config.cancelToken = new CancelToken((c: any) => {
         this.pending[key] = c
       })
       // 在发送请求之前做些什么
       return config
-    }, (error) => {
+    }, (error: Error) => {
       // 对请求错误做些什么
       errorHandle(error)
       return Promise.reject(error)
@@ -138,7 +138,7 @@ class HttpRequest {
       } else {
         return Promise.reject(response)
       }
-    }, (error) => {
+    }, (error: Error) => {
       // 对响应错误做点什么
 
       errorHandle(error)

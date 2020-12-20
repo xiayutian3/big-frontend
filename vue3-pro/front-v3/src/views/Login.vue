@@ -134,7 +134,7 @@ import { defineComponent, onMounted } from 'vue'
 // import { HttpResponse } from '@/common/interface'
 
 // 功能函数抽离了出来后，封装后，函数有自己的作用域
-import { loginUtils } from '@/utils/login'
+import { loginService } from '@/common/provides/login'
 import { HttpResponse } from '@/common/interface'
 
 export default defineComponent({
@@ -168,7 +168,7 @@ export default defineComponent({
     // }
 
     // 封装后的函数
-    const { _getCode, state, loginHandle } = loginUtils()
+    const { _getCode, state, loginHandle } = loginService()
 
     // 点击登录
     const submit = async (values: any, actions: any) => {

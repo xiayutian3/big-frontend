@@ -1,0 +1,4 @@
+[2020-09-23T23:28:40.421] [WARN] application - [GET] - /public/getCaptcha?sid=127e7477-fe7f-4b34-9c1e-09542fd43d4c - time:0.013
+[2020-09-23T23:28:59.102] [WARN] application - [GET] - /public/getCaptcha?sid=127e7477-fe7f-4b34-9c1e-09542fd43d4c - time:0.004
+[2020-09-23T23:29:21.815] [WARN] application - [GET] - /public/getCaptcha?sid=127e7477-fe7f-4b34-9c1e-09542fd43d4c - time:0.012
+[2020-09-23T23:29:41.394] [WARN] application - [GET] - /public/getCaptcha?sid=127e7477-fe7f-4b34-9c1e-09542fd43d4c - time:0.004

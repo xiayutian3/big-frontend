@@ -6,6 +6,10 @@ export interface UserInfo {
   gender?: string;
   regmark?: string;
   pic?: string;
+  isSign?: boolean;
+  lastSign?: string;
+  count?: number;
+  favs?: number;
 }
 
 export interface LoginInfo{

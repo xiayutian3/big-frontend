@@ -10,15 +10,15 @@
         </a>
         <h2>
           <a class="layui-badge">{{item.catalog}}</a>
-          <router-link :to="{name:'detail',params:{tid:item._id}}" >{{item.title}}</router-link>
+          <a :to="{name:'detail',params:{tid:item._id}}" >{{item.title}}</a>
         </h2>
         <div class="fly-list-info">
-          <router-link :to="{name:'home',params:{uid:item.uid._id}}" >
+          <a :to="{name:'home',params:{uid:item.uid._id}}" >
             <cite>{{item.uid.name}}</cite>
             <!--<i class="iconfont icon-renzheng" title="认证信息：XXX"></i>-->
             <i class="layui-badge fly-badge-vip" v-if="item.uid.isVip !== '0'">{{'VIP'+item.uid.isVip}}</i>
-          </router-link>
-          <span>{{item.created | moment}}</span>
+          </a>
+          <span>{{formatDate(item.created)}}</span>
 
           <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻">
             <i class="iconfont icon-kiss"></i> {{item.fav}}
@@ -44,6 +44,8 @@
 
 <script>
 import _ from 'lodash'
+import { defineComponent } from 'vue'
+import { formatDate } from '@/utils/formatDate'
 
 // 也可以使用 moment（库比较大）
 // import moment from 'moment'
@@ -60,7 +62,7 @@ import _ from 'lodash'
 // // dayjs扩展相对时间用的
 // moment.extend(relativeTime)
 
-export default {
+export default defineComponent({
   name: 'list-item',
   props: {
     lists: {
@@ -76,11 +78,16 @@ export default {
       default: false
     }
   },
-  data () {
-    return {}
+  setup (props, { emit }) {
+    // console.log('setup ~ props', props)
+    const more = () => {
+      emit('nextpage')
+    }
+    return {
+      more,
+      formatDate
+    }
   },
-  created () {},
-  mounted () {},
   computed: {
     items () {
       _.map(this.lists, (item) => {
@@ -108,11 +115,11 @@ export default {
       return this.lists
     }
   },
-  methods: {
-    more () {
-      this.$emit('nextpage')
-    }
-  },
+  // methods: {
+  //   more () {
+  //     this.$emit('nextpage')
+  //   }
+  // },
   // filters: {
   //   moment (date) {
   //     // 超过7天，显示日期
@@ -126,7 +133,7 @@ export default {
   // },
   components: {},
   watch: {}
-}
+})
 </script>
 <style lang="scss">
 .nomore{

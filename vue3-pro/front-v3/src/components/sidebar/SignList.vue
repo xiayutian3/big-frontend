@@ -9,16 +9,16 @@
         <div class="layui-layer-content pd0">
           <div class="layui-tab layui-tab-brief">
             <ul class="layui-tab-title">
-              <li :class="{'layui-this':current===0}" @click="choose(0)">最新签到</li>
-              <li :class="{'layui-this':current===1}" @click="choose(1)">今日热议</li>
-              <li :class="{'layui-this':current===2}" @click="choose(2)">总签到榜</li>
+              <li :class="{'layui-this':state.current===0}" @click="choose(0)">最新签到</li>
+              <li :class="{'layui-this':state.current===1}" @click="choose(1)">今日热议</li>
+              <li :class="{'layui-this':state.current===2}" @click="choose(2)">总签到榜</li>
             </ul>
             <div class="layui-tab-content">
               <ul class="layui-tab-item layui-show">
-                <li v-for="(item,index) in lists" :key="'sign'+index">
+                <li v-for="(item,index) in state.lists" :key="'sign'+index">
                   <img src="/img/bear.jpg" alt class="mr1" />
                   <cite class="fly-link">{{item.name}}</cite>
-                  <span class="fly-grey" v-if="current !== 2">签到于 {{item.created}}</span>
+                  <span class="fly-grey" v-if="state.current !== 2">签到于 {{hours(item.created)}}</span>
                   <span class="fly-grey" v-else>
                     已经连续签到
                     <i class="orange">{{item.count}}</i>天
@@ -32,8 +32,11 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { hours } from '@/utils/formatDate'
+import { defineComponent, reactive } from 'vue'
+
+export default defineComponent({
   name: 'sign-list',
   props: {
     isShow: {
@@ -41,24 +44,41 @@ export default {
       default: false
     }
   },
-  data () {
-    return {
+  setup (props, { emit }) {
+    const state = reactive({
       current: 0,
       lists: []
+    })
+    const close = () => {
+      emit('close-modal')
     }
-  },
-  computed: {},
-  methods: {
-    choose (num) {
-      this.current = num
-    },
-    close () {
-      this.$emit('closeModal')
+    const choose = (num: number) => {
+      state.current = num
     }
-  },
-  components: {},
-  watch: {}
-}
+    return {
+      state,
+      close,
+      choose,
+      hours
+    }
+  }
+
+  // vue2 改造前
+  // data () {
+  //   return {
+  //     current: 0,
+  //     lists: []
+  //   }
+  // },
+  // methods: {
+  //   choose (num) {
+  //     this.current = num
+  //   },
+  //   close () {
+  //     this.$emit('close-modal')
+  //   }
+  // },
+})
 </script>
 <style lang="scss">
 </style>
