@@ -18,6 +18,15 @@ import SignRecord from '../model/SignRecord'
 import { v4 as uuid } from 'uuid'
 import { setValue } from '@/config/RedisConfig'
 
+// 生成token方法的封装
+const generateToken = (payload, expire = '1h') => {
+  if (payload) {
+    return jsonwebtoken.sign({
+      ...payload
+    }, config.JWT_SECRET, { expiresIn: expire })
+  }
+}
+
 class LoginController {
   // constructor () { }
   async forget (ctx) {
@@ -92,9 +101,13 @@ class LoginController {
         // 生成有时效性的token 。  payload,是明文，不要放敏感的信息，exp：过期时间，为1天，后边 JWT_SECRET 是密钥
         // let token = jsonwebtoken.sign({_id:'brian',exp:Math.floor(Date.now()/1000) + 60*60*24},config.JWT_SECRET)
         // 另一种方式设置token过期时间的方式
-        const token = jsonwebtoken.sign({ _id: userObj._id }, config.JWT_SECRET, {
-          expiresIn: '7d' // 7d：表示7天的时长
-        })
+        // const token = jsonwebtoken.sign({ _id: userObj._id }, config.JWT_SECRET, {
+        //   expiresIn: '7d' // 7d：表示7天的时长
+        // })
+
+        const token = generateToken({ _id: userObj._id })
+        // 刷新token，等上边token过期的时候，refreshToken的时长 > 上边的token
+        const refreshToken = generateToken({ _id: userObj._id }, '7d')
 
         // 加入isSign属性给用户，前端需要，判断是否到签到问题
         const signRecord = await SignRecord.findByUid(userObj._id)
@@ -121,7 +134,8 @@ class LoginController {
           // },
           // 返回的用户信息，字段多的情况
           data: userObj,
-          token: token
+          token: token,
+          refreshToken
         }
         // 重置checkUserPasswd（为下一个用户重新验证）
         checkUserPasswd = false
@@ -138,6 +152,15 @@ class LoginController {
         code: 401,
         msg: '图片验证码不正确，请检查！'
       }
+    }
+  }
+
+  // refresh token 接口(更新token接口)
+  async refresh (ctx) {
+    ctx.body = {
+      code: 200,
+      token: generateToken({ _id: ctx._id }),
+      msg: '获取token成功'
     }
   }
 
