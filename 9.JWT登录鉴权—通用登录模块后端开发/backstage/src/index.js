@@ -2,7 +2,7 @@
 // const path = require('path')
 import Koa from 'koa'
 import path from 'path'
-// koa token 鉴权(不能产生token)
+// koa token 鉴权(不能产生token)  // 定义公共路径，不需要jwt鉴权
 import JWT from 'koa-jwt'
 // 支持json form  文件 传输
 import koaBody from 'koa-body'
