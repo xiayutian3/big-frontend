@@ -178,7 +178,8 @@ export default {
           // 同步vuex的用户信息
           this.$store.commit('setUserInfo', res.data)
           this.$store.commit('setIsLogin', true)
-          this.$store.commit('setToken', { token: res.token, refreshToken: res.refreshToken })
+          this.$store.commit('setToken', res.token)
+          localStorage.setItem('refreshToken', res.refreshToken)
           // 登录成功 后重置数据
           this.username = ''
           this.password = ''
@@ -188,9 +189,12 @@ export default {
           // 或者像下面这样
           requestAnimationFrame(() => {
             this.$refs.observer.reset()
-            this.$router.push({ name: 'index' })
+            // this.$router.push({ name: 'index' })
           })
-          // this.$router.push({ name: 'index' })
+
+          // 查看地址栏有没有redirect 属性有的话登录成功，让用户跳转到指定的页面，没有就去首页
+          const path = this.$route.query.redirect || { name: 'index' }
+          this.$router.push(path)
           // console.log(res)
         } else if (res.code === 401) {
           // 图片验证码验证失败(validate插件以数组的形式返回，所以设置的时候也得用数组的形式)

@@ -21,21 +21,40 @@ const errorHandle = async (err) => {
   console.log(err)
   if (err.response.status === 401) {
     const refreshToken = localStorage.getItem('refreshToken')
-    instance.headers.Authorization = 'Bearer ' + refreshToken
+    // 不能这么设置因为它是全局的
+    // instance.headers.Authorization = 'Bearer ' + refreshToken
+
     // token已经过期
     // 需要请求refreshToken接口
     // 1.成功-》重新发起请求 -》 参数  之前的请求参数存在err.config中
     // 2.失败 -》 token全失效需要用户重新登录
 
     try {
-      const result = await instance.post('/login/refresh')
+      const result = await instance.post('/login/refresh', null, { // 第三个参数才是 config，第二个是data
+        headers: {
+          Authorization: 'Bearer ' + refreshToken
+        }
+      })
       if (result) {
-        store.commit('setToken', { token: result.data.token, refreshToken })
+        store.commit('setToken', result.data.token)
         // 重新上次请求（err.config 上次请求的数都在里边）
-        return request(err.config)
+        return request.request(err.config)
       }
     } catch (error) {
-      return router.push({ name: 'login' })
+      // 清空数据，返回登录
+      // 清空本地，vuex上的用户数据
+      localStorage.clear()
+      store.commit('setToken', '')
+      store.commit('setUserInfo', '')
+      store.commit('setIsLogin', false)
+
+      // token失效，跳转登录，当用户登录成功后，让用户回到之前的页面
+      return router.push({ name: 'login',
+        query: {
+          redirect: router.currentRoute.fullPath
+          // router.currentRoute 等价于 $route
+        }
+      })
     }
   }
 }

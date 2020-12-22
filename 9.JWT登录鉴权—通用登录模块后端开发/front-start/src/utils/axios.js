@@ -109,10 +109,14 @@ class HttpRequest {
       })
       // 在发送请求之前做些什么
       return config
-    }, (error) => {
+    }, async (error) => {
       // 对请求错误做些什么
-      errorHandle(error)
-      return Promise.reject(error)
+      // errorHandle(error)
+      // return Promise.reject(error)
+
+      // 或者处理返回的error handle(增添refresh token 的第二次请求 是否成功，来决定状态)
+      const result = await errorHandle(error)
+      return result ? Promise.resolve(result) : Promise.reject(error)
     })
 
     // 添加响应拦截器

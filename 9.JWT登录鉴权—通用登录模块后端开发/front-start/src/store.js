@@ -25,11 +25,9 @@ export default new Vuex.Store({
     },
     setToken (state, value) {
       if (value === '') return
-      const { token, refreshToken } = value
-      state.token = token
-      // 本地存储token、refreshToken
-      localStorage.setItem('token', token)
-      localStorage.setItem('refreshToken', refreshToken)
+      state.token = value
+      // 本地存储token、
+      localStorage.setItem('token', value)
     },
     setUserInfo (state, value) {
       if (value === '') return
