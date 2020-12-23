@@ -261,12 +261,18 @@ export default {
     selectRole (value) {
       if (this.roleIndex === '' || this.roleIndex !== value) {
         this.roleIndex = value
+        // if (this.roles[this.roleIndex].menu && this.roles[this.roleIndex].menu.length === 0) {
+        modifyNode(this.menuData, null, 'checked', false)
+        this.tableData = []
+        // this.roleIndex = ''
+        //   return
+        // }
+
+        // 当用户没有权限的时候
         if (this.roles[this.roleIndex].menu && this.roles[this.roleIndex].menu.length === 0) {
-          modifyNode(this.menuData, null, 'checked', false)
-          this.tableData = []
-          // this.roleIndex = ''
           return
         }
+
         // 修改右侧菜单树+权限列表的选中状态
         // 参数含义： 所有的菜单 用户的权限菜单数组 设置checked状态  true
         const tmpData = modifyNode(

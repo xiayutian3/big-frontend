@@ -60,6 +60,9 @@ const getErrorList = (params) => axios.get('/admin/get-error?' + qs.stringify(pa
 // 删除错误日志
 const deleteErrors = (data) => axios.post('/admin/delete-error', data)
 
+// 动态路由列表
+const getroutes = () => axios.post('/admin/getRoutes')
+
 export {
   getUserList,
   updateUserById,
@@ -78,5 +81,6 @@ export {
   getRoleNames,
   getStatData,
   getErrorList,
-  deleteErrors
+  deleteErrors,
+  getroutes
 }

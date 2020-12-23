@@ -18,6 +18,12 @@
 <script>
 import LoginForm from '_c/login-form'
 import { mapActions } from 'vuex'
+import { getroutes } from '@/api/admin'
+import communityRoutes from '@/router/community'
+import _import from '@/libs/_import'
+import { resetRouter } from '@/router'
+import { getRoutesName, filterRoutes } from '@/libs/util'
+import routes from '@/router/routers'
 export default {
   components: {
     LoginForm
@@ -37,8 +43,42 @@ export default {
       this.handleLogin(options).then(res => {
         this.loading = false
         if (res.code === 200) {
-          this.$router.push({
-            name: this.$config.homeName
+          // 用户登录成功，获取菜单数据
+          getroutes().then(res => {
+            // 动态设置路由
+            // addRoutes api
+            if (res.code === 200) {
+              const routesData = res.data
+              const routesName = getRoutesName(routesData)
+              // 从所有的路由中过滤出 这个用户所拥有的路由 filterRoutes
+              // const newRoutes = communityRoutes.filter(item => routesName.includes(item.name))
+              const newRoutes = filterRoutes(communityRoutes, routesName)
+              // 添加 () => import(...)
+              newRoutes.map(item => {
+                if (typeof item.component === 'string') {
+                  item.component = _import(item.component)
+                }
+                if (item.children && item.children.length > 0) {
+                  item.children.map(i => {
+                    if (typeof i.component === 'string') {
+                      i.component = _import(i.component)
+                    }
+                  })
+                }
+              })
+              // 动态路由设置部分*****************
+              // 重置路由
+              resetRouter()
+              // 添加新的路由规则
+              this.$router.addRoutes(newRoutes)
+
+              // 设置store中的routes规则
+              this.$store.commit('setRouters', newRoutes.concat(routes))
+              this.$router.push({
+                name: this.$config.homeName
+              })
+              //* ************ */ 动态路由设置部分****
+            }
           })
         } else {
           this.$Message.error(res.msg)

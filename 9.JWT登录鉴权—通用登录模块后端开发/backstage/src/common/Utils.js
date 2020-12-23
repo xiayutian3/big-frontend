@@ -106,6 +106,7 @@ const getMenuData = (tree, rights, flag) => {
         arr.push({
           _id: item._id,
           path: item.path,
+          name: item.name,
           meta: {
             title: item.title,
             hideInBread: item.hideInBread,

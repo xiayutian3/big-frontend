@@ -629,3 +629,30 @@ export const sortMenus = (tree) => {
   }
   return tree
 }
+
+// 获取router的name
+export const getRoutesName = (routes) => {
+  const arr = []
+  routes.forEach(item => {
+    arr.push(item.name)
+    if (item.children && item.children.length > 0) {
+      arr.push(getRoutesName(item.children))
+    }
+  })
+  // 转为一维数组导出
+  return flatten(arr)
+}
+
+// 过滤路由
+export const filterRoutes = (origin, target) => {
+  const arr = []
+  origin.forEach(item => {
+    if (target.includes(item.name)) {
+      if (item.children && item.children.length > 0) {
+        item.children = filterRoutes(item.children, target)
+      }
+      arr.push(item)
+    }
+  })
+  return arr
+}

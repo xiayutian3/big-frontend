@@ -8,10 +8,10 @@ import config from '@/config'
 const { homeName } = config
 
 Vue.use(Router)
-const router = new Router({
-  routes,
-  mode: 'history'
-})
+// const router = new Router({
+//   routes,
+//   mode: 'history'
+// })
 const LOGIN_PAGE_NAME = 'login'
 
 const turnTo = (to, access, next) => {
@@ -19,7 +19,13 @@ const turnTo = (to, access, next) => {
   else next({ replace: true, name: 'error_401' }) // 无权限，重定向到401页面
 }
 
-router.beforeEach((to, from, next) => {
+// 添加动态路由
+const createRouter = () => new Router({
+  mode: 'history',
+  routes: routes
+})
+
+const beforeEachHandler = (to, from, next) => {
   iView.LoadingBar.start()
   const token = getToken()
   if (!token && to.name !== LOGIN_PAGE_NAME) {
@@ -50,12 +56,23 @@ router.beforeEach((to, from, next) => {
       })
     }
   }
-})
-
-router.afterEach(to => {
+}
+const afterEachhandler = to => {
   setTitle(to, router.app)
   iView.LoadingBar.finish()
   window.scrollTo(0, 0)
-})
+}
+
+const router = createRouter()
+
+router.beforeEach(beforeEachHandler)
+router.afterEach(afterEachhandler)
+
+export function resetRouter () {
+  const newRouter = createRouter()
+  newRouter.beforeEach(beforeEachHandler)
+  newRouter.afterEach(afterEachhandler)
+  router.matcher = newRouter.matcher // the relevant part   才生效
+}
 
 export default router
