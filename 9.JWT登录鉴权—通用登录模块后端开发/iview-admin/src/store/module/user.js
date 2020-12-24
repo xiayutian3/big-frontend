@@ -9,7 +9,7 @@ import {
   getUnreadCount
 } from '@/api/user'
 import { login } from '@/api/login'
-import { setToken, getToken } from '@/libs/util'
+import { setToken, getToken, localRead, localSave } from '@/libs/util'
 
 export default {
   state: {
@@ -17,7 +17,7 @@ export default {
     userId: '',
     avatarImgPath: '',
     token: getToken(),
-    access: '',
+    access: localRead('access'),
     hasGetInfo: false,
     unreadCount: 0,
     messageUnreadList: [],
@@ -37,6 +37,7 @@ export default {
     },
     setAccess (state, access) {
       state.access = access
+      localSave('access', access)
     },
     setToken (state, token) {
       state.token = token

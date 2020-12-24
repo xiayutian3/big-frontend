@@ -343,11 +343,20 @@ export const routeHasExist = (tagNavList, routeItem) => {
 }
 
 export const localSave = (key, value) => {
+  if (typeof value === 'object') {
+    value = JSON.stringify(value)
+  }
   localStorage.setItem(key, value)
 }
 
 export const localRead = (key) => {
-  return localStorage.getItem(key) || ''
+  const data = localStorage.getItem(key)
+  try {
+    return JSON.parse(data)
+  } catch (error) {
+    return data || ''
+  }
+  // return localStorage.getItem(key) || ''
 }
 
 // scrollTop animation

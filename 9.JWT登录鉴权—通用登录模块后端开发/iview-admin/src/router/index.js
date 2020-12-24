@@ -14,6 +14,7 @@ Vue.use(Router)
 // })
 const LOGIN_PAGE_NAME = 'login'
 
+// eslint-disable-next-line no-unused-vars
 const turnTo = (to, access, next) => {
   if (canTurnTo(to.name, access, routes)) next() // 有权限，可访问
   else next({ replace: true, name: 'error_401' }) // 无权限，重定向到401页面
@@ -43,11 +44,15 @@ const beforeEachHandler = (to, from, next) => {
     })
   } else {
     if (store.state.user.hasGetInfo) {
-      turnTo(to, store.state.user.access, next)
+      // turnTo(to, store.state.user.access, next)
+      // 后端已经权限判断了，前端就不需要了
+      next()
     } else {
       store.dispatch('getUserInfo').then(user => {
         // 拉取用户信息，通过用户权限和跳转的页面的name来判断是否有权限访问;access必须是一个数组，如：['super_admin'] ['super_admin', 'admin']
-        turnTo(to, user.access, next)
+        // turnTo(to, user.access, next)
+        // 后端已经权限判断了，前端就不需要了
+        next()
       }).catch(() => {
         setToken('')
         next({

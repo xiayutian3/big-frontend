@@ -53,7 +53,7 @@ export default [
   },
   // ...communityRoutes,
   {
-    path: '',
+    path: '/doc',
     name: 'doc',
     meta: {
       title: '文档',
