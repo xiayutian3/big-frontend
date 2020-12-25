@@ -641,6 +641,7 @@ export const sortMenus = (tree) => {
 
 // 获取router的name
 export const getRoutesName = (routes) => {
+  if (!routes || routes.length === 0) return
   const arr = []
   routes.forEach(item => {
     arr.push(item.name)
