@@ -90,7 +90,9 @@ if (!isDevMode) {
 app.use(middleware)
 app.use(router())
 
-app.listen(3000, () => {
-  console.log('server is starting')
+// 服务端口号 生产：12005，开发：3000
+const port = !isDevMode ? 12005 : 3000
+app.listen(port, () => {
+  console.log(`server is starting:${port}`)
   run()
 })
